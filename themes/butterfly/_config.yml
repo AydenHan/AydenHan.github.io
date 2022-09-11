@@ -7,8 +7,8 @@ menu:
   归档: /archives/ || fas fa-archive
   标签: /tags/ || fas fa-tags
   分类: /categories/ || fas fa-folder-open
-  # List||fas fa-list:
-  #   Music: /music/ || fas fa-music
+  脚本||fas fa-list:
+    我焯!原!: /scripts/genshin/ || fas fa-gamepad
   #   Movie: /movies/ || fas fa-video
   # Link: /link/ || fas fa-link
   关于: /about/ || fas fa-heart
@@ -135,7 +135,7 @@ error_img:
 
 # A simple 404 page
 error_404:
-  enable: false
+  enable: true
   subtitle: 'Page Not Found'
   background: https://i.loli.net/2020/05/19/aKOcLiyPl2JQdFD.png
 
