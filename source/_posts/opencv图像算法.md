@@ -552,6 +552,625 @@ Laplace算子的差分形式：
 
 
 
+### 连通域
+
+连通域一般是指图像中具有相同像素值且位置相邻的前景像素点组成的图像区域。连通区域分析是指将图像中的各个连通区域找出并标记。通常连通区域分析处理的对象是一张二值化后的图像。
+
+从连通域的定义可以知道，一个连通区域是由具有相同像素值的相邻像素组成像素集合，因此，我们就可以通过这两个条件在图像中寻找连通区域，对于找到的每个连通区域，我们赋予其一个唯一的标识（Label），以区别其他连通区域。
+
+最常见的有两种算法：**Two-pass法**和**Seed-Filling种子填充法**。
+
+#### 种子填充法
+
+本质上就是DFS，维护一个队列或者堆栈。
+
+按照从上到下、从左到右的顺序遍历图像，对于找到的每一个**为指定前景色且未被标记的像素点**重复执行以下步骤：
+
+1.标记该像素点，并将该点坐标入队。
+
+2.开启DFS，while（队列非空）。
+
+3.while内部，获取队首的坐标，并将其出队。搜寻该点的4邻域或8邻域（注意边界限幅），若存在**为指定前景色且未被标记的像素点**，标记并入队。
+
+3.5 while中可维护变量用于统计该连通域的像素点数（面积）和x、y坐标的总和（求均值作为连通域的中心）。
+
+**代码实现**
+
+由于实际应用需求，写的是纯C的版本，没有队列向量，malloc了两个二维数组用来存取连通域信息。
+
+```c
+unsigned char* flag = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
+memset(flag, 0, sizeof(unsigned char) * width * height);
+int** con = (int**)malloc(sizeof(int*) * conNums);
+int** conInfo = (int**)malloc(sizeof(int*) * conNums);
+for (int i = 0; i < conNums; i++) {
+    // x、y点坐标
+    con[i] = (int*)malloc(width * height * sizeof(int) * 2);
+    // 区域信息 0-Area、12-Center、310-Rect
+    conInfo[i] = (int*)malloc(sizeof(int) * 11);
+}
+
+int conIdx = -1;	// 标记连通域的序号
+int ptr = 0;		// 通过自加模拟出队
+int growNum = 0;	// 模拟队列是否为空
+int sumx = 0, sumy = 0, curx = 0, cury = 0;
+for (int i = 0; i < height; i++) {
+    for (int j = 0; j < width; j++) {
+        if (srcImage[i * width + j] == 255 && flag[i * width + j] == 0 
+            && conIdx < conNums - 1) {
+            // 初始化本次连通域信息
+            conIdx++;
+            growNum = 1;
+            ptr = 0;
+            sumx = 0;
+            sumy = 0;
+            flag[i * width + j] = conIdx + 1;
+            con[conIdx][0] = j;
+            con[conIdx][1] = i;
+
+            // 开找
+            while (growNum > 0) {
+                curx = con[conIdx][ptr++];
+                cury = con[conIdx][ptr++];
+                sumx += curx;
+                sumy += cury;
+                growNum--;
+
+                if (cury > 0 && srcImage[(cury - 1) * width + curx] == 255 
+                    && flag[(cury - 1) * width + curx] == 0) 
+                {
+                    flag[(cury - 1) * width + curx] = conIdx + 1;
+                    con[conIdx][ptr + growNum * 2] = curx;
+                    con[conIdx][ptr + growNum * 2 + 1] = cury - 1;
+                    growNum++;
+                }
+                if (cury < height - 1 && srcImage[(cury + 1) * width + curx] == 255
+                    && flag[(cury + 1) * width + curx] == 0) 
+                {
+                    flag[(cury + 1) * width + curx] = conIdx + 1;
+                    con[conIdx][ptr + growNum * 2] = curx;
+                    con[conIdx][ptr + growNum * 2 + 1] = cury + 1;
+                    growNum++;
+                }
+                if (curx > 0 && srcImage[cury * width + curx - 1] == 255
+                    && flag[cury * width + curx - 1] == 0) 
+                {
+                    flag[cury * width + curx - 1] = conIdx + 1;
+                    con[conIdx][ptr + growNum * 2] = curx - 1;
+                    con[conIdx][ptr + growNum * 2 + 1] = cury;
+                    growNum++;
+                }
+                if (curx < width - 1 && srcImage[cury * width + curx + 1] == 255
+                    && flag[cury * width + curx + 1] == 0) 
+                {
+                    flag[cury * width + curx + 1] = conIdx + 1;
+                    con[conIdx][ptr + growNum * 2] = curx + 1;
+                    con[conIdx][ptr + growNum * 2 + 1] = cury;
+                    growNum++;
+                }
+            }
+            // 计算连通域的面积、中心点和最小外接矩
+            conInfo[conIdx][0] = ptr / 2;
+            if (conInfo[conIdx][0] < minConArea) {	// 小于指定面积的连通域舍弃
+                conIdx--;
+            }
+            else {
+                conInfo[conIdx][1] = sumx * 2 / ptr;
+                conInfo[conIdx][2] = sumy * 2 / ptr;
+                int miny = 9999, maxy = 0, minx = 9999, maxx = 0;
+                for (int y = 0; y < conInfo[conIdx][0]; y++) {
+                    if (con[conIdx][y * 2 + 1] < miny)	miny = con[conIdx][y * 2 + 1];
+                    if (con[conIdx][y * 2 + 1] > maxy)	maxy = con[conIdx][y * 2 + 1];
+                    if (con[conIdx][y * 2] < minx)	minx = con[conIdx][y * 2];
+                    if (con[conIdx][y * 2] > maxx)	maxx = con[conIdx][y * 2];
+                }
+                conInfo[conIdx][3] = minx;
+                conInfo[conIdx][4] = maxy;
+                conInfo[conIdx][5] = minx;
+                conInfo[conIdx][6] = miny;
+                conInfo[conIdx][7] = maxx;
+                conInfo[conIdx][8] = miny;
+                conInfo[conIdx][9] = maxx;
+                conInfo[conIdx][10] = maxy;
+            }
+        }
+    }
+}
+```
+
+#### Two-pass法
+
+由于业务环境为纯c，写Two-pass较为麻烦而且效率并不比种子填充高，因此这里只是贴了网上的代码。
+
+**1.生成等价对**
+
+要找一张二维图像中的连通域，很容易想到可以一行一行先把子区域找出来，然后再拼合成一个完整的连通域，因为从**每一行找连通域**是一件很简单的事。这个过程中需要记录每一个子区域，为了满足定位要求，并且节省内存，我们需要记录**子区域所在的行号、区域开始和结束的位置以及子区域的总数**。需要注意的就是子区域开始位置和结束位置在行首和行末的情况要单独拿出来考虑。
+
+**代码实现**
+
+```c++
+// 查找每一行的子区域
+// numberOfArea：子区域总数 stArea：子区域开始位置  enArea：子区域结束位置  rowArea：子区域所在行号
+void searchArea(const Mat src, int &numberOfArea, vector<int> &stArea, vector<int> &enArea, vector<int> &rowArea)
+{
+    for (int row = 0; row < src.rows; row++)
+    {
+        // 行指针
+        const uchar *rowData = src.ptr<uchar>(row);
+        // 判断行首是否是子区域的开始点
+        if (rowData[0] == 255){
+            numberOfArea++;
+            stArea.push_back(0);
+        }
+        
+        for (int col = 1; col < src.cols; col++)
+        {
+            // 子区域开始位置的判断：前像素为背景，当前像素是前景
+            if (rowData[col - 1] == 0 && rowData[col] == 255)
+            {
+                numberOfArea++;
+                stArea.push_back(col);   
+            // 子区域结束位置的判断：前像素是前景，当前像素是背景             
+            }else if (rowData[col - 1] == 255 && rowData[col] == 0)
+            {
+                // 更新结束位置vector、行号vector
+                enArea.push_back(col - 1);
+                rowArea.push_back(row);
+            }
+        }
+        // 结束位置在行末
+        if (rowData[src.cols - 1] == 255)
+        {
+            enArea.push_back(src.cols - 1);
+            rowArea.push_back(row);
+        }
+    }
+}
+
+```
+
+另外一个比较棘手的问题，如何给这些子区域标号，使得同一个连通域有相同的标签值。我们给单独每一行的子区域标号区分是很容易的事， 关键是处理相邻行间的子区域关系（怎么判别两个子区域是连通的）。
+
+![img](opencv图像算法/1547375-20200311181334108-202813998.png)
+
+主要思路：以四连通为例，在上图我们可以看出BE是属于同一个连通域，判断的依据是**E的开始位置小于B的结束位置，并且E的结束地址大于B的开始地址**；同理可以判断出EC属于同一个连通域，CF属于同一个连通域，因此可以推知BECF都属于同一个连通域。
+
+**迭代策略：**寻找E的相连区域时，对前一行的ABCD进行迭代，找到相连的有B和C，而D的开始地址已经大于了E的结束地址，**此时就可以提前break掉，避免不必要的迭代操作**；接下来迭代F的时候，由于有E留下来的基础，**因此对上一行的迭代可以直接从C开始。**另外，当前行之前的一行如果不存在子区域的话，那么当前行的所有子区域都可以直接赋新的标签，而不需要迭代上一行。
+
+**标签策略：**以上图为例，遍历第一行，A、B、C、D会分别得到标签1、2、3、4。到了第二行，检测到E与B相连，之前E的标签还是初始值0，因此给E赋上B的标签2；之后再次检测到C和E相连，由于E已经有了标签2，而C的标签为3，则保持E和C标签不变，将（2,3）作为等价对进行保存。同理，检测到F和C相连，且F标签还是初始值0，则为F标上3。如此对所有的子区域进行标号，最终可以得到一个等价对的列表。
+
+下面的代码实现了上述的过程。子区域用一维vector保存，没办法直接定位到某一行号的子区域，因此需要用curRow来记录当前的行，用firstAreaPrev记录前一行的第一个子区域在vector中的位置，用lastAreaPrev记录前一行的最后一个子区域在vector中的位置。在换行的时候，就去更新刚刚说的3个变量，其中firstAreaPrev的更新依赖于当前行的第一个子区域位置，所以还得用firstAreaCur记录当前行的第一个子区域。
+
+```c++
+// 初步标签,获取等价对
+// labelOfArea:子区域标签值， equalLabels：等价标签对 offset:0为四连通,1为8连通
+void markArea(int numberOfArea, vector<int> stArea, vector<int> enArea, vector<int> rowArea, vector<int> &labelOfArea, vector<pair<int, int>> &equalLabels, int offset)
+{
+    int label = 1;
+    // 当前所在行   
+    int curRow = 0;
+    // 当前行的第一个子区域位置索引
+    int firstAreaCur = 0;
+    // 前一行的第一个子区域位置索引
+    int firstAreaPrev = 0;
+    // 前一行的最后一个子区域位置索引
+    int lastAreaPrev = 0;
+
+    // 初始化标签都为0
+    labelOfArea.assign(numberOfArea, 0);
+    
+    // 遍历所有子区域并标记
+    for (int i = 0; i < numberOfArea; i++)
+    {
+        // 行切换时更新状态变量
+        if (curRow != rowArea[i])
+        {
+            curRow = rowArea[i];
+            firstAreaPrev = firstAreaCur;
+            lastAreaPrev = i - 1;
+            firstAreaCur = i;
+        }
+        // 相邻行不存在子区域
+        if (curRow != rowArea[firstAreaPrev] + 1)
+        {
+            labelOfArea[i] = label++;
+            continue;
+        }
+        // 对前一行进行迭代
+        for (int j = firstAreaPrev; j <= lastAreaPrev; j++)
+        {
+            // 判断是否相连
+            if (stArea[i] <= enArea[j] + offset && enArea[i] >= stArea[j] - offset)
+            {
+                // 之前没有标记过
+                if (labelOfArea[i] == 0)
+                    labelOfArea[i] = labelOfArea[j];
+                // 之前已经被标记，保存等价对
+                else if (labelOfArea[i] != labelOfArea[j])
+                    equalLabels.push_back(make_pair(labelOfArea[i], labelOfArea[j]));
+            }else if (enArea[i] < stArea[j] - offset)
+            {
+                // 为当前行下一个子区域缩小上一行的迭代范围
+                firstAreaPrev = max(firstAreaPrev, j - 1);
+                break;
+            }
+        }
+        // 与上一行不存在相连
+        if (labelOfArea[i] == 0)
+        {
+            labelOfArea[i] = label++;
+        }
+    }
+}
+```
+
+**2.DFS Two-pass算法**
+
+建立一个Bool型等价对矩阵，用作深搜环境。具体做法是先获取最大的标签值maxLabel，然后生成一个**maxLabel∗maxLabel大小的二维矩阵**，初始值为**false**；对于例如（1，3）这样的等价对，在矩阵的（0，2）和（2，0）处赋值true——要注意索引和标签值是相差1的。就这样把所有等价对都反映到矩阵上。
+
+深搜的目的在于建立一个标签的重映射。例如4、5、8是等价的标签，都重映射到标签2。最后重映射的效果就是标签最小为1，且依次递增，没有缺失和等价。深搜在这里就是优先地寻找一列等价的标签，例如一口气把4、5、8都找出来，然后给他们映射到标签2。程序也维护了一个队列，当标签在矩阵上值为true，而且没有被映射过，就加入到队列。
+
+当然不一定要建立一个二维等价矩阵，一般情况，等价对数量要比maxLabel来的小，所以也可以直接对等价对列表进行深搜，但无论采用怎样的深搜，其等价对处理的性能都不可能提高很多。
+
+**代码实现**
+
+```c++
+// 等价对处理，标签重映射
+void replaceEqualMark(vector<int> &labelOfArea, vector<pair<int, int>> equalLabels)
+{
+    int maxLabel = *max_element(labelOfArea.begin(), labelOfArea.end());
+
+    // 等价标签矩阵，值为true表示这两个标签等价
+    vector<vector<bool>> eqTab(maxLabel, vector<bool>(maxLabel, false));
+    // 将等价对信息转移到矩阵上
+    vector<pair<int, int>>::iterator labPair;
+    for (labPair = equalLabels.begin(); labPair != equalLabels.end(); labPair++)
+    {
+        eqTab[labPair->first -1][labPair->second -1] = true;
+        eqTab[labPair->second -1][labPair->first -1] = true;
+    }
+    // 标签映射
+    vector<int> labelMap(maxLabel + 1, 0);
+    // 等价标签队列
+    vector<int> tempList;
+    // 当前使用的标签
+    int curLabel = 1;
+
+    for (int i = 1; i <= maxLabel; i++)
+    {
+        // 如果该标签已被映射，直接跳过
+        if (labelMap[i] != 0)
+        {
+            continue;
+        }
+
+        labelMap[i] = curLabel;
+        tempList.push_back(i);
+
+        for (int j = 0; j < tempList.size(); j++)
+        {
+            // 在所有标签中寻找与当前标签等价的标签 
+            for (int k = 1; k <= maxLabel; k++)
+            {
+                // 等价且未访问
+                if (eqTab[tempList[j] - 1][k - 1] && labelMap[k] == 0)
+                {
+                    labelMap[k] = curLabel;
+                    tempList.push_back(k);
+                }
+            }
+        }
+
+        curLabel++;
+        tempList.clear();
+    }
+
+    // 根据映射修改标签
+    vector<int>::iterator label;
+    for (label = labelOfArea.begin(); label != labelOfArea.end(); label++)
+    {
+        *label = labelMap[*label];
+    }
+
+    return;
+}
+
+```
+
+**2.并查集 Two-pass算法**
+
+等价对，实质是一种关系分类，因而联想到并查集。并查集方法在这个问题上显得非常合适，首先将等价对进行综合就是合并操作，标签重映射就是查询操作（并查集可以看做一种多对一映射）。这里定义成了类。
+
+**代码实现**
+
+```c++
+#include<opencv2/opencv.hpp>
+#include<iostream>
+
+using namespace std;
+using namespace cv;
+
+class AreaMark
+{
+    public:
+        AreaMark(const Mat src,int offset);
+        int getMarkedArea(vector<vector<int>> &area); 
+        void getMarkedImage(Mat &dst);
+
+    private:
+        Mat src; 
+        int offset;
+        int numberOfArea=0;
+        vector<int> labelMap;
+        vector<int> labelRank;
+        vector<int> stArea; 
+        vector<int> enArea;
+        vector<int> rowArea;
+        vector<int> labelOfArea;
+        vector<pair<int, int>> equalLabels;
+        
+        void markArea();
+        void searchArea();
+        void setInit(int n);
+        int findRoot(int label);
+        void unite(int labelA, int labelB);
+        void replaceEqualMark();
+};
+
+// 构造函数
+// imageInput:输入待标记二值图像    offsetInput:0为四连通，1为八连通
+AreaMark::AreaMark(Mat imageInput,int offsetInput)
+{
+    src = imageInput;
+    offset = offsetInput;
+}
+
+// 使用可区分的颜色标记连通域
+void AreaMark::getMarkedImage(Mat &dst)
+{
+    Mat img(src.rows, src.cols, CV_8UC3, CV_RGB(0, 0, 0));
+    cvtColor(img, dst, CV_RGB2HSV);
+    
+    int maxLabel = *max_element(labelOfArea.begin(), labelOfArea.end());
+    vector<uchar> hue;
+    for (int i = 1; i<= maxLabel; i++)
+    {
+        // HSV color-mode 
+        hue.push_back(uchar(180.0 * (i - 1) / (maxLabel + 1)));
+    }
+
+    for (int i = 0; i < numberOfArea; i++)
+    {
+        for (int j = stArea[i]; j <= enArea[i]; j++)
+        {
+            dst.at<Vec3b>(rowArea[i], j)[0] = hue[labelOfArea[i]];
+            dst.at<Vec3b>(rowArea[i], j)[1] = 255;
+            dst.at<Vec3b>(rowArea[i], j)[2] = 255;
+        }
+    }
+
+    cvtColor(dst, dst, CV_HSV2BGR);
+} 
+
+// 获取标记过的各行子区域
+int AreaMark::getMarkedArea(vector<vector<int>> &area)
+{
+    searchArea();
+    markArea();
+    replaceEqualMark();
+    area.push_back(rowArea);
+    area.push_back(stArea);
+    area.push_back(enArea);
+    area.push_back(labelOfArea);
+    return numberOfArea;
+}
+
+// 查找每一行的子区域
+// numberOfArea：子区域总数 stArea：子区域开始位置  enArea：子区域结束位置  rowArea：子区域所在行号
+void AreaMark::searchArea()
+{
+    for (int row = 0; row < src.rows; row++)
+    {
+        // 行指针
+        const uchar *rowData = src.ptr<uchar>(row);
+        // 判断行首是否是子区域的开始点
+        if (rowData[0] == 255){
+            numberOfArea++;
+            stArea.push_back(0);
+        }
+        
+        for (int col = 1; col < src.cols; col++)
+        {
+            // 子区域开始位置的判断：前像素为背景，当前像素是前景
+            if (rowData[col - 1] == 0 && rowData[col] == 255)
+            {
+                numberOfArea++;
+                stArea.push_back(col);   
+            // 子区域结束位置的判断：前像素是前景，当前像素是背景             
+            }else if (rowData[col - 1] == 255 && rowData[col] == 0)
+            {
+                // 更新结束位置vector、行号vector
+                enArea.push_back(col - 1);
+                rowArea.push_back(row);
+            }
+        }
+        // 结束位置在行末
+        if (rowData[src.cols - 1] == 255)
+        {
+            enArea.push_back(src.cols - 1);
+            rowArea.push_back(row);
+        }
+    }
+}
+
+
+
+void AreaMark::markArea()
+{
+    int label = 1;
+    // 当前所在行   
+    int curRow = 0;
+    // 当前行的第一个子区域位置索引
+    int firstAreaCur = 0;
+    // 前一行的第一个子区域位置索引
+    int firstAreaPrev = 0;
+    // 前一行的最后一个子区域位置索引
+    int lastAreaPrev = 0;
+
+    // 初始化标签都为0
+    labelOfArea.assign(numberOfArea, 0);
+    
+    // 遍历所有子区域并标记
+    for (int i = 0; i < numberOfArea; i++)
+    {
+        // 行切换时更新状态变量
+        if (curRow != rowArea[i])
+        {
+            curRow = rowArea[i];
+            firstAreaPrev = firstAreaCur;
+            lastAreaPrev = i - 1;
+            firstAreaCur = i;
+        }
+        // 相邻行不存在子区域
+        if (curRow != rowArea[firstAreaPrev] + 1)
+        {
+            labelOfArea[i] = label++;
+            continue;
+        }
+        // 对前一行进行迭代
+        for (int j = firstAreaPrev; j <= lastAreaPrev; j++)
+        {
+            // 判断是否相连
+            if (stArea[i] <= enArea[j] + offset && enArea[i] >= stArea[j] - offset)
+            {
+                // 之前没有标记过
+                if (labelOfArea[i] == 0)
+                    labelOfArea[i] = labelOfArea[j];
+                // 之前已经被标记，保存等价对
+                else if (labelOfArea[i] != labelOfArea[j])
+                    equalLabels.push_back(make_pair(labelOfArea[i], labelOfArea[j]));
+            }else if (enArea[i] < stArea[j] - offset)
+            {
+                // 为当前行下一个子区域缩小上一行的迭代范围
+                firstAreaPrev = max(firstAreaPrev, j - 1);
+                break;
+            }
+        }
+        // 与上一行不存在相连
+        if (labelOfArea[i] == 0)
+        {
+            labelOfArea[i] = label++;
+        }
+    }
+}
+
+//集合初始化
+void AreaMark::setInit(int n)
+{
+    for (int i = 0; i <= n; i++)
+    {
+        labelMap.push_back(i);
+        labelRank.push_back(0);
+    }
+}
+
+//查找树根
+int AreaMark::findRoot(int label)
+{
+    if (labelMap[label] == label)
+    {
+        return label;
+    }
+    else
+    {
+        // path compression
+        return labelMap[label] = findRoot(labelMap[label]);
+    }
+}
+
+// 合并集合
+void AreaMark::unite(int labelA, int labelB)
+{
+    labelA = findRoot(labelA);
+    labelB = findRoot(labelB);
+
+    if (labelA == labelB)
+    {
+        return;
+    }
+    // rank optimization:tree with high rank merge tree with low rank
+    if (labelRank[labelA] < labelRank[labelB])
+    {
+        labelMap[labelA] = labelB;
+    }
+    else
+    {
+        labelMap[labelB] = labelA;
+        if (labelRank[labelA] == labelRank[labelB])
+        {
+            labelRank[labelA]++;
+        }
+    }
+
+}
+
+// 等价对处理，标签重映射
+void AreaMark::replaceEqualMark()
+{
+    int maxLabel = *max_element(labelOfArea.begin(), labelOfArea.end());
+    
+    setInit(maxLabel);
+    
+    // 合并等价对，标签初映射
+    vector<pair<int, int>>::iterator labPair;
+    for (labPair = equalLabels.begin(); labPair != equalLabels.end(); labPair++)
+    {
+        unite(labPair->first, labPair->second);
+    }
+
+    // 标签重映射，填补缺失标签
+    int newLabel=0;
+    vector<int> labelReMap(maxLabel + 1, 0);
+    vector<int>::iterator old;
+    for (old = labelMap.begin(); old != labelMap.end(); old++)
+    {
+        if (labelReMap[findRoot(*old)] == 0)
+        {
+            labelReMap[findRoot(*old)] = newLabel++;
+        }
+    }
+    
+    // 根据重映射结果修改标签
+    vector<int>::iterator label;
+    for (label = labelOfArea.begin(); label != labelOfArea.end(); label++)
+    {
+        *label = labelReMap[findRoot(*label)];
+    }  
+}
+
+int main()
+{
+    Mat img = imread("img/qrcode.jpg", IMREAD_GRAYSCALE);
+    threshold(img, img, 0, 255, THRESH_OTSU);
+
+    AreaMark marker(img, 0);
+    vector<vector<int>> area;
+    int amount;
+    // 1s for 1000 times
+    amount = marker.getMarkedArea(area);
+    Mat dst;
+    marker.getMarkedImage(dst);
+
+    imshow("img", img);
+    imshow("dst", dst);
+    waitKey(0);
+}
+```
+
+
+
+
+
 ## 霍夫变换
 
 ### 直线检测
@@ -1006,6 +1625,16 @@ else
 为了快速计算，可将类间方差计算公式：σ^2 = p1 * ( m1 - mg ) ^ 2 + p2 * ( m2 - mg ) ^ 2 
 
 简化为：**σ^2 = p1 * p2 * ( m1 - m2 ) ^ 2** 
+
+
+
+### 局部自适应二值化
+
+核心就是对每个像素点，计算它指定大小邻域内的阈值，来作为这个像素点的二值化阈值。
+
+邻域阈值的计算方法常用的有两种：**均值**和**高斯加权和**。
+
+计算方法非常简单，在本文上述提到的均值滤波和高斯滤波的基础上，对计算出的每个像素点邻域内的均值或高斯加权和，减去一个指定的偏移量，就是该点的二值化阈值了。
 
 
 
