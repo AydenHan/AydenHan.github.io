@@ -1355,6 +1355,18 @@ unsigned char newPixel = static_cast<unsigned char>(pow(pixel / 255.0, gamma) * 
 
 
 
+### 对数变换
+
+由于对数曲线在像素值较低的区域斜率大，在像素值较高的区域斜率较小，所以图像经过对数变换后，较暗区域的对比度将有所提升，所以就可以增强图像的暗部细节。
+
+对数变换可以将图像的低灰度值部分扩展，显示出低灰度部分更多的细节，将其高灰度值部分压缩，减少高灰度值部分的细节，从而达到强调图像低灰度部分的目的。表达式如下：
+
+![img](opencv图像算法/20190508195612463.png)
+
+![img](opencv图像算法/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMwNDYwOTQ5,size_16,color_FFFFFF,t_70.png)
+
+
+
 ### 图像的归一化
 
 所谓归一化，就是把需要处理的数据限制在你需要的一定范围内。

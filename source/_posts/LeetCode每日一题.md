@@ -179,3 +179,78 @@ public:
 
 for循环中，相比于**++i**，**i++**需要多开辟一个**临时变量来存储i自加后的值**，因此前者性能更好。
 
+
+
+## 2022.11.8
+
+### 1684.统一一致字符串的数目
+
+#### 题干
+
+给你一个由不同字符组成的字符串 **allowed** 和一个字符串数组 **words 。如果**一个字符串的每一个字符都在 **allowed** 中，就称这个字符串是 一致字符串 。
+
+请你返回 **words** 数组中 **一致字符串** 的数目。
+
+**示例**
+
+```
+示例 1:
+输入：allowed = "ab", words = ["ad","bd","aaab","baa","badab"]
+输出：2
+解释：字符串 "aaab" 和 "baa" 都是一致字符串，因为它们只包含字符 'a' 和 'b' 。
+```
+
+```
+示例 2:
+输入：allowed = "abc", words = ["a","b","c","ab","ac","bc","abc"]
+输出：7
+解释：所有字符串都是一致的。
+```
+
+```
+示例 3:
+输入：allowed = "cad", words = ["cc","acd","b","ba","bac","bad","ac","d"]
+输出：4
+解释：字符串 "cc"，"acd"，"ac" 和 "d" 是一致字符串。
+```
+
+#### 解法
+
+本题实际是如何判断一个字符串中的每个字符是否都在另一个字符串中出现过的问题。
+
+最简单的暴力解法就是循环words中字符串的每个字符与allowed中的每个字符进行比较，看是否都能匹配上，全匹配上了计数加一。有无法匹配到的跳出循环，判断该字符串为不一致。
+
+**解法2：位运算**
+
+定义一个32位的int变量，26个字符，各占一位，占据低26位；通过将字符与 **'a'** 作差计算相应字符需要向左移位多少。某一位为1，表示该位对应的字符存在。
+
+计算出**allowed**字符串对应的int值**standard**，和**words**中的每个字符串对应的值作或运算，若仍为**standard**原值，说明该字符串的字符均在**allowed**中，计数num++。
+
+**相比于暴力循环，在内存消耗差不多的情况下，提高了1/3速度。**
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int countConsistentStrings(string allowed, vector<string>& words) {
+        int num = 0;
+        auto convert = [](string& str){
+            int rst = 0;
+            for(int i = 0; i < str.length(); ++i){
+                rst |= 1 << (str[i] - 'a');
+            }
+            return rst;
+        };
+        int standard = convert(allowed);
+        for(int i = 0; i < words.size(); ++i){
+            if (standard == (standard | convert(words[i])))
+                num++;
+        }
+        return num;
+    }
+};
+```
+
+这里使用了匿名函数的方式来封装统一的转换方法。好处是可以免去函数的声明和定义。这样匿名函数**仅在调用函数的时候才会创建函数对象，而调用结束后立即释放**，所以匿名函数比非匿名函数**更节省空间**。
+
