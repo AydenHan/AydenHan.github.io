@@ -254,3 +254,92 @@ public:
 
 这里使用了匿名函数的方式来封装统一的转换方法。好处是可以免去函数的声明和定义。这样匿名函数**仅在调用函数的时候才会创建函数对象，而调用结束后立即释放**，所以匿名函数比非匿名函数**更节省空间**。
 
+
+
+## 2022.11.9
+
+### 764.最大加号标志
+
+#### 题干
+
+在一个 **n x n** 的矩阵 **grid** 中，除了在数组 **mines** 中给出的元素为 0，其他每个元素都为 1。**mines[i] = [xi, yi]**表示 **grid\[xi][yi] == 0**
+
+返回  **grid** 中包含 1 的**最大的 轴对齐 加号标志**的阶数 。如果未找到加号标志，则返回 0 。
+
+一个 **k** 阶由 1 组成的 “轴对称”加号标志 具有中心网格 **grid\[r][c] == 1** ，以及4个从中心向上、向下、向左、向右延伸，长度为 **k-1**，由 1 组成的臂。注意，只有加号标志的所有网格要求为 1 ，别的网格可能为 0 也可能为 1 。
+
+**示例**
+
+<img src="LeetCode每日一题/plus1-grid.jpg" alt="img" style="zoom:50%;" />
+
+```
+示例 1:
+输入: n = 5, mines = [[4, 2]]
+输出: 2
+解释: 在上面的网格中，最大加号标志的阶只能是2。一个标志已在图中标出。
+```
+
+<img src="LeetCode每日一题/plus2-grid.jpg" alt="img" style="zoom:67%;" />
+
+```
+示例 2:
+输入: n = 1, mines = [[0, 0]]
+输出: 0
+解释: 没有加号标志，返回 0 。
+```
+
+#### 解法
+
+本题实际是一个动态规划问题。动态规划的核心思想就是——**拆分子问题，记住过往，减少重复计算**
+
+题中要求十字的最大阶数，但实际上**最大阶数是由中心到四个方向上的连续1数量中的最小值决定的。**那么问题转变为了：先求每个点为中心到四个方向上的连续1数量中的最小值，再从中取最大值。
+
+如何求四个方向的最小值？假设简化一下，只求左方向的值怎么求？只需要计算每个点左边最长的连续1的格子数，那么十字就是上述的四次重复。初始化时先假设每个点连续1的数量均为网格的宽度n（即最大值），维护一个**自加变量left**记录连续1的数量。当在一行中从左向右遍历时，如果**遇到0，自加变量清零，否则left++。**每次自加后与原先该点记录的值取最小值，更新该点的值。
+
+在重复时，同一个点都会经过四个方向的遍历，但只会保留到四个方向里面的最小值了。遍历结束后，得到一个二维的记录每个点最大十字阶数的向量，取里面的最大值即可。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int orderOfLargestPlusSign(int n, vector<vector<int>>& mines) {
+        // 初始化矩阵
+        vector<vector<int> > grid(n, vector<int>(n, n));
+        for(int i = 0; i < mines.size(); ++i)
+            grid[mines[i][0]][mines[i][1]] = 0;
+        // 遍历
+        int left, right, top, bottom;
+        for(int i = 0; i < n; ++i){
+            left = 0; right = 0; top = 0; bottom = 0;
+            for(int j = 0, k = n - 1; j < n; ++j, --k){
+                left = grid[i][j] ? left + 1 : 0;
+                right = grid[i][k] ? right + 1 : 0;
+                top = grid[j][i] ? top + 1 : 0;
+                bottom = grid[k][i] ? bottom + 1 : 0;
+                grid[i][j] = left < grid[i][j] ? left : grid[i][j];
+                grid[i][k] = right < grid[i][k] ? right : grid[i][k];
+                grid[j][i] = top < grid[j][i] ? top : grid[j][i];
+                grid[k][i] = bottom < grid[k][i] ? bottom : grid[k][i];
+            }
+        }
+        int max = 0;
+        for(int i = 0; i < n; ++i){
+            for(int j = 0; j < n; ++j){
+                if (max < grid[i][j])   max = grid[i][j];
+            }
+        }
+        return max;
+    }
+};
+```
+
+注：vector的初始化方式。
+
+vector采用
+
+```c++
+for(auto& item : vector)
+```
+
+的形式遍历较为方便，但是速度较普通for循环更慢，但是不用担心越界问题。
