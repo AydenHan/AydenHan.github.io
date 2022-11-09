@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Laundry</title>
+    <style>
+        /* .wrapper {
+            width: 600px;
+        } */
+        body {
+            text-align: center;
+        }
+
+        .head_wrapper i{
+            color: blue;
+        }
+
+        .wrapper_wrapper {
+            margin: 0 auto;
+            width: 400PX;
+            height: 300px;
+        }
+        /* .wrapper_wrapper {
+            float: left;
+            position: relative;
+            left: 10%;
+        } */
+
+        #l_six li{
+            font-weight: bold;
+            float: left;
+            text-align: left;
+            width: 180px;
+            height: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="head_wrapper">
+            <h2>楼道内洗衣机使用情况</h2>
+            <i>以楼梯口进楼方向分为左右两边（左边寝室号数小）</i>
+        </div><br>
+        <div class="wrapper_wrapper">
+            <ul id="l_six">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+    
+</body>
+<script src="/js/jquery-1.8.3.js"></script>
+<script>
+    var code = new Array('0162', '0152', '0155', '0159', '0118', '0160', '0122', '0121', '0157', '0114', '0124', '0120');
+    var stt = new Array(12);
+
+    window.onload = function()  {
+        var f = (function(){
+            var xmlhttp = [], url, rst, loc, state, i;
+            for(var i = 0;i < code.length;i++){
+                (function(i){
+                    xmlhttp[i] = new XMLHttpRequest();
+                    url = 'https://api.sodalife.xyz/v1/devices/MNBGCD' + code[i] + '?__t=1599892706445';
+                    xmlhttp[i].open('GET', url, true);
+                    xmlhttp[i].onreadystatechange = function(){
+                        if(xmlhttp[i].status == 200 && xmlhttp[i].readyState == 4){
+                            rst = JSON.parse(xmlhttp[i].response);
+                            stt[i] = rst.data.status;
+                            if(i % 2 == 0){
+                                loc = '左';
+                            } else{
+                                loc = '右';
+                            }
+                            if(stt[i] == 'AVAILABLE'){
+                                state = '可用';
+                            } else if(stt[i] == 'USING'){
+                                state = '<font color="red">使用中</font>';
+                            } else{
+                                state = '<font color="yellow">ERROR</font>';
+                            }
+                            $('ul li:eq('+i+')').html('六栋 '+Math.floor(i/2 + 1)+' 楼'+loc+'：'+state);
+                        }
+                    }    
+                    xmlhttp[i].send();
+                })(i);
+            }
+        })();
+    };
+</script>
+</html>

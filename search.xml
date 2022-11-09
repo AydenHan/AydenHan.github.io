@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>LeetCode每日一题</title>
+      <link href="/%E5%8E%9F%E7%90%86/LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/"/>
+      <url>/%E5%8E%9F%E7%90%86/LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</url>
+      
+      
+      <categories>
+          
+          <category> 原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> CPP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>关于js跨源请求的解决方案</title>
+      <link href="/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8Ejs%E8%B7%A8%E6%BA%90%E8%AF%B7%E6%B1%82%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/"/>
+      <url>/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8Ejs%E8%B7%A8%E6%BA%90%E8%AF%B7%E6%B1%82%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</url>
+      
+      
+      <categories>
+          
+          <category> 原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 前端 </tag>
+            
+            <tag> javascript </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>基于STM32F103的实时操作系统</title>
+      <link href="/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
+      <url>/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</url>
+      
+      
+      <categories>
+          
+          <category> 原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 电子 </tag>
+            
+            <tag> 嵌入式 </tag>
+            
+            <tag> 操作系统 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>opencv图像算法</title>
+      <link href="/%E5%8E%9F%E7%90%86/opencv%E5%9B%BE%E5%83%8F%E7%AE%97%E6%B3%95/"/>
+      <url>/%E5%8E%9F%E7%90%86/opencv%E5%9B%BE%E5%83%8F%E7%AE%97%E6%B3%95/</url>
+      
+      
+      <categories>
+          
+          <category> 原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> opencv </tag>
+            
+            <tag> 图像 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>opencv移库笔记</title>
+      <link href="/%E6%9D%82%E8%AE%B0/opencv%E7%A7%BB%E5%BA%93%E7%AC%94%E8%AE%B0/"/>
+      <url>/%E6%9D%82%E8%AE%B0/opencv%E7%A7%BB%E5%BA%93%E7%AC%94%E8%AE%B0/</url>
+      
+      
+      <categories>
+          
+          <category> 杂记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> opencv </tag>
+            
+            <tag> 环境 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>PyQt5狗都不用:阴阳师挂机软件OnHook</title>
+      <link href="/%E5%BA%94%E7%94%A8/PyQt5%E7%8B%97%E9%83%BD%E4%B8%8D%E7%94%A8-%E9%98%B4%E9%98%B3%E5%B8%88%E6%8C%82%E6%9C%BA%E8%BD%AF%E4%BB%B6OnHook/"/>
+      <url>/%E5%BA%94%E7%94%A8/PyQt5%E7%8B%97%E9%83%BD%E4%B8%8D%E7%94%A8-%E9%98%B4%E9%98%B3%E5%B8%88%E6%8C%82%E6%9C%BA%E8%BD%AF%E4%BB%B6OnHook/</url>
+      
+      
+      <categories>
+          
+          <category> 应用 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> PyQt5 </tag>
+            
+            <tag> 小软件 </tag>
+            
+            <tag> 脚本 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>web端小作品</title>
+      <link href="/%E5%BA%94%E7%94%A8/web%E7%AB%AF%E5%B0%8F%E4%BD%9C%E5%93%81/"/>
+      <url>/%E5%BA%94%E7%94%A8/web%E7%AB%AF%E5%B0%8F%E4%BD%9C%E5%93%81/</url>
+      
+      
+      <categories>
+          
+          <category> 应用 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 前端 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>ID卡与IC卡原理</title>
+      <link href="/%E5%8E%9F%E7%90%86/ID%E5%8D%A1%E4%B8%8EIC%E5%8D%A1%E5%8E%9F%E7%90%86/"/>
+      <url>/%E5%8E%9F%E7%90%86/ID%E5%8D%A1%E4%B8%8EIC%E5%8D%A1%E5%8E%9F%E7%90%86/</url>
+      
+      
+      <categories>
+          
+          <category> 原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 电子 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>关于url编码</title>
+      <link href="/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8Eurl%E7%BC%96%E7%A0%81/"/>
+      <url>/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8Eurl%E7%BC%96%E7%A0%81/</url>
+      
+      
+      <categories>
+          
+          <category> 原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 加密与编码 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>关于RSA加密算法</title>
+      <link href="/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8ERSA%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"/>
+      <url>/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8ERSA%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/</url>
+      
+      
+      <categories>
+          
+          <category> 原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 加密与编码 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>获取bilibili视频文件和封面</title>
+      <link href="/%E5%BA%94%E7%94%A8/%E8%8E%B7%E5%8F%96bilibili%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%92%8C%E5%B0%81%E9%9D%A2/"/>
+      <url>/%E5%BA%94%E7%94%A8/%E8%8E%B7%E5%8F%96bilibili%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%92%8C%E5%B0%81%E9%9D%A2/</url>
+      
+      
+      <categories>
+          
+          <category> 应用 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 脚本 </tag>
+            
+            <tag> 前端 </tag>
+            
+            <tag> python爬虫 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>第一次笔记本拆机体验</title>
+      <link href="/%E6%9D%82%E8%AE%B0/%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%AC%94%E8%AE%B0%E6%9C%AC%E6%8B%86%E6%9C%BA%E4%BD%93%E9%AA%8C/"/>
+      <url>/%E6%9D%82%E8%AE%B0/%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%AC%94%E8%AE%B0%E6%9C%AC%E6%8B%86%E6%9C%BA%E4%BD%93%E9%AA%8C/</url>
+      
+      
+      <categories>
+          
+          <category> 杂记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 电子 </tag>
+            
+            <tag> 硬件 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>PyQt5再尝试:Windows桌面便笺</title>
+      <link href="/%E5%BA%94%E7%94%A8/PyQt5%E5%86%8D%E5%B0%9D%E8%AF%95-Windows%E6%A1%8C%E9%9D%A2%E4%BE%BF%E7%AC%BA/"/>
+      <url>/%E5%BA%94%E7%94%A8/PyQt5%E5%86%8D%E5%B0%9D%E8%AF%95-Windows%E6%A1%8C%E9%9D%A2%E4%BE%BF%E7%AC%BA/</url>
+      
+      
+      <categories>
+          
+          <category> 应用 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> PyQt5 </tag>
+            
+            <tag> 小软件 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>PyQt5初尝试:Unicode转换器</title>
+      <link href="/%E5%BA%94%E7%94%A8/PyQt5%E5%88%9D%E5%B0%9D%E8%AF%95-Unicode%E8%BD%AC%E6%8D%A2%E5%99%A8/"/>
+      <url>/%E5%BA%94%E7%94%A8/PyQt5%E5%88%9D%E5%B0%9D%E8%AF%95-Unicode%E8%BD%AC%E6%8D%A2%E5%99%A8/</url>
+      
+      
+      <categories>
+          
+          <category> 应用 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> PyQt5 </tag>
+            
+            <tag> 小软件 </tag>
+            
+            <tag> 加密与编码 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
+</search>
