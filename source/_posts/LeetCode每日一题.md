@@ -343,3 +343,76 @@ for(auto& item : vector)
 ```
 
 的形式遍历较为方便，但是速度较普通for循环更慢，但是不用担心越界问题。
+
+
+
+## 2022.11.11
+
+### 1704.判断字符串的两半是否相似
+
+#### 题干
+
+给你一个偶数长度的字符串 **s** 。将其拆分成长度相同的两半，前一半为 **a** ，后一半为 **b** 。
+
+两个字符串 **相似** 的前提是它们都含有**相同数目的元音**（**'a'，'e'，'i'，'o'，'u'，'A'，'E'，'I'，'O'，'U'**）。注意，**s** 可能同时含有大写和小写字母。
+
+如果 **a** 和 **b** 相似，返回 **true** ；否则，返回 **false** 。
+
+**示例**
+
+```
+示例 1:
+输入：s = "book"
+输出：true
+解释：a = "bo" 且 b = "ok" 。a 中有 1 个元音，b 也有 1 个元音。所以，a 和 b 相似。
+```
+
+```
+示例 2:
+输入：s = "textbook"
+输出：false
+解释：a = "text" 且 b = "book" 。a 中有 1 个元音，b 中有 2 个元音。因此，a 和 b 不相似。
+```
+
+#### 解法
+
+本题实际就是一次for循环，对字符串s的每个字符判断一次是否为元音即可，中间记录下前后半的元音个数。
+
+可优化的点在于
+
+1.不必for循环整个字符串，由于a、b长度相同，可以只**for循环前一半**（类似双指针？）。
+
+2.只需**维护一个变量**记录元音数量即可，左加右减，节约内存。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    bool halvesAreAlike(string s) {
+        auto isVowel = [](char c){
+            int val = c - 'A';
+            if (val == 0 || val == 4 || val == 8 || val == 14 || val == 20 
+             || val == 32 || val == 36 || val == 40 || val == 46 || val == 52 )
+                return true;
+            else
+                return false;
+        };
+        int cnt = 0;
+        int len = s.length() / 2;
+        for(int i = 0; i < len; ++i){
+            cnt += isVowel(s[i]) ? 1 : 0;
+            cnt -= isVowel(s[i + len]) ? 1 : 0;
+        }
+        return cnt == 0;
+    }
+};
+```
+
+我这里直接写了个匿名函数通过ASCII的差值判断是否为元音，还可以用**集合**。
+
+```c++
+unordered_set<char> vowels = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
+cnt += vowels.count(s[i]);
+```
+
