@@ -630,3 +630,76 @@ public:
 };
 ```
 
+
+
+## 2023.2.8
+
+### 1233.删除子文件夹
+
+#### 题干
+
+你是一位系统管理员，手里有一份文件夹列表 **folder**，你的任务是要删除该列表中的所有 **子文件夹**，并以 **任意顺序** 返回剩下的文件夹。
+
+如果文件夹 **folder[i]** 位于另一个文件夹 **folder[j]** 下，那么 **folder[i]** 就是 **folder[j]** 的 子文件夹 。
+
+文件夹的**「路径」**是由一个或多个按以下格式串联形成的字符串：**'/'** 后跟**一个或者多个小写英文字母**。
+
+例如，"**/leetcode**" 和 "**/leetcode/problems**" 都是有效的路径，而**空字符串和 "/" 不是**。
+
+**示例**
+
+```
+示例 1:
+输入：folder = ["/a","/a/b","/c/d","/c/d/e","/c/f"]
+输出：["/a","/c/d","/c/f"]
+解释："/a/b" 是 "/a" 的子文件夹，而 "/c/d/e" 是 "/c/d" 的子文件夹。
+```
+
+```
+示例 2:
+输入：folder = ["/a","/a/b/c","/a/b/d"]
+输出：["/a"]
+解释：文件夹 "/a/b/c" 和 "/a/b/d" 都会被删除，因为它们都是 "/a" 的子文件夹。
+```
+
+```
+示例 3:
+输入: folder = ["/a/b/c","/a/b/ca","/a/b/d"]
+输出: ["/a/b/c","/a/b/ca","/a/b/d"]
+```
+
+#### 解法
+
+基本思路：
+
+先按照字典序排序（/a，/a/b，/a/b/c，/b），这样在遍历时只需要和上一个被加入的非子文件夹比较（因为相同根文件夹情况下先短后长排序），便于排除。
+
+将第一个文件夹加入输出，遍历**folder**中的剩余文件夹，作如下判断：
+
+1.当前字符串长度比上一个被加入的字符串**短**的，必然是根文件夹名改变了，是非子文件夹，**加入**。
+
+2.当前字符串的前n个字符与上一个被加入的字符串完全相同且**第n+1个字符为 ‘/’ 的**，必然是子文件夹，**排除**。
+
+**解法2：字典树**
+
+
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    vector<string> removeSubfolders(vector<string>& folder) {
+        sort(folder.begin(), folder.end());
+        vector<string> rst = {folder[0]};
+        for(int i = 1; i < folder.size(); ++i){
+            int ori_len = rst.back().size();
+            int cur_len = folder[i].size();
+            if (ori_len >= cur_len || !(rst.back() == folder[i].substr(0, ori_len) && folder[i][ori_len] == '/'))
+                rst.push_back(folder[i]);
+        }
+        return rst;
+    }
+};
+```
+
