@@ -942,3 +942,119 @@ public:
 };
 ```
 
+
+
+## 2023.2.18
+
+### 1237.找出给定方程的正整数解
+
+#### 题干
+
+给你一个函数  **f(x, y)** 和一个目标结果 **z**，函数公式未知，请你计算方程 **f(x,y) == z** 所有可能的**正整数** **数对 x 和 y**。满足条件的结果数对可以按任意顺序返回。
+
+尽管函数的具体式子未知，但它是**单调递增**函数，也就是说：
+
+**f(x, y) < f(x + 1, y)**
+**f(x, y) < f(x, y + 1)**
+
+函数接口定义如下：
+
+```c++
+interface CustomFunction {
+public:
+  // Returns some positive integer f(x, y) for two positive integers x and y based on a formula.
+  int f(int x, int y);
+};
+```
+
+你的解决方案将按如下规则进行评判：
+
+1. 判题程序有一个由 CustomFunction 的 9 种实现组成的列表，以及一种为特定的 z 生成所有有效数对的答案的方法。
+2. 判题程序接受两个输入：function_id（决定使用哪种实现测试你的代码）以及目标结果 z 。
+3. 判题程序将会调用你实现的 findSolution 并将你的结果与答案进行比较。
+4. 如果你的结果与答案相符，那么解决方案将被视作正确答案，即 Accepted 。
+
+**示例**
+
+```
+示例 1:
+输入：function_id = 1, z = 5
+输出：[[1,4],[2,3],[3,2],[4,1]]
+解释：function_id = 1 暗含的函数式子为 f(x, y) = x + y
+以下 x 和 y 满足 f(x, y) 等于 5：
+x=1, y=4 -> f(1, 4) = 1 + 4 = 5
+x=2, y=3 -> f(2, 3) = 2 + 3 = 5
+x=3, y=2 -> f(3, 2) = 3 + 2 = 5
+x=4, y=1 -> f(4, 1) = 4 + 1 = 5
+```
+
+```
+示例 2:
+输入：function_id = 2, z = 5
+输出：[[1,5],[5,1]]
+解释：function_id = 2 暗含的函数式子为 f(x, y) = x * y
+以下 x 和 y 满足 f(x, y) 等于 5：
+x=1, y=5 -> f(1, 5) = 1 * 5 = 5
+x=5, y=1 -> f(5, 1) = 5 * 1 = 5
+```
+
+**提示：**
+
+- 1 <= function_id <= 9
+- 1 <= z <= 100
+- 题目保证 f(x, y) == z 的解处于 1 <= x, y <= 1000 的范围内。
+- 在 1 <= x, y <= 1000 的前提下，题目保证 f(x, y) 是一个 32 位有符号整数。
+
+#### 解法
+
+基本思路：
+
+这个题目我觉得题干有非常多的无效信息，因为f（x，y）是具体实现不可见的函数。
+
+实际有效的信息只有两条：
+
+1. **f（x，y）是单调递增函数**
+2. **x，y的取值范围均为 [1, 1000]**
+
+那么我们可以采用枚举的方式（遍历），分别将x，y的值设为区间的两端（原因后面可以体会到）
+
+**x初始为1最小，y初始为1000最大（即x只能递增，y只能递减）**，计算f（x，y）有三种结果
+
+- 当f（x，y）< z 时，由单调性可知，f（x，y-1）同样小于z，而我们的目标是等于z，此时唯一的动作就是x++；
+- 当f（x，y）> z 时，同理，只能y--；
+- 当f（x，y）== z 时，存储这一对x，y，同时x++，y--（两个同时增减，因为只变动一个没有意义，必然不可能等于z）。
+
+#### 代码
+
+```c++
+/*
+ * // This is the custom function interface.
+ * // You should not implement it, or speculate about its implementation
+ * class CustomFunction {
+ * public:
+ *     // Returns f(x, y) for any given positive integers x and y.
+ *     // Note that f(x, y) is increasing with respect to both x and y.
+ *     // i.e. f(x, y) < f(x + 1, y), f(x, y) < f(x, y + 1)
+ *     int f(int x, int y);
+ * };
+ */
+
+class Solution {
+public:
+    vector<vector<int>> findSolution(CustomFunction& customfunction, int z) {
+        vector<vector<int>> res;
+        int x = 1, y = 1000;
+        while(x <= 1000 && y) {
+            int rst = customfunction.f(x, y);
+            if (rst < z) 
+                x++;
+            else if (rst > z)
+                y--;
+            else
+                res.push_back({x++, y--});
+        }
+        return res;
+    }
+};
+```
+
