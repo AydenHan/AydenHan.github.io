@@ -1266,3 +1266,131 @@ public:
 };
 ```
 
+
+
+## 2023.2.27
+
+### 1144.递减元素使数组成锯齿状
+
+#### 题干
+
+给你一个整数数组 **nums**，每次操作会从中**选择一个元素**并**将该元素的值减少 1**。
+
+如果符合下列情况**之一**，则数组 **A** 就是 **锯齿数组**：
+
+- 每个偶数索引对应的元素都大于相邻的元素，即 **A[0] > A[1] < A[2] > A[3] < A[4] > ...**
+- 每个奇数索引对应的元素都大于相邻的元素，即 **A[0] < A[1] > A[2] < A[3] > A[4] < ...**
+
+返回将数组 **nums** 转换为锯齿数组所需的**最小**操作次数。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [1,2,3]
+输出：2
+解释：我们可以把 2 递减到 0，或把 3 递减到 1。
+```
+
+```
+示例 2:
+输入：nums = [9,6,1,6,2]
+输出：4
+```
+
+#### 解法
+
+基本思路：
+
+枚举呗。
+
+奇数和偶数下标各遍历一遍，每次都判断和两边的差值，记录最大值求和即可。
+
+排除掉当元素处于数组边界时越界的问题，最后比较两种哪种小。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int movesToMakeZigzag(vector<int>& nums) {
+        int cnt[2] = {0};
+        for(int i = 0; i < 2; ++i){
+            for(int j = i; j < nums.size(); ++j, ++j){
+                int step = 0;
+                if(j)   step = max(step, nums[j] - nums[j - 1] + 1);
+                if(j < nums.size()-1)   step = max(step, nums[j] - nums[j + 1] + 1);
+                cnt[i] += step;
+            }
+        }
+        return min(cnt[0], cnt[1]);
+    }
+};
+```
+
+
+
+### 面试题16.07.最大数值
+
+#### 题干
+
+编写一个方法，找出两个数字 **a** 和 **b** 中**最大**的那一个。**不得使用if-else或其他比较运算符**。
+
+**示例**
+
+```
+示例 1:
+输入： a = 1, b = 2
+输出： 2
+```
+
+#### 解法
+
+基本思路：
+
+首先考虑到的就是不用比较符号如何出现控制输出a还是b呢？
+
+想到了类似门电路，用0和1控制就行，也就是 **a * (condition ^ 1) + b * condition** ;
+
+那么什么运算结果是0和1呢，很容易想到通过位运算获取符号位。
+
+于是得到以下代码：
+
+```c++
+class Solution {
+public:
+    int maximum(int a, int b) {
+        // 注意当值为负数时，右移高位是会补1的，因此需要把计算结果转为无符号
+        int signSub = static_cast<unsigned>(a - b) >> 31;
+        return a * (signSub ^ 1) + b * signSub;
+    }
+};
+```
+
+提交时出现了问题  <font color='red'>`signed integer overflow: 2147483647 - -2147483648 cannot be represented in type 'int'`</font>
+
+忘记考虑了溢出的问题，在 a - b 时就溢出了。当a和b同号时，不存在溢出问题，可以直接用上述方法，只有当ab异号时需要考虑溢出问题。
+
+可以发现，当a和b异号时，若a为负数，符号位1，需要输出b，也就是signSub = 1；a为正数，符号位0，输出a，signSub = 0.
+
+可以得到此时的处理方法，**signSub = a符号位  ^ b符号位 ^ b符号位**。	
+
+在不使用比较运算符的情况下，可以用 && 作为if判断使用。
+
+代码
+
+```c++
+class Solution {
+public:
+    int maximum(int a, int b) {
+        int signA = static_cast<unsigned>(a) >> 31;
+        int signB = static_cast<unsigned>(b) >> 31;
+
+        int signSub = signA ^ signB ^ signB;
+        int temp = (signA ^ signB ^ 1) && (signSub = static_cast<unsigned>(a - b) >> 31);
+
+        return a * (signSub ^ 1) + b * signSub;
+    }
+};
+```
+
