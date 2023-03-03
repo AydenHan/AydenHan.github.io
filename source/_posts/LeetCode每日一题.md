@@ -1644,3 +1644,157 @@ public:
 };
 ```
 
+
+
+## 2023.3.3
+
+### 1487.保证文件名唯一
+
+#### 题干
+
+给你一个长度为 **n** 的字符串数组 **names** 。你将会在文件系统中创建 **n** 个文件夹：在第 i 分钟，新建名为 names[i] 的文件夹。
+
+由于两个文件**不能共享相同的文件名**，因此如果新建文件夹使用的文件名已经被占用，系统会以 **(k)** 的形式为新文件夹的文件名添加后缀，其中 **k** 是能保证文件名唯一的 **最小正整数** 。
+
+返回长度为 **n** 的字符串数组，其中 ans[i] 是创建第 i 个文件夹时系统分配给该文件夹的**实际名称**。
+
+**示例**
+
+```
+示例 1:
+输入：names = ["gta","gta(1)","gta","avalon"]
+输出：["gta","gta(1)","gta(2)","avalon"]
+```
+
+```
+示例 2:
+输入：names = ["wano","wano","wano","wano"]
+输出：["wano","wano(1)","wano(2)","wano(3)"]
+```
+
+```
+示例 3:
+输入：names = ["kaido","kaido(1)","kaido","kaido(1)"]
+输出：["kaido","kaido(1)","kaido(2)","kaido(1)(1)"]
+解释：注意，如果含后缀文件名被占用，那么系统也会按规则在名称后添加新的后缀 (k) 。
+```
+
+#### 解法
+
+基本思路：
+
+看到 “ 唯一 ” ，马上就想到了哈希表。key为实际文件名，value记录当前文件名加上后缀时当前存在的最大值。
+
+直接使用输入的names，用哈希表判断是否有重名，只对重名的元素进行修改并记录在哈希表中，节约空间。
+
+执行用时只击败了18%用户，，，不知时间上还可以怎么缩减。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    vector<string> getFolderNames(vector<string>& names) {
+        unordered_map<string, int> hash;
+        for(int i = 0; i < names.size(); ++i){
+            if(hash[names[i]]){
+                int cnt = hash[names[i]] - 1;
+                while(hash[names[i] + "(" + to_string(++cnt) + ")"]);
+                hash[names[i]] = cnt;
+                names[i] += "(" + to_string(cnt) + ")";
+            }
+            hash[names[i]] = 1;
+        }
+        return names;
+    }
+};
+```
+
+
+
+### 1967.作为子字符串出现在单词中的字符串数目
+
+#### 题干
+
+给你一个字符串数组 **patterns** 和一个字符串 **word** ，统计 **patterns** 中有多少个字符串是 **word** 的**子字符串**。返回字符串**数目**。
+
+**子字符串** 是字符串中的一个连续字符序列。
+
+**示例**
+
+```
+示例 1:
+输入：patterns = ["a","abc","bc","d"], word = "abc"
+输出：3
+```
+
+```
+示例 2:
+输入：patterns = ["a","b","c"], word = "aaaaabbbbb"
+输出：2
+```
+
+```
+示例 3:
+输入：patterns = ["a","a","a"], word = "ab"
+输出：3
+```
+
+#### 解法
+
+一开始看到字符串匹配，第一反应就是经典的[KMP算法](https://blog.csdn.net/weixin_52622200/article/details/110563434)。(印象深刻，考研那会儿在k = next[k];上卡了好久hhh)
+
+然而在实际场景中，需要匹配的字符串都是较短且无序随机的，初始化的时间开销、额外的空间开销反而会更消耗资源，在字符串搜索中并不实用。因此提交代码后发现执行用时和内存消耗都不低。
+
+查询了一下，在例如Java的String.indexOf中，使用的是暴力方法进行字符串匹配。在glibc中的strstr函数，则采用的是Two-Way算法。
+
+这些库函数均未使用KMP算法，原因在于：
+
+1. KMP需要对字符串预处理，这个需要花时间，如果做多次查找的话，这部分预处理的时间可以分摊到多次查找里面，平摊后时间较短，但是如果只做一次查找，这部分时间是不能忽略的。
+2. KMP的核心思想是跳跃遍历(而不是逐个字节遍历)但是跳跃遍历破坏了CPU对内存的预取且不能进行SIMD优化。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    vector<int> getNextArr(string p){
+        vector<int> next(p.length());
+        next[0] = -1;
+        int k = -1, j = 0;
+        while(j < p.length() - 1){
+            if(k == -1 || p[j] == p[k])
+                next[++j] = ++k;
+            else
+                k = next[k];
+        }
+        return next;
+    }
+
+    int kmp(string pattern, string word){
+        int i = 0, j = 0;
+        int pLen = pattern.length(), wLen = word.length();
+        vector<int> next = getNextArr(pattern);
+        while(i < wLen && j < pLen){
+            if(j == -1 || word[i] == pattern[j]){
+                ++i;
+                ++j;
+            }
+            else{
+                j = next[j];
+            }
+        }
+        return j == pattern.length() ? 1 : 0;
+    }
+
+    int numOfStrings(vector<string>& patterns, string word) {
+        int cnt = 0;
+        for(int i = 0; i < patterns.size(); ++i)
+            cnt += kmp(patterns[i], word);
+        return cnt;
+    }
+};
+```
+
+
+
