@@ -2049,3 +2049,126 @@ public:
 };
 ```
 
+
+
+## 2023.3.8
+
+### 剑指offer47.礼物的最大价值
+
+#### 题干
+
+在一个 m*n 的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值**大于 0**）。你可以从棋盘的**左上角**开始拿格子里的礼物，并每次**向右或者向下**移动一格、直到到达棋盘的**右下角**。给定一个棋盘及其上面的礼物的价值，请计算你**最多**能拿到**多少价值**的礼物？
+
+**示例**
+
+```
+示例 1:
+输入: 
+[
+  [1,3,1],
+  [1,5,1],
+  [4,2,1]
+]
+输出: 12
+解释: 路径 1→3→5→2→1 可以拿到最多价值的礼物
+```
+
+#### 解法
+
+基本思路：
+
+从其中一格到它的右下角只有两种拿法，往下往右或者往右往下，取决于两个里选哪个。第一反应就是动态规划。
+
+如示例1，22处的最大值取决于11的最大值加上12和21中的最大值 ——> 11的最大值取决于00的最大值加上01和10中的最大值.
+
+设 res{i}{j} 为该处的最大值，则有 **res{i}{j} = max(res{i - 1}{j}，res{i}{j - 1}) + grid{i - 1}{j - 1}**， 结果为**res{m}{n}**
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int maxValue(vector<vector<int>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+        vector<vector<int>> res(m+1, vector<int>(n+1));
+        for(int i = 1; i <= m; ++i){
+            for(int j = 1; j <= n; ++j){
+                res[i][j] = max(res[i - 1][j], res[i][j - 1]) + grid[i - 1][j - 1];
+            }
+        }
+        return res[m][n];
+    }
+};
+```
+
+
+
+### 剑指offer Ⅱ 060.出现频率最高的k个数字
+
+#### 题干
+
+给定一个整数数组 `nums` 和一个整数 `k` ，请返回其中出现频率前 `k` 高的元素。可以按 **任意顺序** 返回答案。
+
+**进阶：**所设计算法的时间复杂度 **必须** 优于 `O(n log n)` ，其中 `n` 是数组大小。
+
+**示例**
+
+```
+示例 1:
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+```
+
+```
+示例 2:
+输入: nums = [1], k = 1
+输出: [1]
+```
+
+#### 解法
+
+基本思路：
+
+第一遍for循环遍历，用哈希表存储每个数字出现的次数。
+
+使用优先队列（底层是堆实现），自定义比较方式为从小到大（小根堆），这样堆顶元素是最小的，便于排除。
+
+第二遍for循环将前k个数字出现的次数加入队列，之后的数字若出现次数更多，替换堆顶元素。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    struct cmp {
+       bool operator()(pair<int,int> &m,pair<int,int> &n) {
+           return m.second>n.second;
+       }
+    };
+
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> cnt;
+        for(int i = 0; i < nums.size(); ++i){
+            cnt[nums[i]]++;
+        }
+        priority_queue<pair<int,int>,vector<pair<int,int>>,cmp> q;
+        for(auto x : cnt){
+            if(q.size() == k){
+                if(x.second > q.top().second){
+                    q.pop();
+                    q.push(x);
+                }
+            }
+            else
+                q.push(x);
+        }
+        vector<int> res;
+        while(!q.empty()){
+            res.push_back(q.top().first);
+            q.pop();
+        }
+        return res;
+    }
+};
+```
+
