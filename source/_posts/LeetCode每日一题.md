@@ -2307,3 +2307,82 @@ public:
 };
 ```
 
+
+
+## 2023.3.9
+
+### 1590.使数组和能被P整除
+
+#### 题干
+
+给你一个正整数数组 **nums**，请你移除 **最短** 子数组（**可以为 空**），使得剩余元素的 **和** 能**被 p 整除**。 **不允许** 将整个数组都移除。
+
+请你返回你需要移除的**最短**子数组的长度，如果无法满足题目要求，返回 **-1** 。
+
+子数组 定义为原数组中连续的一组元素。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [3,1,4,2], p = 6
+输出：1
+解释：nums 中元素和为 10，不能被 p 整除。我们可以移除子数组 [4] ，剩余元素的和为 6 。
+```
+
+```
+示例 2:
+输入：nums = [1,2,3], p = 3
+输出：0
+```
+
+```
+示例 3:
+输入：nums = [1,2,3], p = 7
+输出：-1
+```
+
+#### 解法
+
+基本思路：
+
+![image-20230310191911243](LeetCode每日一题/image-20230310191911243.png)
+
+![1622650279-vfRdaq-file_1622650276899](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/1622650279-vfRdaq-file_1622650276899.png)
+
+**tips1: ** 哨兵思想的应用，处理当前缀和求余等于0时的情况，此时 **i** 作为下标，表示的位置为第 **i + 1** 个，因此设为-1。
+
+**tips2:**  存在前缀和的余数小于总和余数的情况，因此需要 + p ，保证为正数。
+
+**tips3:**  一开始用的 **if(hash[target])** 进行判断，调试时发现这样会产生 **hash[target] = 0** 的初始化操作，影响后续判断计算，因此改用成员函数count。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int minSubarray(vector<int>& nums, int p) {
+        int mod = 0;
+        for(int i = 0; i < nums.size(); ++i)
+            mod = (mod + nums[i]) % p;
+        if(mod == 0)
+            return 0;
+        int cur = 0, target = 0, res = nums.size();
+        unordered_map<int, int> hash;
+        // tips1
+        hash[0] = -1;
+        for(int i = 0; i < nums.size(); ++i){
+            cur = (cur + nums[i]) % p;
+            // tips2
+            target = (cur - mod + p) % p;
+            // tips3
+            if(hash.count(target))
+                res = min(res, i - hash[target]);
+            hash[cur] = i;
+        }
+        return res == nums.size() ? -1 : res;
+    }
+};
+```
+
+
