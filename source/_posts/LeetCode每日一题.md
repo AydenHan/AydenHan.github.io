@@ -2482,8 +2482,6 @@ public:
 输出：[[0]]
 ```
 
-
-
 #### 解法
 
 基本思路：
@@ -2506,6 +2504,197 @@ public:
             }
         }
         return res;
+    }
+};
+```
+
+
+
+## 2023.3.15
+
+### 1615.最大网络秩
+
+#### 题干
+
+**n** 座城市和一些连接这些城市的道路 **roads** 共同组成一个基础设施网络。每个 **roads[i] = [ai, bi]** 都表示在城市 **ai 和 bi** 之间有一条**双向**道路。
+
+两座不同城市构成的 **城市对** 的 **网络秩** 定义为：与这两座城市 **直接** 相连的道路总数。如果存在一条道路直接连接这两座城市，则这条道路**只计算 一次** 。
+
+整个基础设施网络的 **最大网络秩** 是所有不同城市对中的 **最大网络秩** 。给你整数 n 和数组 roads，返回整个基础设施网络的 **最大网络秩** 。
+
+**示例**
+
+![img](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/ex1.png)
+
+```
+示例 1:
+输入：n = 4, roads = [[0,1],[0,3],[1,2],[1,3]]
+输出：4
+解释：城市 0 和 1 的网络秩是 4，因为共有 4 条道路与城市 0 或 1 相连。位于 0 和 1 之间的道路只计算一次。
+```
+
+![img](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/ex2.png)
+
+```
+示例 2:
+输入：n = 5, roads = [[0,1],[0,3],[1,2],[1,3],[2,3],[2,4]]
+输出：5
+解释：共有 5 条道路与城市 1 或 2 相连。
+```
+
+```
+示例 3:
+输入：n = 8, roads = [[0,1],[1,2],[2,3],[2,4],[5,6],[5,7]]
+输出：5
+解释：2 和 5 的网络秩为 5，注意并非所有的城市都需要连接起来。
+```
+
+#### 解法
+
+基本思路：
+
+暴力解法。统计与每个城市相连的道路数cnt，统计每对城市间是否存在道路，可计算得城市对a、b的最大网络秩为 **cnt[a] + cnt[b] - connected[a] [b]**。
+
+遍历所有不重复的城市对即可。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int maximalNetworkRank(int n, vector<vector<int>>& roads) {
+        vector<int> cnt(n);
+        vector<vector<int>> connected(n, vector<int>(n));
+        for(auto pair : roads){
+            cnt[pair[0]]++;
+            cnt[pair[1]]++;
+            connected[pair[0]][pair[1]] = 1;
+            connected[pair[1]][pair[0]] = 1;
+        }
+        int maxRank = 0, rank;
+        for(int i = 0; i < n ; ++i){
+            for(int j = i + 1; j < n ; ++j){
+                rank =  cnt[i] + cnt[j] - connected[i][j];
+                maxRank = max(maxRank, rank);
+            }
+        }
+        return maxRank;
+    }
+};
+```
+
+
+
+### 441.排列硬币
+
+#### 题干
+
+你总共有 **n** 枚硬币，并计划将它们按阶梯状排列。对于一个由 **k** 行组成的阶梯，其第 i 行必须正好有 i 枚硬币。阶梯的最后一行 **可能** 是不完整的。
+
+给你一个数字 n ，计算并返回可形成 **完整阶梯行** 的总行数。
+
+**示例**
+
+![img](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/arrangecoins1-grid.jpg)
+
+```
+示例 1:
+输入：n = 5
+输出：2
+```
+
+```
+示例 2:
+输入：n = 8
+输出：3
+```
+
+#### 解法
+
+1. **解方程**
+2. **二分查找**
+
+#### 代码
+
+1.因为n取值很大，乘以常数后可能超出int取值范围，因此需转化为**long long**型。
+
+```c++
+class Solution {
+public:
+    int arrangeCoins(int n) {
+        return static_cast<int>((sqrt(8 * (long long)n + 1) - 1) / 2);
+    }
+};
+```
+
+2.一开始使用了暴力for循环，太慢了，就想到了**二分**进行优化。
+
+```c++
+class Solution {
+public:
+    int arrangeCoins(int n) {
+        int l = 1, r = n;
+        while(l < r){
+            int mid = l + (r - l + 1) / 2;
+            if((long long)mid * (mid + 1) <= (long long)2 * n)
+                l = mid;
+            else
+                r = mid - 1;
+        }
+        return l;
+    }
+};
+```
+
+
+
+### LCP 02.分式简化
+
+#### 题干
+
+有一个同学在学习分式。他需要将一个连分数化成最简分数，你能帮助他吗？
+
+![img](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/fraction_example_1.jpg)
+
+连分数是形如上图的分式。在本题中，所有系数都是**大于等于0的整数**。
+
+输入的**cont**代表连分数的系数（**cont[0]代表上图的a0**，以此类推）。返回一个长度为2的数组**[n, m]**，使得连分数的值等于n / m，且n, m**最大公约数为1**。
+
+**示例**
+
+```
+示例 1:
+输入：cont = [3, 2, 0, 2]
+输出：[13, 4]
+解释：原连分数等价于3 + (1 / (2 + (1 / (0 + 1 / 2))))。注意[26, 8], [-13, -4]都不是正确答案。
+```
+
+```
+示例 2:
+输入：cont = [0, 0, 3]
+输出：[3, 1]
+解释：如果答案是整数，令分母为1即可。
+```
+
+#### 解法
+
+数学
+
+![image-20230315154115757](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/image-20230315154115757.png)
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    vector<int> fraction(vector<int>& cont) {
+        int m = 1, n = 0;
+        for(int i = cont.size() - 1; i > 0; --i){
+            int temp = m;
+            m = cont[i] * m + n;
+            n = temp;
+        }
+        return {cont[0] * m + n, m};
     }
 };
 ```
