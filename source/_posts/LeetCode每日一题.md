@@ -2699,3 +2699,181 @@ public:
 };
 ```
 
+
+
+## 2023.3.17
+
+### 2389.和有限的最长子序列
+
+#### 题干
+
+给你一个长度为 n 的整数数组 **nums** ，和一个长度为 m 的整数数组 **queries** 。
+
+返回一个长度为 m 的数组 **answer** ，其中 answer[i] 是 **nums 中 元素之和** **小于等于** queries[i] 的 **子序列** 的 **最大 长度**  。
+
+子序列 是由一个数组**删除某些**元素（也可以不删除）但不改变剩余元素顺序得到的一个数组。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [4,5,2,1], queries = [3,10,21]
+输出：[2,3,4]
+```
+
+```
+示例 2:
+输入：nums = [2,3,4,5], queries = [1]
+输出：[0]
+```
+
+#### 解法
+
+基本思路：
+
+先给nums排个序，然后for循环比较queries每个元素最大比前几个nums的元素和大就行。
+
+自己的方法是直接暴力求和一个个比较过去；
+
+题解采用了**前缀和统计+二分查找**的方法来优化比较的起始位置，但是实际提交发现在给定的测试用例中好像并没有比暴力快。
+
+哦，我就看了个标题，代码里用的 ***upper_bound*()** 库函数，难怪比我自己实现的快。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    // 我的方案
+    vector<int> answerQueries(vector<int>& nums, vector<int>& queries) {
+        sort(nums.begin(), nums.end());
+        for(int i = 0; i < queries.size(); ++i){
+            int sum = 0, cnt = 0;
+            while(queries[i] >= sum && cnt < nums.size())
+                sum += nums[cnt++];
+            if(sum > queries[i])
+                cnt--;
+            queries[i] = cnt;
+        }
+        return queries;
+    }
+};
+
+class Solution {
+public:
+    // 题解方法：前缀和+二分查找
+    int binarySearch(vector<int>& nums, int num){
+        int l = 0, r = nums.size() - 1;
+        while(l < r){
+            int mid = (r - l + 1) / 2 + l;
+            if (nums[mid] <= num)
+                l = mid;
+            else
+                r = mid - 1;
+        }
+        return l;
+    }
+    vector<int> answerQueries(vector<int>& nums, vector<int>& queries) {
+        vector<int> sums(nums.size());
+        sort(nums.begin(), nums.end());
+        sums[0] = nums[0];
+        for(int i = 1; i < nums.size(); ++i){
+            sums[i] = nums[i] + sums[i - 1];
+        }
+        for(int i = 0; i < queries.size(); ++i){
+            int idx = binarySearch(nums, queries[i]);
+            while(queries[i] < sums[idx] && idx >= 0){
+                if(--idx < 0)
+                    break;
+            }
+            queries[i] = idx + 1;
+        }
+        return queries;
+    }
+};
+```
+
+
+
+### 1254.统计封闭岛屿的数目
+
+#### 题干
+
+二维矩阵 grid 由 **0 （土地）**和 **1 （水）**组成。岛是由最大的4个方向**连通的 0** 组成的群，封闭岛是一个 **完全 由1包围**（左、上、右、下）的岛。
+
+请返回 **封闭岛屿** 的数目。
+
+**示例**
+
+![img](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/sample_3_1610.png)
+
+```
+示例 1:
+输入：grid = [[1,1,1,1,1,1,1,0],[1,0,0,0,0,1,1,0],[1,0,1,0,1,1,1,0],[1,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,0]]
+输出：2
+```
+
+![img](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/sample_4_1610.png)
+
+```
+示例 2:
+输入：grid = [[0,0,1,0,0],[0,1,0,1,0],[0,1,1,1,0]]
+输出：1
+```
+
+#### 解法
+
+基本思路：
+
+可以发现封闭岛屿必然不会出现在矩阵的边缘，因为需要被1全包裹。
+
+也就是说可以先统计全部的岛屿数量，然后去除在边缘的岛屿就是答案。
+
+可以用DFS，向四个方向搜索来找到一个连通域（想到了图像处理里的找连通域，简化版）。但是不方便在DFS函数中去统计总数，所以想到了标记（覆盖 / 污染）。
+
+DFS的作用为标记一整个连通域为1.
+
+那么只要先把边缘的连通域都标记为1，之后剩下的连通域每标记一个，就cnt++就行。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    void dfs(vector<vector<int>>& grid, int x, int y){
+        int m = grid.size(), n = grid[0].size();
+        if(x < 0 || x >= m || y < 0 || y >= n)
+            return;
+        if(grid[x][y])
+            return;
+        grid[x][y] = 2;
+        dfs(grid, x, y + 1);
+        dfs(grid, x + 1, y);
+        dfs(grid, x, y - 1);
+        dfs(grid, x - 1, y);
+    }
+
+    int closedIsland(vector<vector<int>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+        for(int i = 0; i < m; ++i){
+            dfs(grid, i, 0);
+            dfs(grid, i, n - 1);
+        }
+        for(int i = 0; i < n; ++i){
+            dfs(grid, 0, i);
+            dfs(grid, m - 1, i);
+        }
+        int cnt = 0;
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(!grid[i][j]){
+                    cnt++;
+                    dfs(grid, i, j);
+                }
+            }
+        }
+        return cnt;
+    }
+};
+```
+
