@@ -2877,3 +2877,336 @@ public:
 };
 ```
 
+
+
+## 2023.3.18
+
+### 1616.分割两个字符串得到回文串
+
+#### 题干
+
+给你两个字符串 a 和 b ，它们**长度相同**。请你选择一个下标，将两个字符串都在 **相同的下标** 分割开。由 a 可以得到两个字符串： aprefix 和 asuffix ，满足 **a = aprefix + asuffix** ，同理，由 b 可以得到两个字符串 bprefix 和 bsuffix ，满足 **b = bprefix + bsuffix** 。请你判断 aprefix + bsuffix **或者** bprefix + asuffix **能否构成回文串**。
+
+当你将一个字符串 s 分割成 sprefix 和 ssuffix 时， **ssuffix 或者 sprefix 可以为空**。比方说， s = "abc" 那么 "" + "abc" ， "a" + "bc" ， "ab" + "c" 和 "abc" + "" 都是合法分割。如果 能构成回文字符串 ，那么请返回 true，否则返回 false 。
+
+注意， x + y 表示连接字符串 x 和 y 。
+
+**示例**
+
+```
+示例 1:
+输入：a = "x", b = "y"
+输出：true
+```
+
+```
+示例 2:
+输入：a = "abdef", b = "fecab"
+输出：true
+```
+
+#### 解法
+
+基本思路：
+
+**双指针。**
+
+回文串其实是分为两部分对应的。第一部分是a的头和b的尾（可能为空），第二部分是ab任一的中部（也可能为空）。
+
+那么只需要维护两个指针，分别从a头b尾向中间扫描对比，遇到不同的字符就跳转到第二部分，a和b中间部分（区间 [l, r]）若是回文串，则返回ture。否则再从b头a尾开始重复一遍。
+
+写法可能有点问题，和一个题解思路相同但是速度慢了一些。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    bool isPalindrome(string s, int l, int r){
+        while(s[l] == s[r]){
+            if(r - l > 2){
+                l++;
+                r--;
+            }
+            else
+                return true;
+        }
+        return false;
+    }
+
+    bool checkPalindromeFormation(string a, string b) {
+        int l = 0, r = b.length() - 1;
+        while(a[l] == b[r]){
+            if(r - l > 2){
+                l++;
+                r--;
+            }
+            else
+                return true;
+        }
+        if(isPalindrome(a, l, r) || isPalindrome(b, l, r))
+            return true;
+        l = 0;
+        r = a.length() - 1;
+        while(b[l] == a[r]){
+            if(r - l > 2){
+                l++;
+                r--;
+            }
+            else
+                return true;
+        }
+        if(isPalindrome(b, l, r) || isPalindrome(a, l, r))
+            return true;
+        return false;
+    }
+};
+```
+
+
+
+### 2032.至少在两个数组中出现的值
+
+#### 题干
+
+给你三个整数数组 **nums1**、**nums2** 和 **nums3** ，请你构造并返回一个 **元素各不相同**的 数组，且由 **至少** 在 **两个** 数组中出现的所有值组成。数组中的元素可以按 **任意** 顺序排列。
+
+**示例**
+
+```
+示例 1:
+输入：nums1 = [1,1,3,2], nums2 = [2,3], nums3 = [3]
+输出：[3,2]
+```
+
+```
+示例 2:
+输入：nums1 = [1,2,2], nums2 = [4,3,3], nums3 = [5]
+输出：[]
+```
+
+#### 解法
+
+基本思路：**枚举**。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    vector<int> twoOutOfThree(vector<int>& nums1, vector<int>& nums2, vector<int>& nums3) {
+        vector<int> res;
+        int cnt1[101] = {0};
+        int cnt2[101] = {0};
+        int cnt3[101] = {0};
+        for(auto x : nums1)
+            cnt1[x] = 1;
+        for(auto x : nums2)
+            cnt2[x] = 1;
+        for(auto x : nums3)
+            cnt3[x] = 1;
+        for(int i = 1; i < 101; ++i){
+            if(cnt1[i] + cnt2[i] + cnt3[i] > 1)
+                res.push_back(i);
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 1984.学生分数的最小差值
+
+#### 题干
+
+给你一个 下标从 0 开始 的整数数组 **nums** ，其中 nums[i] 表示第 **i** 名学生的分数。另给你一个整数 k 。
+
+从数组中选出任意 **k** 名学生的分数，使这 k 个分数间 **最高分 和 最低分 的 差值** 达到 最小化 。
+
+返回可能的 **最小差值** 。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [90], k = 1
+输出：0
+```
+
+```
+示例 2:
+输入：nums = [9,4,1,7], k = 2
+输出：2
+```
+
+#### 解法
+
+基本思路：
+
+先给nums排序，然后遍历找长度为k的子数组的最大差值中的最小值。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int minimumDifference(vector<int>& nums, int k) {
+        sort(nums.begin(), nums.end());
+        int minSub = nums.back() - nums[0];
+        for(int i = 0; i < nums.size() - k + 1; ++i)
+            minSub = min(minSub, nums[i + k - 1] - nums[i]);
+        return minSub;
+    }
+};
+```
+
+
+
+### 2465.不同的平均值数目
+
+#### 题干
+
+给你一个下标从 0 开始长度为 **偶数** 的整数数组 **nums** 。
+
+只要 nums **不是 空数组**，你就重复执行以下步骤：
+
+- 找到 nums 中的**最小值**，并删除它。
+
+- 找到 nums 中的**最大值**，并删除它。
+- 计算删除两数的**平均值**。
+
+比方说，2 和 3 的平均值是 (2 + 3) / 2 = 2.5 。返回上述过程能得到的 **不同** 平均值的数目。
+
+注意 ，如果最小值或者最大值有重复元素，可以删除**任意**一个。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [4,1,4,0,3,5]
+输出：2
+```
+
+```
+示例 2:
+输入：nums = [1,100]
+输出：1
+```
+
+#### 解法
+
+基本思路：
+
+先给nums排序，然后双指针每次分别从头尾各取一个值计算平均值加入哈希表，最后返回哈希表中的键值对数。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int distinctAverages(vector<int>& nums) {
+        unordered_map<double, int> res;
+        sort(nums.begin(), nums.end());
+        for(int i = 0, j = nums.size() - 1; i < nums.size() / 2; ++i, --j)
+            res[(nums[i] + nums[j]) / 2.0] = 1;
+        return res.size();
+    }
+};
+```
+
+
+
+### 8.字符串转换整数
+
+#### 题干
+
+实现一个 myAtoi(string s) 函数，使其能将字符串转换成一个 32 位有符号整数（类似 C/C++ 中的 atoi 函数）。
+
+函数 **myAtoi**(string s) 的算法如下：
+
+1. 读入字符串并丢弃**无用的前导空格**
+
+2. 检查下一个字符（假设还未到字符末尾）为正还是负号，读取该字符（如果有）。 确定最终结果是负数还是正数。 如果两者都不存在，则假定结果为正。
+3. 读入下一个字符，直到到达下一个非数字字符或到达输入的结尾。字符串的其余部分将被忽略。
+4. 将前面步骤读入的这些数字转换为**整数**（即，"123" -> 123， "0032" -> 32）。如果没有读入数字，则整数为 0 。必要时更改符号（从步骤 2 开始）。
+5. 如果整数数超过 32 位有符号整数范围 [−231,  231 − 1] ，需要截断这个整数，使其保持在这个范围内。具体来说，小于 −231 的整数应该被固定为 −231 ，大于 231 − 1 的整数应该被固定为 231 − 1 。
+6. 返回整数作为最终结果。
+
+注意：
+
+本题中的空白字符只包括空格字符 ' ' 。
+
+除前导空格或数字后的其余字符串外，请勿忽略 任何其他字符。
+
+**示例**
+
+```
+示例 1:
+输入：s = "42"
+输出：42
+```
+
+```
+示例 2:
+输入：s = "   -42"
+输出：-42
+```
+
+```
+示例 3：
+输入：s = "4193 with words"
+输出：4193
+```
+
+#### 解法
+
+基本思路：
+
+简单的if判断。
+
+- 结果可能超出int，因此用long long存储；
+- 用sign为1 或 -1表示符号位方便计算；
+- 宏定义 **INT_MAX** 和 **INT_MIN** 。
+
+#### 代码
+
+```c++
+class Solution {
+public:
+    int myAtoi(string s) {
+        int sign = 1;
+        bool isPre = true;
+        long long res = 0;
+        for(auto x : s){
+            if(isPre){
+                if(x == ' ')    continue;
+                else if(x == '+')   isPre = false;
+                else if(x == '-'){
+                   isPre = false;
+                   sign = -1;
+                }
+                else if(x >= '0' && x <= '9'){
+                    isPre = false;
+                    res = x - '0';
+                }   
+                else
+                    return 0; 
+            }
+            else{
+                if(x >= '0' && x <= '9'){
+                    res = res * 10 + x - '0';
+                    if(res * sign > INT_MAX)    
+                        return INT_MAX;
+                    if(res * sign < INT_MIN)    
+                        return INT_MIN;
+                }
+                else
+                    return res * sign;
+            }
+        }
+        return res * sign;
+    }
+};
+```
+
