@@ -689,7 +689,7 @@ for (int i = 0; i < height; i++) {
 
 **代码实现**
 
-```c++
+```cpp
 // 查找每一行的子区域
 // numberOfArea：子区域总数 stArea：子区域开始位置  enArea：子区域结束位置  rowArea：子区域所在行号
 void searchArea(const Mat src, int &numberOfArea, vector<int> &stArea, vector<int> &enArea, vector<int> &rowArea)
@@ -742,7 +742,7 @@ void searchArea(const Mat src, int &numberOfArea, vector<int> &stArea, vector<in
 
 下面的代码实现了上述的过程。子区域用一维vector保存，没办法直接定位到某一行号的子区域，因此需要用curRow来记录当前的行，用firstAreaPrev记录前一行的第一个子区域在vector中的位置，用lastAreaPrev记录前一行的最后一个子区域在vector中的位置。在换行的时候，就去更新刚刚说的3个变量，其中firstAreaPrev的更新依赖于当前行的第一个子区域位置，所以还得用firstAreaCur记录当前行的第一个子区域。
 
-```c++
+```cpp
 // 初步标签,获取等价对
 // labelOfArea:子区域标签值， equalLabels：等价标签对 offset:0为四连通,1为8连通
 void markArea(int numberOfArea, vector<int> stArea, vector<int> enArea, vector<int> rowArea, vector<int> &labelOfArea, vector<pair<int, int>> &equalLabels, int offset)
@@ -815,7 +815,7 @@ void markArea(int numberOfArea, vector<int> stArea, vector<int> enArea, vector<i
 
 **代码实现**
 
-```c++
+```cpp
 // 等价对处理，标签重映射
 void replaceEqualMark(vector<int> &labelOfArea, vector<pair<int, int>> equalLabels)
 {
@@ -884,7 +884,7 @@ void replaceEqualMark(vector<int> &labelOfArea, vector<pair<int, int>> equalLabe
 
 **代码实现**
 
-```c++
+```cpp
 #include<opencv2/opencv.hpp>
 #include<iostream>
 
@@ -1216,7 +1216,7 @@ int main()
 
 **opencv函数**
 
-```c++
+```cpp
 HoughLinesP(InputArray image, OutputArray lines, double	rho, double theta, int threshold,
 double minLineLength = 0, double maxLineGap = 0)
 ```
@@ -1541,7 +1541,7 @@ V是明暗，表示色彩的明亮程度
 
 ![4f18d260bc465763fed4a95044fc253d.png](opencv图像算法/4f18d260bc465763fed4a95044fc253d.png)
 
-```C++
+```cpp
 float max = 0,min = 0;
 
 max = retmax(R,G,B);	// 计算三者的最大值
@@ -1570,7 +1570,7 @@ else if(max == B)
 
 ![18284ab401f777c452c89f641f2db4b4.png](opencv图像算法/18284ab401f777c452c89f641f2db4b4.png)
 
-```c++
+```cpp
 float C = 0,X = 0,Y = 0,Z = 0;
 int i = 0;
 float H = h / 1.0;

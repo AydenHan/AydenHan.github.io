@@ -64,7 +64,7 @@ tags:
 
 #### 代码
 
-```c++
+```cpp
 int reachNumber(int target) {
     target = abs(target);
     int dist = 0, numMoves = 0;
@@ -80,7 +80,7 @@ int reachNumber(int target) {
 
 <img src="LeetCode每日一题/image-20221104152911835.png" alt="image-20221104152911835" style="zoom:67%;" />
 
-```c++
+```cpp
 int reachNumber(int target) {
     target = abs(target);
     int n = ceil((-1 + sqrt(8L * target + 1)) / 2); // 注意 8*target 会超过 int 范围
@@ -146,7 +146,7 @@ int reachNumber(int target) {
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<string> classifyNumber(string s){
@@ -230,7 +230,7 @@ for循环中，相比于**++i**，**i++**需要多开辟一个**临时变量来�
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int countConsistentStrings(string allowed, vector<string>& words) {
@@ -300,7 +300,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int orderOfLargestPlusSign(int n, vector<vector<int>>& mines) {
@@ -338,7 +338,7 @@ public:
 
 vector采用
 
-```c++
+```cpp
 for(auto& item : vector)
 ```
 
@@ -386,7 +386,7 @@ for(auto& item : vector)
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     bool halvesAreAlike(string s) {
@@ -411,7 +411,7 @@ public:
 
 我这里直接写了个匿名函数通过ASCII的差值判断是否为元音，还可以用**集合**。
 
-```c++
+```cpp
 unordered_set<char> vowels = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
 cnt += vowels.count(s[i]);
 ```
@@ -468,7 +468,7 @@ cnt += vowels.count(s[i]);
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int numDifferentIntegers(string word) {
@@ -541,7 +541,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minOperations(vector<int>& nums1, vector<int>& nums2) {
@@ -617,7 +617,7 @@ accumulate属于numeric头文件，作用是计算数组或C++容器指定地址
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     bool checkPowersOfThree(int n) {
@@ -686,7 +686,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<string> removeSubfolders(vector<string>& folder) {
@@ -756,7 +756,7 @@ authenticationManager.countUnexpiredTokens(15); // tokenId 为 "bbb" 的验证�
 
 #### 代码
 
-```c++
+```cpp
 class AuthenticationManager {
 public:
     AuthenticationManager(int timeToLive) {
@@ -840,7 +840,7 @@ private:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int fillCups(vector<int>& amount) {
@@ -916,7 +916,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int balancedString(string s) {
@@ -957,7 +957,7 @@ public:
 
 函数接口定义如下：
 
-```c++
+```cpp
 interface CustomFunction {
 public:
   // Returns some positive integer f(x, y) for two positive integers x and y based on a formula.
@@ -1024,7 +1024,7 @@ x=5, y=1 -> f(5, 1) = 5 * 1 = 5
 
 #### 代码
 
-```c++
+```cpp
 /*
  * // This is the custom function interface.
  * // You should not implement it, or speculate about its implementation
@@ -1106,7 +1106,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     string bestHand(vector<int>& ranks, vector<char>& suits) {
@@ -1167,7 +1167,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minimumOperations(vector<int>& nums) {
@@ -1248,7 +1248,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minimumSwap(string s1, string s2) {
@@ -1308,7 +1308,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int movesToMakeZigzag(vector<int>& nums) {
@@ -1354,7 +1354,7 @@ public:
 
 于是得到以下代码：
 
-```c++
+```cpp
 class Solution {
 public:
     int maximum(int a, int b) {
@@ -1377,7 +1377,7 @@ public:
 
 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int maximum(int a, int b) {
@@ -1443,7 +1443,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<vector<int>> mergeSimilarItems(vector<vector<int>>& items1, vector<vector<int>>& items2) {
@@ -1498,7 +1498,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int hammingWeight(uint32_t n) {
@@ -1551,7 +1551,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<vector<int>> largestLocal(vector<vector<int>>& grid) {
@@ -1623,7 +1623,7 @@ double小数的二进制转化方法，以**0.625**为例：
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     string printBin(double num) {
@@ -1689,7 +1689,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<string> getFolderNames(vector<string>& names) {
@@ -1753,7 +1753,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<int> getNextArr(string p){
@@ -1869,7 +1869,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minOperationsMaxProfit(vector<int>& customers, int boardingCost, int runningCost) {
@@ -1947,7 +1947,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minimumDeletions(string s) {
@@ -1982,7 +1982,7 @@ public:
 
 推理这个公式时，实际是上述思路的逆过程，拆分时从后开始由大到小，计算时从前开始由小到大。
 
-```c++
+```cpp
 class Solution {
 public:
     int minimumDeletions(string s) {
@@ -2029,7 +2029,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int maxScore(string s) {
@@ -2083,7 +2083,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int maxValue(vector<vector<int>>& grid) {
@@ -2135,7 +2135,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     struct cmp {
@@ -2211,7 +2211,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minimumRecolors(string blocks, int k) {
@@ -2275,7 +2275,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int maximumScore(int a, int b, int c) {
@@ -2297,7 +2297,7 @@ public:
 
 ![image-20230309180318190](LeetCode每日一题/image-20230309180318190.png)
 
-```c++
+```cpp
 class Solution {
 public:
     int maximumScore(int a, int b, int c) {
@@ -2358,7 +2358,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minSubarray(vector<int>& nums, int p) {
@@ -2427,7 +2427,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minNumberOfHours(int initialEnergy, int initialExperience, vector<int>& energy, vector<int>& experience) {
@@ -2490,7 +2490,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<vector<int>> restoreMatrix(vector<int>& rowSum, vector<int>& colSum) {
@@ -2559,7 +2559,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int maximalNetworkRank(int n, vector<vector<int>>& roads) {
@@ -2618,7 +2618,7 @@ public:
 
 1.因为n取值很大，乘以常数后可能超出int取值范围，因此需转化为**long long**型。
 
-```c++
+```cpp
 class Solution {
 public:
     int arrangeCoins(int n) {
@@ -2629,7 +2629,7 @@ public:
 
 2.一开始使用了暴力for循环，太慢了，就想到了**二分**进行优化。
 
-```c++
+```cpp
 class Solution {
 public:
     int arrangeCoins(int n) {
@@ -2684,7 +2684,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<int> fraction(vector<int>& cont) {
@@ -2741,7 +2741,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     // 我的方案
@@ -2837,7 +2837,7 @@ DFS的作用为标记一整个连通域为1.
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     void dfs(vector<vector<int>>& grid, int x, int y){
@@ -2919,7 +2919,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     bool isPalindrome(string s, int l, int r){
@@ -2991,7 +2991,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     vector<int> twoOutOfThree(vector<int>& nums1, vector<int>& nums2, vector<int>& nums3) {
@@ -3048,7 +3048,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int minimumDifference(vector<int>& nums, int k) {
@@ -3102,7 +3102,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int distinctAverages(vector<int>& nums) {
@@ -3171,7 +3171,7 @@ public:
 
 #### 代码
 
-```c++
+```cpp
 class Solution {
 public:
     int myAtoi(string s) {
@@ -3209,4 +3209,52 @@ public:
     }
 };
 ```
+
+
+
+## 2023.3.21
+
+### 2469.温度转换
+
+#### 题干
+
+给你一个四舍五入到两位小数的非负浮点数 **celsius** 来表示温度，以 摄氏度（Celsius）为单位。
+
+你需要将摄氏度转换为 开氏度（Kelvin）和 华氏度（Fahrenheit），并以数组 **ans = [kelvin, fahrenheit]** 的形式返回结果。
+
+返回数组 ans 。与实际答案误差不超过 10e-5 的会视为正确答案。
+
+- 开氏度 = 摄氏度 + 273.15
+- 华氏度 = 摄氏度 * 1.80 + 32.00
+
+**示例**
+
+```
+示例 1:
+输入：celsius = 36.50
+输出：[309.65000,97.70000]
+```
+
+```
+示例 2:
+输入：celsius = 122.11
+输出：[395.26000,251.79800]
+```
+
+#### 解法
+
+基本思路：。。。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<double> convertTemperature(double celsius) {
+        return {celsius + 273.15, celsius * 1.8 + 32};
+    }
+};
+```
+
+
 
