@@ -3485,3 +3485,119 @@ public:
 };
 ```
 
+
+
+### 1438.绝对差不超过限制的最长连续子数组
+
+#### 题干
+
+给你一个整数数组 **nums** ，和一个表示限制的整数 **limit**，请你返回**最长**连续子数组的**长度**，该子数组中的任意两个元素之间的**绝对差**必须**小于或者等于** limit 。
+
+如果不存在满足条件的子数组，则返回 0 。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [8,2,4,7], limit = 4
+输出：2 
+```
+
+```
+示例 2:
+输入：nums = [4,2,2,2,4,4,2,2], limit = 0
+输出：3
+```
+
+#### 解法
+
+基本思路：双指针滑动窗口。
+
+右指针r主动移动，左指针l被动移动（超出limit时）。需要一个数据结构来维护子数组有序（顺序容器中的map和set），由于存在重复数字，采用**multiset**。
+
+注：
+
+1. **begin() == rend()** 均指向**第一个**元素，**rbegin()** 指向最后一个元素，**end()** 指向最后一个元素的下一个。
+2. 在multiset中，**erase(elem)** 擦除的是值等于elem的所有元素。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int longestSubarray(vector<int>& nums, int limit) {
+        multiset<int> sub;
+        int l = 0, r = 0;
+        int res = 0;
+        while(r < nums.size()){
+            sub.emplace(nums[r]);
+            while(*sub.rbegin() - *sub.begin() > limit)
+                sub.erase(sub.find(nums[l++]));
+            res = max(res, r - l + 1);
+            r++;
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 424.替换后的最长重复字符
+
+#### 题干
+
+给你一个字符串 **s** 和一个整数 **k** 。你可以选择字符串中的任一字符，并将其**更改**为**任何其他**大写英文字符。该操作最多可执行 **k** 次。
+
+在执行上述操作后，返回包含相同字母的**最长**子字符串的**长度**。
+
+**示例**
+
+```
+示例 1:
+输入：s = "ABAB", k = 2
+输出：4
+```
+
+```
+示例 2:
+输入：s = "AABABBA", k = 1
+输出：4
+```
+
+#### 解法
+
+基本思路：双指针滑动窗口。
+
+和上题（1438）思路类似的滑动窗口双指针，统计需要修改的字符数是否超过k。因为不确定最后的子串是哪个字符，因此先将所有不同字符加入集合，全循环一遍。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        unordered_set<char> letter;
+        for(char c : s)
+            letter.emplace(c);
+        int res = 0;
+        for(char c : letter){
+            int l = 0, r = 0;
+            int cnt = 0;
+            while(r < s.length()){
+                if(s[r] != c)   cnt++;
+                while(cnt > k){
+                    if(s[l] != c)   cnt--;
+                    l++;
+                }
+                res = max(res, r - l + 1);
+                r++;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
