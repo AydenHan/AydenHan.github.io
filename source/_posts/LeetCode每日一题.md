@@ -3601,3 +3601,183 @@ public:
 
 
 
+## 2023.3.28
+
+### 1092.最短公共超序列（未完结）
+
+#### 题干
+
+给出两个字符串 **str1** 和 **str2**，返回**同时**以 str1 和 str2 作为**子序列**的**最短**字符串。如果答案不止一个，则可以返回满足条件的任意一个答案。
+
+（如果从字符串 T 中删除一些字符（也可能不删除，并且选出的这些字符可以位于 T 中的 任意位置），可以得到字符串 S，那么 S 就是 T 的子序列）
+
+**示例**
+
+```
+示例 1:
+输入：str1 = "abac", str2 = "cab"
+输出："cabac"
+解释：
+str1 = "abac" 是 "cabac" 的一个子串，因为我们可以删去 "cabac" 的第一个 "c"得到 "abac"。 
+str2 = "cab" 是 "cabac" 的一个子串，因为我们可以删去 "cabac" 末尾的 "ac" 得到 "cab"。
+最终我们给出的答案是满足上述属性的最短字符串。
+```
+
+#### 解法
+
+基本思路：动态规划+双指针。
+
+我们要找的目的字符串由三部分组成：两个字符串的**最长公共子序列**LCS + 第一个字符串除去LCS之后的序列 + 第二个字符串除去LCS之后的序列。同一个字符串中的字符的相对顺序不可改变，所以我们可以用字符串与LCS比较来确定字符的相对位置。
+
+此题转化为了先求解LCS，再去构建目的字符串。
+
+**LCS部分：**
+
+定义 **f [i] [j] ** 表示考虑  **str1** 的前 i 个字符、**str2** 的前 j 的字符所形成的**最长公共子序列长度**。
+
+可得状态转移方程：
+
+![image-20230328202936624](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/image-20230328202936624.png)
+
+在代码中为了计算方便，在两个string前添加一个空格，令下标从1开始。
+
+**构建目的字符串部分：**
+
+采用双指针 p、q 分别指向两个string的尾部。
+
+1. 当 p 或 q 走完（p == 0 || q == 0），直接将另一字符串剩余部分加入结果中。
+2. 当指向的两个字符相同时，该字符为LCS中的字符，加入结果，双指针同时自减。
+3. 根据第一部分得到的状态数组f，判断：
+4.   **f [p] [q] ==  f [p - 1] [q]  **时，str1[p] 加入结果，p--。
+5.   **f [p] [q] ==  f [p] [q - 1]  **时，str2[q] 加入结果，q--。
+6. 最后，由于是从尾部向前构造，与实际答案相反，因此需要翻转。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string shortestCommonSupersequence(string str1, string str2) {
+        int m = str1.length(), n = str2.length();
+        str1 = " " + str1;
+        str2 = " " + str2;
+        vector<vector<int>> f(m + 1, vector<int>(n + 1));
+        for(int i = 1; i <= m; ++i){
+            for(int j = 1; j <= n; ++j){
+                if(str1[i] == str2[j])  f[i][j] = f[i-1][j-1] + 1;
+                else    f[i][j] = max(f[i-1][j], f[i][j-1]);  
+            }
+        }
+        int p = m, q = n;
+        string res;
+        while(p > 0 || q > 0){
+            if(p == 0)  res += str2[q--];
+            else if(q == 0) res += str1[p--];
+            else{
+                if(str1[p] == str2[q]){
+                    res += str1[p--];
+                    q--;
+                }
+                else if(f[p][q] == f[p-1][q])   res += str1[p--];
+                else    res += str2[q--];
+            }
+        }
+        return string(res.rbegin(), res.rend());
+    }
+};
+```
+
+
+
+### 1550.存在连续三个奇数的数组
+
+#### 题干
+
+给你一个整数数组 `arr`，请你判断数组中是否存在连续三个元素都是奇数的情况：如果存在，请返回 `true` ；否则，返回 `false` 。
+
+**示例**
+
+```
+示例 1:
+输入：arr = [2,6,4,1]
+输出：false
+```
+
+```
+示例 2:
+输入：arr = [1,2,34,3,4,5,7,23,12]
+输出：true
+```
+
+#### 解法
+
+基本思路：简单的if判断。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool threeConsecutiveOdds(vector<int>& arr) {
+        int limit = 0;
+        for(int num : arr){
+            if(num % 2) limit++;
+            else    limit = 0;
+            if(limit > 2)
+                return true;
+        }
+        return false;
+    }
+};
+```
+
+
+
+### 1991.找到数组的中间位置
+
+#### 题干
+
+给你一个下标从 0 开始的整数数组 **nums** ，请你找到 **最左边** 的中间位置 **middleIndex** （也就是所有可能中间位置下标最小的一个）。
+
+中间位置 **middleIndex** 是满足 *nums[0] + nums[1] + ... + nums[middleIndex-1] == nums[middleIndex+1] + nums[middleIndex+2] + ... + nums[nums.length-1]* 的数组下标。如果 middleIndex == 0 ，左边部分的和定义为 0 。类似的，如果 middleIndex == nums.length - 1 ，右边部分的和定义为 0 。
+
+请你返回满足上述条件 **最左边** 的 **middleIndex** ，如果不存在这样的中间位置，请你返回 **-1** 。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [2,3,-1,8,4]
+输出：3
+```
+
+```
+示例 2:
+输入：nums = [1,-1,4]
+输出：2
+```
+
+#### 解法
+
+基本思路：前缀和。
+
+在比较的过程中计算局部前缀和，调用库函数accumulate，相对节约时间和空间一点。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findMiddleIndex(vector<int>& nums) {
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        int preSum = 0;
+        for(int i = 0; i < nums.size(); ++i){
+            if(sum - nums[i] == 2 * preSum)    
+                return i;
+            preSum += nums[i];
+        }
+        return -1;
+    }
+};
+```
+
