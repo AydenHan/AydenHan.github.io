@@ -3781,3 +3781,303 @@ public:
 };
 ```
 
+
+
+## 2023.3.29
+
+### 1641.统计字典序元音字符串的数目
+
+#### 题干
+
+给你一个整数 n，请返回长度为 **n** 、仅由元音 (**a, e, i, o, u**) 组成且按 **字典序排列** 的字符串数量。
+
+字符串 s 按字典序排列需要满足：对于所有有效的 i，**s[i]** 在字母表中的位置总是与 **s[i+1]** **相同**或在 **s[i+1] 之前**。
+
+**示例**
+
+```
+示例 1:
+输入：n = 1
+输出：5
+```
+
+```
+示例 2:
+输入：n = 2
+输出：15
+```
+
+#### 解法
+
+基本思路：动态规划。
+
+![image-20230329181116422](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/image-20230329181116422.png)
+
+![image-20230329181148290](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/image-20230329181148290.png)
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int countVowelStrings(int n) {
+        vector<vector<int>> f(n, vector<int>(5));
+        for(int i = 0; i < 5; ++i)
+            f[0][i] = 1;
+        for(int i = 1; i < n; ++i)
+            for(int j = 0; j < 5; ++j)
+                for(int k = 0; k <= j; ++k)
+                    f[i][j] += f[i - 1][k];
+        int res = 0;
+        for(int i = 0; i < 5; ++i)
+            res += f[n - 1][i];
+        return res;
+    }
+};
+```
+
+#### 优化
+
+空间优化：二维数组 ——> 一维数组。
+
+因为最终要求的实际是 n - 1 处的前缀和，过程中的值并不需要，因此可以省略二维数组中的第一维（i），通过直接修改的的方式不断更新一维数组的值直到 n - 1。
+
+```cpp
+class Solution {
+public:
+    int countVowelStrings(int n) {
+        int f[5] = {1, 1, 1, 1, 1};
+        for(int i = 0; i < n - 1; ++i){
+            int sum = 0;
+            for(int j = 0; j < 5; ++j){
+                sum += f[j];
+                f[j] = sum;
+            }
+        }
+        int res = 0;
+        for(int i = 0; i < 5; ++i)
+            res += f[i];
+        return res;
+    }
+};
+```
+
+
+
+### 15.三数之和
+
+#### 题干
+
+给你一个整数数组 **nums** ，判断是否存在三元组 **[nums[i], nums[j], nums[k]]** 满足 **i != j、i != k 且 j != k** ，同时还满足 nums[i] + nums[j] + nums[k] == **0** 。
+
+请你返回所有**和为 0** 且**不重复**的三元组。
+
+注意，输出的顺序和三元组的**顺序**并不重要。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+```
+
+```
+示例 2:
+输入：nums = [0,1,1]
+输出：[]
+```
+
+#### 解法
+
+基本思路：**排序 + 双指针**。
+
+考虑到和为0，三数之中必有正负或全0，且顺序不重要，那么先排个序肯定方便计算。
+
+三个数，考虑用三个指针，其中for循环指针指定最左侧的数，从左往右遍历，那么剩下双指针只需要考虑该数右侧的部分即可（避免重复）。
+
+双指针指向该数右侧子数组的两端，分别向中间移动判断。
+
+需要注意的**去重情况**有：
+
+1. 当最左侧数**大于0**时，右侧两数也大于0，sum必大于0，直接结束循环。
+2. 当最左侧数 **nums [i] == nums [i - 1]** 时，此时双指针移动得到的三元组是一样的，跳过。
+3. 同上，当左指针 **nums[l] == nums[l + 1]** 时，三元组重复，跳过，l++。
+4. 当右指针 **nums[r] == nums[r + 1]** 时，三元组重复，跳过，r--。
+
+去重后，根据sum的值**大于**或**小于**0判断移动**右**指针还是**左**指针。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> res;
+        sort(nums.begin(), nums.end());
+        for(int i = 0; i < nums.size(); ++i){
+            int l = i + 1, r = nums.size() - 1;
+            if(nums[i] > 0) 
+                break;
+            if(i > 0 && nums[i] == nums[i - 1])
+                continue;
+            while(l < r){
+                int sum = nums[i] + nums[l] + nums[r];
+                if(sum == 0){
+                    while(l < r && nums[l] == nums[l + 1])  l++;
+                    while(l < r && nums[r] == nums[r - 1])  r--;
+                    res.push_back({nums[i], nums[l++], nums[r--]});
+                }
+                else if(sum > 0)    
+                    r--;
+                else    
+                    l++;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 16.最接近的三数之和
+
+#### 题干
+
+给你一个长度为 n 的整数数组 **nums** 和 一个目标值 **target**。请你从 nums 中选出**三个整数**，使它们的**和**与 **target** **最接近**。返回这三个数的和。
+
+假定每组输入**只存在**恰好**一个**解。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [-1,2,1,-4], target = 1
+输出：2
+```
+
+```
+示例 2:
+输入：nums = [0,0,0], target = 1
+输出：0
+```
+
+#### 解法
+
+基本思路：**排序 + 双指针**。
+
+同15题思路：排序肯定方便计算。三个数三个指针，其中for循环指针指定最左侧的数，从左往右遍历，那么剩下双指针只需要考虑该数右侧的部分即可（避免重复）。双指针指向该数右侧子数组的两端，分别向中间移动判断。
+
+不需要去重，只用计算和与target比较，根据大小判断移动哪个指针；
+
+维护结果变量res，如果 和与target的差值 小于 res与target的差值，就更新res为本次的和。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        int res = nums[0] + nums[1] + nums[2];
+        sort(nums.begin(), nums.end());
+        for(int i = 0; i < nums.size(); ++i){
+            int l = i + 1, r = nums.size() - 1;
+            while(l < r){
+                int sum = nums[i] + nums[l] + nums[r];
+                if(abs(target - sum) < abs(target - res))
+                    res = sum;
+                if(sum > target)    
+                    r--;
+                else if(sum < target)   
+                    l++;
+                else
+                    return res;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 18.四数之和
+
+#### 题干
+
+给你一个由 n 个整数组成的数组 **nums** ，和一个目标值 **target** 。请你找出并返回满足下述全部条件且**不重复**的四元组 [nums[a], nums[b], nums[c], nums[d]] （若两个四元组元素一一对应，则认为两个四元组重复）：
+
+- 0 <= a, b, c, d < n
+- a、b、c 和 d 互不相同
+- nums[a] + nums[b] + nums[c] + nums[d] == target
+
+你可以按 **任意顺序** 返回答案 。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [1,0,-1,0,-2,2], target = 0
+输出：[[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+```
+
+```
+示例 2:
+输入：nums = [2,2,2,2,2], target = 8
+输出：[[2,2,2,2]]
+```
+
+#### 解法
+
+基本思路：**排序 + 双指针**。
+
+思路同15.三数之和，无非外面多加了层循环。
+
+需要注意的**去重情况**有：
+
+1. 当最左侧数 **nums [i] == nums [i - 1]** 时，此时双指针移动得到的四元组是一样的，跳过。
+2. 当左侧第二个数 **nums [j] == nums [j - 1]** 时，此时双指针移动得到的四元组是一样的，跳过。
+3. 同上，当左指针 **nums[l] == nums[l + 1]** 时，四元组重复，跳过，l++。
+4. 当右指针 **nums[r] == nums[r + 1]** 时，四元组重复，跳过，r--。
+
+去重后，根据sum的值**大于**或**小于**0判断移动**右**指针还是**左**指针。
+
+注意越界问题，**sum**使用 **long** 记录。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> res;
+        sort(nums.begin(), nums.end());
+        for(int i = 0; i < nums.size(); ++i){
+            if(i > 0 && nums[i] == nums[i - 1])
+                continue;
+            for(int j = i + 1; j < nums.size(); ++j){
+                int l = j + 1, r = nums.size() - 1;
+                if(j > i + 1 && nums[j] == nums[j - 1])
+                    continue;
+                while(l < r){
+                    long sum = (long)nums[i] + nums[j] + nums[l] + nums[r];
+                    if(sum == target){
+                        while(l < r && nums[l] == nums[l + 1])  l++;
+                        while(l < r && nums[r] == nums[r - 1])  r--;
+                        res.push_back({nums[i], nums[j], nums[l++], nums[r--]});
+                    }
+                    else if(sum > target)    
+                        r--;
+                    else    
+                        l++;
+                }
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
