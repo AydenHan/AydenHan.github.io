@@ -4081,3 +4081,449 @@ public:
 
 
 
+## 2023.3.30
+
+### 1637.两点之间不包含任何点的最宽垂直区域
+
+#### 题干
+
+给你 n 个二维平面上的点 **points** ，其中 **points[i] = [xi, yi]** ，请你返回两点之间内部不包含任何点的 **最宽垂直区域** 的宽度。**垂直区域** 的定义是**固定宽度**，而 y 轴上无限延伸的一块区域（也就是高度为无穷大）。 最宽垂直区域 为宽度最大的一个垂直区域。
+
+请注意，垂直区域 **边上** 的点 **不在** 区域内。
+
+**示例**
+
+```
+示例 1:
+输入：points = [[8,7],[9,9],[7,4],[9,7]]
+输出：1
+```
+
+```
+示例 2:
+输入：points = [[3,1],[9,0],[1,0],[1,4],[5,3],[8,8]]
+输出：3
+```
+
+#### 解法
+
+基本思路：**排序**。
+
+其实就是求所有点 x 坐标之间的**最大差值**。按第一位排序，然后求最大差值即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int maxWidthOfVerticalArea(vector<vector<int>>& points) {
+        sort(points.begin(), points.end(),  [](const vector<int>& a, const vector<int>& b) {
+            return a[0] < b[0];
+        });
+        int res = 0;
+        for(int i = 1; i < points.size(); ++i)
+            res = max(res, points[i][0] - points[i-1][0]);
+        return res;
+    }
+};
+```
+
+#### 优化
+
+![image-20230330111533897](LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/image-20230330111533897.png)
+
+```cpp
+class Solution {
+public:
+    int maxWidthOfVerticalArea(vector<vector<int>>& points) {
+        int n = points.size();
+        vector<int> nums;
+        for (auto& p : points) {
+            nums.push_back(p[0]);
+        }
+        const int inf = 1 << 30;
+        int mi = inf, mx = -inf;
+        for (int v : nums) {
+            mi = min(mi, v);
+            mx = max(mx, v);
+        }
+        int bucketSize = max(1, (mx - mi) / (n - 1));
+        int bucketCount = (mx - mi) / bucketSize + 1;
+        vector<pair<int, int>> buckets(bucketCount, {inf, -inf});
+        for (int v : nums) {
+            int i = (v - mi) / bucketSize;
+            buckets[i].first = min(buckets[i].first, v);
+            buckets[i].second = max(buckets[i].second, v);
+        }
+        int ans = 0;
+        int prev = inf;
+        for (auto [curmin, curmax] : buckets) {
+            if (curmin > curmax) continue;
+            ans = max(ans, curmin - prev);
+            prev = curmax;
+        }
+        return ans;
+    }
+};
+```
+
+
+
+### 704.二分查找
+
+#### 题干
+
+给定一个 n 个元素有序的（**升序**）整型数组 **nums** 和一个目标值 **target**  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 **-1**。
+
+**示例**
+
+```
+示例 1:
+输入: nums = [-1,0,3,5,9,12], target = 9
+输出: 4
+```
+
+```
+示例 2:
+输入: nums = [-1,0,3,5,9,12], target = 2
+输出: -1
+```
+
+#### 解法
+
+基本思路：**二分查找**。
+
+当二分查找的双指针是闭区间 **[ l, r ]** 时while中判断是 **<=** ；当左闭右开时，while中使用 **<** ，**r = num.size()**。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int l = 0, r = nums.size() - 1;
+        while(l <= r){
+            int mid = (l + r) / 2;
+            if(nums[mid] == target)
+                return mid;
+            else if(nums[mid] > target)
+                r = mid - 1;
+            else
+                l = mid + 1;
+        }
+        return -1;
+    }
+};
+```
+
+
+
+### 35.搜索插入位置
+
+#### 题干
+
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。请必须使用时间复杂度为 **O(log n)** 的算法。
+
+**示例**
+
+```
+示例 1:
+输入: nums = [1,3,5,6], target = 5
+输出: 2
+```
+
+```
+示例 2:
+输入: nums = [1,3,5,6], target = 7
+输出: 4
+```
+
+#### 解法
+
+基本思路：**二分查找**。
+
+和704.二分查找一样，最后return的值改成双指针相遇的位置，就是应该插入的位置。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int l = 0, r = nums.size() - 1;
+        while(l <= r){
+            int mid = (l + r) / 2;
+            if(nums[mid] < target)	l = mid + 1;
+            else if(nums[mid] > target)	r = mid - 1;
+            else	return mid;
+        }
+        return l;
+    }
+};
+```
+
+
+
+### 34.在排序数组中查找元素的第一个和最后一个位置
+
+#### 题干
+
+给你一个按照**非递减顺序**排列的整数数组 **nums**，和一个目标值 **target**。请你找出给定目标值在数组中的**开始**位置和**结束**位置。如果数组中**不存在**目标值 target，返回 **[-1, -1]**。
+
+你必须设计并实现时间复杂度为 **O(log n)** 的算法解决此问题。
+
+**示例**
+
+```
+示例 1:
+输入：nums = [5,7,7,8,8,10], target = 8
+输出：[3,4]
+```
+
+```
+示例 2:
+输入：nums = [5,7,7,8,8,10], target = 6
+输出：[-1,-1]
+```
+
+#### 解法
+
+基本思路：**二分查找**。
+
+需要两次二分查找，找左边的就不断将右指针向左压缩，找到target后继续压缩直至左右指针重合，找右边同理。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findRange(vector<int>& nums, int target, bool isLeft){
+        int l = 0, r = nums.size() - 1;
+        int res = -1;
+        while(l <= r){
+            int mid = (l + r) / 2;
+            if(nums[mid] < target)	l = mid + 1;
+            else if(nums[mid] > target)	r = mid - 1;
+            else{
+                res = mid;
+                if(isLeft)	r = mid - 1;
+                else	l = mid + 1;
+            }
+        }
+        return res;
+    }
+    vector<int> searchRange(vector<int>& nums, int target) {
+        return {findRange(nums, target, true), findRange(nums, target, false)};
+    }
+};
+```
+
+
+
+### 69.x的平方根 、367.有效的完全平方数
+
+#### 题干
+
+给你一个**非负整数** x ，计算并返回 **x** 的 **算术平方根** 。
+
+由于返回类型是整数，结果只保留 **整数部分** ，小数部分将被 **舍去** 。
+
+注意：不允许使用任何内置指数函数和算符，例如 pow(x, 0.5) 或者 x ** 0.5 。
+
+**示例**
+
+```
+示例 1:
+输入：x = 4
+输出：2
+```
+
+```
+示例 2:
+输入：x = 8
+输出：2
+```
+
+#### 解法
+
+基本思路：**二分查找**。
+
+小数部分舍去，因此结果的平方必然 **小于等于** x，因此在该处记录mid值，等到 l 和 r 重合后的mid即为结果。
+
+注意用 **long long** 存储平方结果。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int mySqrt(int x) {
+        int l = 0, r = x, res;
+        while(l <= r){
+            int mid = (l + r) / 2;
+            if((long long)mid * mid <= x){
+                l = mid + 1;
+                res = mid;
+            }	
+            else	r = mid - 1;
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 27.移除元素、26.删除有序数组中的重复项
+
+#### 解法
+
+基本思路：**双指针**。
+
+利用了题意只打印前返回值个数的元素且不在意顺序，因此不需要真删，最后返回**头指针的位置**即可。
+
+#### 代码
+
+```cpp
+// 27
+class Solution {
+public:
+    // 双指针
+    int removeElement(vector<int>& nums, int val) {
+        int l = 0, r = nums.size() - 1;
+        while(l <= r){
+            if(nums[l] == val)
+                nums[l] = nums[r--];
+            else
+                l++;
+        }
+        return l;
+    }
+    // vector方法操作
+    int removeElement2(vector<int>& nums, int val) {
+        if(nums.empty())    return 0;
+        vector<int>::iterator it = nums.begin();
+        while(it != nums.end()){
+            if(*it == val)
+                nums.erase(it);
+            else
+                it++;
+        }
+        return nums.size();
+    }
+};
+```
+
+```cpp
+// 26
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int l = 0;
+        for(int r = 0; r < nums.size(); ++r){
+            if(nums[l] != nums[r])
+                nums[++l] = nums[r];
+        }
+        return l + 1;
+    }
+};
+```
+
+
+
+### 283.移动0
+
+#### 解法
+
+基本思路：**双指针**。
+
+确保 **r指针** 的左边均为非0值，**l指针** 用于遍历一遍，将所有非0值与 r 所在位置交换。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        int r = 0;
+        for(int l = 0; l < nums.size(); ++l)
+            if(nums[l])
+                swap(nums[l], nums[r++]);
+    }
+};
+```
+
+
+
+### 844.比较含退格的字符串
+
+#### 解法
+
+基本思路：**双指针**。
+
+慢指针维护真实的字符串，始终指向真实字符串的后一位（相当于真实字符串的长度）。
+
+快指针用于遍历。非 **‘#’** 时，将快指针指向的字符赋给慢指针位置，慢指针右移；当为 **‘#’** 时，不赋值并慢指针后退。最后慢指针用于截取字符串（前slow个字符）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string strBack(string s){
+        int slow = 0;
+        for(int fast = 0; fast < s.length(); ++fast)
+            if(s[fast] != '#')
+                s[slow++] = s[fast];
+            else if(slow > 0)
+                slow--;
+        return s.substr(0, slow);
+    }
+
+    bool backspaceCompare(string s, string t) {
+        return strBack(s) == strBack(t);
+    }
+};
+```
+
+
+
+### 977.有序数组的平方
+
+#### 解法
+
+基本思路：**双指针**。
+
+其实是三指针。
+
+维护一个指针**truth**指向结果数组的尾部。另外双指针分别指向头尾，将两者中平方更大的数加入结果数组（同时**truth**指针左移，因为从大到小插入），指针向中间移动。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> sortedSquares(vector<int>& nums) {
+        int truth = nums.size() - 1;
+        vector<int> res(nums.size());
+        for(int i = 0, j = nums.size() - 1; i <= j;){
+            if(nums[i] * nums[i] < nums[j] * nums[j]){
+                res[truth--] = nums[j] * nums[j];
+                j--;
+            }
+            else{
+                res[truth--] = nums[i] * nums[i];
+                i++;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
