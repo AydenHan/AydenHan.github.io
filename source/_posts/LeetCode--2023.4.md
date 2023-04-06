@@ -391,9 +391,9 @@ public:
 
 
 
-## 2023.4.4
+## 2023.4.5
 
-### 46.全排列
+### 2427.公因子的数目
 
 #### 解法
 
@@ -413,6 +413,332 @@ public:
             if(a % i == 0 && b % i == 0)
                 res++;
         return res;
+    }
+};
+```
+
+
+
+## 2023.4.6
+
+### 1017.负二进制转换
+
+#### 题干
+
+给你一个整数 `n` ，以二进制字符串的形式返回该整数的 **负二进制（`base -2`）**表示。
+
+**注意，**除非字符串就是 `"0"`，否则返回的字符串中不能含有前导零。
+
+**示例**
+
+```
+示例 1：
+输入：n = 2
+输出："110"
+解释：(-2)2 + (-2)1 = 2
+```
+
+```
+示例 2：
+输入：n = 3
+输出："111"
+解释：(-2)2 + (-2)1 + (-2)0 = 3
+```
+
+#### 解法
+
+基本思路：**模拟、数学**
+
+本题主要用到了**十进制转n进制**的方法：**除n取余，逆序排列**。代码模拟了这个过程。
+
+注意：因为填入的结果只有0、1，而余数可能为 -1，可以通过商+1重新计算余数，不影响结果。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string baseNeg2(int n) {
+        if(n == 0)  
+            return "0";
+        string res = "";
+        while(n){
+            int quotient = n / -2;
+            int remainder = n - quotient * -2;
+            if(remainder < 0)
+                remainder = n - ++quotient * -2;
+            res += to_string(remainder);
+            n = quotient;    
+        }
+        return string(res.rbegin(), res.rend());
+    }
+};
+```
+
+
+
+### 47.全排列Ⅱ
+
+#### 题干
+
+给定一个可包含重复数字的序列 `nums` ，***按任意顺序*** 返回所有不重复的全排列。
+
+**示例**
+
+```
+示例 1：
+输入：nums = [1,1,2]
+输出：[[1,1,2],[1,2,1],[2,1,1]]
+```
+
+```
+示例 2：
+输入：nums = [1,2,3]
+输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+```
+
+#### 解法
+
+基本思路：**回溯、DFS**
+
+相比于46.全排列，这题在输入数组中存在重复数字，这意味着按照之前的方法会导致重复数字被使用导致排列相同的情况。因此需要判断和剪枝。
+
+首先，要先找到重复数字是哪些，最方便的方法就是先对原数组进行**排序**，那么是否重复只需和上一个数字比较即可。
+
+其次，因为排序，不能直接在原数组上操作了，需要新开一个数组存储每次排列的结果，通过**push**和**pop**来实现**状态重置**。
+
+接着，就需要找到要被剪枝的部分的**判断条件**——
+
+以本题的示例1来说：
+
+![image.png](LeetCode--2023.4/1600386643-uhkGmW-image.png)
+
+可以发现，对于一个重复数字，如果它的上一个相同数字已经被使用了（添加进了数组中），那么该数字是不影响接下来的使用的，因为是添加到上一个数字后面的。而对于未被使用（不在结果数组中）的相同数字，就会导致结果重复。1、1、2中选1和选1，剩下的都是1、2，那么结果也都是一样的，因此可以得到跳过的条件：
+
+**遍历到的数字和上一个相同（重复了）且上一个数字未被使用。**使用一个数组进行记录使用情况，在递归前后改变状态完成状态重置。
+
+注意：
+
+1. i - 1 越界问题，要加上 i > 0;
+2. 由于原数组被排序了，也无法得知上一个被push进数组的是哪个，因此for循环需要全部遍历一遍，对于已经被push的（状态数组为true，直接跳过即可）。
+3. idx用于统计结果数组中已push的数字数量，满了就存储一个结果并开始状态重置。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    void dfs(vector<vector<int>>& res, vector<int>& sub, vector<bool>& used, vector<int>& nums, int idx){
+        if(idx == nums.size()){
+            res.push_back(sub);
+            return;
+        }
+        for(int i = 0; i < nums.size(); ++i){
+            if(used[i] || i > 0 && nums[i] == nums[i-1] && !used[i-1])
+                continue;
+            sub.push_back(nums[i]);
+            used[i] = true;
+            dfs(res, sub, used, nums, idx + 1);
+            used[i] = false;
+            sub.pop_back();
+        }
+    }
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> sub;
+        vector<bool> used(nums.size());
+        sort(nums.begin(), nums.end());
+        dfs(res, sub, used, nums, 0);
+        return res;
+    }
+};
+```
+
+
+
+### 56.合并区间
+
+#### 题干
+
+以数组 **intervals** 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你**合并所有重叠的区间**，并返回 **一个不重叠的区间数组**，该数组需恰好**覆盖**输入中的**所有区间** 。
+
+**示例**
+
+```
+示例 1：
+输入：intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出：[[1,6],[8,10],[15,18]]
+```
+
+```
+示例 2：
+输入：intervals = [[1,4],[0,4]]
+输出：[[0,4]]
+```
+
+#### 解法
+
+基本思路：**双指针？**
+
+先对二维数组排序，sort默认按第一列升序排，不需要自定义比较函数（自定义的比较函数会让排序慢上很多，其中**单写函数比lambda函数要快一些**）。排完序后需要合并的区间必然是**连续**的。
+
+双指针（这里用了一个大小为2的vector便于存储），只需要判断**左区间和上一个的右区间**即可。
+
+- 左区间大，不用合并，则直接将当前区间加入结果，双指针替换为当前区间的左右边界；
+- 左区间小，再判断**右区间和上一个的右区间**，只有当前右区间更大的时候需要替换右边界的值。
+
+结束循环后，若最后一个区间需要合并，则值已经更新在双指针sub中；若不需要合并，则sub也已经替换为了该区间。仅需将sub再加入结果中即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end());
+        vector<vector<int>> res;
+        vector<int> sub = intervals[0];
+        for(int i = 1; i < intervals.size(); ++i){
+            if(intervals[i][0] <= sub[1]){
+                if(intervals[i][1] > sub[1])
+                    sub[1] = intervals[i][1];
+            }
+            else{
+                res.push_back(sub);
+                sub = intervals[i];
+            }
+        }
+        res.push_back(sub);
+        return res;56
+    }
+};
+```
+
+
+
+### 57.插入区间
+
+#### 题干
+
+给你一个 **无重叠的** *，*按照区间起始端点排序的区间列表。
+
+在列表中插入一个新的区间，你需要确保列表中的区间仍然有序且不重叠（如果有必要的话，可以合并区间）。
+
+**示例**
+
+```
+示例 1：
+输入：intervals = [[1,3],[6,9]], newInterval = [2,5]
+输出：[[1,5],[6,9]]
+```
+
+```
+示例 2：
+输入：intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+输出：[[1,2],[3,10],[12,16]]
+```
+
+#### 解法
+
+基本思路：**模拟**
+
+遍历一遍，每个元素判断以下三种状态：
+
+1. 完全在插入区间左边，直接push
+2. 与插入区间有重叠，求他们的并集，更新插入区间的左右边界。
+3. 完全在插入区间右侧，需要判断插入区间是否push了，没push就push一下，然后push本次元素。
+
+如果遍历完都没有push过，那么最后push插入区间。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        bool merged = false;
+        vector<vector<int>> res;
+        for (auto& range: intervals) {
+            if (range[1] < newInterval[0])
+                res.push_back(range);
+            else if (range[0] > newInterval[1]) {
+                if (!merged) {
+                    res.push_back(newInterval);
+                    merged = true;                    
+                }
+                res.push_back(range);
+            }
+            else {
+                newInterval[0] = min(newInterval[0], range[0]);
+                newInterval[1] = max(newInterval[1], range[1]);
+            }
+        }
+        if (!merged) {
+            res.push_back(newInterval);
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 73.矩阵置0
+
+#### 题干
+
+给定一个 `m x n` 的矩阵，如果一个元素为 **0** ，则将其所在行和列的所有元素都设为 **0** 。请使用 **原地** 算法**。**
+
+你能想出一个仅使用**常量空间**的解决方案吗？
+
+**示例**
+
+```
+示例 1：
+输入：matrix = [[1,1,1],[1,0,1],[1,1,1]]
+输出：[[1,0,1],[0,0,0],[1,0,1]]
+```
+
+```
+示例 2：
+输入：matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+输出：[[0,0,0,0],[0,4,5,0],[0,3,1,0]]
+```
+
+#### 解法
+
+基本思路：**模拟**
+
+仅用常数空间，那只能利用原数组进行操作，也就是挑一行和一列记录该行/列是否有0。于是问题转化为了如何记录这一行一列本身是否有0？
+
+思考过程中发现，第一行是最先遍历的话，就能先知道这一行是否有0，那么这一行的值就不重要了，可以用来存储。那么对于列来说，如果是行内遍历列的话（for循环行在外面），只需要维护一个标志位，每次行内遍历时先判断的是第一列，如果是0，标志位置位，就知道了第一列是否有0。这样第一列的值也不重要了（判断过了），也可以用来存储了。
+
+最后按照第一行和第一列的记录情况把对应行列置0。注意跟上述过程相反，为了将记录信息保存到最后，从右下角开始遍历，先向左（到第一列时，这个位置的记录就不需要了。**根据标志位对第一列单独置0**）再向上。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        bool col0 = false;
+        int row = matrix.size();
+        int col = matrix[0].size();
+        for(int i = 0; i < row; ++i){
+            if(matrix[i][0] == 0)   col0 = true;
+            for(int j = 1; j < col; ++j){
+                if(matrix[i][j] == 0){
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
+        for(int i = row - 1; i >= 0; --i){
+            for(int j = col - 1; j >= 1; --j)
+                if(matrix[i][0] == 0 || matrix[0][j] == 0)
+                    matrix[i][j] = 0;
+            if(col0)   matrix[i][0] = 0;
+        }
     }
 };
 ```
