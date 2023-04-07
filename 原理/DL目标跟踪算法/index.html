@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>DL目标跟踪算法 | 小涵的米奇妙妙屋</title><meta name="keywords" content="算法,Deep Learning"><meta name="author" content="Szh"><meta name="copyright" content="Szh"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言目标跟踪难点 形态变化 - 姿态变化是目标跟踪中常见的干扰问题。运动目标发生姿态变化时, 会导致它的特征以及外观模型发生改变, 容易导致跟踪失败。例如:体育比赛中的运动员、马路上的行人。 尺度变化 - 尺度的自适应也是目标跟踪中的关键问题。当目标尺度缩小时, 由于跟踪框不能自适应跟踪, 会将很多背景信息包含在内, 导致目标模型的更新错误；当目标尺度增大时, 由于跟踪框不能将目标完全包括在内,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DL目标跟踪算法">
+<meta property="og:url" content="https://www.hanhan0223.cn/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="小涵的米奇妙妙屋">
+<meta property="og:description" content="前言目标跟踪难点 形态变化 - 姿态变化是目标跟踪中常见的干扰问题。运动目标发生姿态变化时, 会导致它的特征以及外观模型发生改变, 容易导致跟踪失败。例如:体育比赛中的运动员、马路上的行人。 尺度变化 - 尺度的自适应也是目标跟踪中的关键问题。当目标尺度缩小时, 由于跟踪框不能自适应跟踪, 会将很多背景信息包含在内, 导致目标模型的更新错误；当目标尺度增大时, 由于跟踪框不能将目标完全包括在内,">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg">
+<meta property="article:published_time" content="2023-04-07T02:54:57.000Z">
+<meta property="article:modified_time" content="2023-04-07T13:43:09.108Z">
+<meta property="article:author" content="Szh">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="Deep Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg"><link rel="shortcut icon" href="/img/Sign.ico"><link rel="canonical" href="https://www.hanhan0223.cn/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a8ed5b37dd0aaae924c52eb382109c5d";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"prismjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DL目标跟踪算法',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-04-07 21:43:09'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小涵的米奇妙妙屋</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">DL目标跟踪算法</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-07T02:54:57.000Z" title="发表于 2023-04-07 10:54:57">2023-04-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-07T13:43:09.108Z" title="更新于 2023-04-07 21:43:09">2023-04-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8E%9F%E7%90%86/">原理</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.5k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="DL目标跟踪算法"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="目标跟踪难点"><a href="#目标跟踪难点" class="headerlink" title="目标跟踪难点"></a>目标跟踪难点</h3><ol>
+<li><strong>形态变化</strong> - 姿态变化是目标跟踪中常见的干扰问题。运动目标发生姿态变化时, 会导致它的特征以及外观模型发生改变, 容易导致跟踪失败。例如:体育比赛中的运动员、马路上的行人。</li>
+<li><strong>尺度变化</strong> - 尺度的自适应也是目标跟踪中的关键问题。当目标尺度缩小时, 由于跟踪框不能自适应跟踪, 会将很多背景信息包含在内, 导致目标模型的更新错误；当目标尺度增大时, 由于跟踪框不能将目标完全包括在内, 跟踪框内目标信息不全, 也会导致目标模型的更新错误。因此, 实现尺度自适应跟踪是十分必要的。</li>
+<li><strong>遮挡与消失</strong> - 目标在运动过程中可能出现被遮挡或者短暂的消失情况。当这种情况发生时, 跟踪框容易将遮挡物以及背景信息包含在跟踪框内, 会导致后续帧中的跟踪目标漂移到遮挡物上面。若目标被完全遮挡时, 由于找不到目标的对应模型, 会导致跟踪失败。</li>
+<li><strong>图像模糊</strong> - 光照强度变化, 目标快速运动, 低分辨率等情况会导致图像模型, 尤其是在运动目标与背景相似的情况下更为明显。因此, 选择有效的特征对目标和背景进行区分非常必要。</li>
+</ol>
+<h3 id="跟踪算法简要总结"><a href="#跟踪算法简要总结" class="headerlink" title="跟踪算法简要总结"></a>跟踪算法简要总结</h3><ul>
+<li>相比于光流法、Kalman、Meanshift等传统算法，<strong>相关滤波类</strong>算法跟踪速度更快，<strong>深度学习</strong>类方法精度高；</li>
+<li>具有<strong>多特征</strong>融合以及<strong>深度特征</strong>的追踪器在跟踪精度方面的效果更好；</li>
+<li>使用<strong>强大的分类器</strong>是实现良好跟踪的基础；</li>
+<li>尺度的自适应以及模型的更新机制也影响着跟踪的精度。</li>
+</ul>
+<h2 id="SiameseFC"><a href="#SiameseFC" class="headerlink" title="SiameseFC"></a>SiameseFC</h2><p><strong><a href="https://link.zhihu.com/?target=https://arxiv.org/abs/1606.09549">Fully-Convolutional Siamese Networks</a></strong></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/q923714892/article/details/119839796">CSDN - SiameseFC超详解</a></p>
+<h3 id="要做什么？"><a href="#要做什么？" class="headerlink" title="要做什么？"></a>要做什么？</h3><p>SOT的思想是，在视频中的某一帧中框出你需要跟踪目标的bounding box，在后续的视频帧中，无需你再检测出物体的bounding box进行匹配，而是通过某种相似度的计算，寻找需要跟踪的对象在后续帧的位置。</p>
+<h3 id="解决什么问题？"><a href="#解决什么问题？" class="headerlink" title="解决什么问题？"></a>解决什么问题？</h3><p>目前基于深度学习的跟踪方法，要不就是采用 shallow methods（如：correlation filters）利用网络的中间表示作为 feature；要不就是执行 SGD 算法来微调多层网络结构。但是，利用 shallow 的方法并不能充分发挥 end-to-end 训练的优势，采用 SGD 的方法来微调也无法达到实时的要求。</p>
+<p>将DL用于tracking中，有两点制约其发展：</p>
+<ol>
+<li><strong>训练数据的稀缺</strong>。由于跟踪目标事先未知，只能通过最初的框选定，无法预先准备大量训练数据。</li>
+<li><strong>实时的约束</strong>。对于跟踪问题来说，基于DL的做法虽然能有效提升模型的丰富度，能够很好的提升跟踪的效果，但是在时效性这一方面却做的很差，因为DL复杂的模型往往需要很大的计算量，尤其是当使用的DL模型在跟踪的时候需要对模型进行更新的话，需要在线SGD调整网络参数，限制了速度，可能使用GPU都没法达到实时。</li>
+</ol>
+<p><strong>Siamese-FC</strong>分别针对这两点，利用ILSVRC15 数据库中用于目标检测的视频来训练模型（离线训练），在跟踪时，不更新模型（也就没有fine-tuning），保证速度够快。成为了使用了CNN进行跟踪，同时又具有很高的效率的跟踪算法。并因其速度很快，效果很好，成为之后很多算法（例如CFNet、DCFNet）的baseline。</p>
+<h3 id="如何解决？"><a href="#如何解决？" class="headerlink" title="如何解决？"></a>如何解决？</h3><p>使用<strong>孪生网络</strong>（Siamese Net）结构来进行<strong>相似度比较</strong>，对比模版图片（在训练前应该指定好）和需比较的目标图片之间的相似度。</p>
+<h3 id="效果如何？"><a href="#效果如何？" class="headerlink" title="效果如何？"></a>效果如何？</h3><p>速度是SiameseFC的最大优势。可以用于追踪任意物体（不需要预先训练）。</p>
+<h3 id="框架结构"><a href="#框架结构" class="headerlink" title="框架结构"></a>框架结构</h3><p><img src="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3E5MjM3MTQ4OTI=,size_16,color_FFFFFF,t_70.png" alt="在这里插入图片描述"></p>
+<p>图中z代表的是模板图像，算法中使用的是<strong>第一帧</strong>的groundtruth；</p>
+<p>x代表的是search region，代表在后面的待跟踪帧中的<strong>候选框搜索区域</strong>；</p>
+<p>ϕ代表的是一种<strong>特征映射操作</strong>，将原始图像映射到特定的特征空间，文中采用的是<strong>CNN中的卷积层和pooling层</strong>；6x6x128代表z经过ϕ后得到的特征，是一个128通道66大小feature，同理，22x22x128是x经过ϕ后的特征；后面的代表卷积操作，让22x22x128的feature被6x6x128的卷积核卷积，得到一个17*17的<strong>score map</strong>，代表着search region中各个位置与模板相似度值。score越大，相似度越大，越有可能是同一个物体。</p>
+<p>总体来说，卷积网络将search image作为整体输入，<strong>直接计算两个输入图像的feature map的相似度匹配</strong>，节省了计算。计算得到相似度最高的位置，并反向计算出目标在原图中的位置。</p>
+<p>算法本身是比较搜索区域与目标模板的相似度，最后得到搜索区域的score map。其实从原理上来说，这种方法和相关性滤波的方法很相似。其在搜索区域中逐个的对目标模板进行匹配，将这种逐个平移匹配计算相似度的方法看成是一种卷积，然后在卷积结果中找到相似度值最大的点，作为新的目标的中心。</p>
+<p>上图所画的ϕ其实是CNN中的一部分，并且两个ϕ的网络结构是一样的，这是一种典型的孪生神经网络，并且在整个模型中只有conv层和pooling层，因此这也是一种典型的全卷积（fully-convolutional）神经网络。</p>
+<h3 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h3><p><img src="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3E5MjM3MTQ4OTI=,size_16,color_FFFFFF,t_70-16808480030013.png" alt="在这里插入图片描述"></p>
+<p>整个网络结构类似与AlexNet，但是没有最后的全连接层，只有前面的卷积层和pooling层。</p>
+<p>其中pooling层采用的是max-pooling，每个卷积层后面都有一个ReLU非线性激活层，但是第五层没有。另外，在训练的时候，每个ReLU层前都使用了batch normalization，用于降低过拟合的风险。</p>
+<h3 id="不足之处"><a href="#不足之处" class="headerlink" title="不足之处"></a>不足之处</h3><p><strong>鲁棒性不强</strong></p>
+<p>SiameseFC是一个模板匹配的任务，在跟踪过程中<strong>并不更新目标模板和网络权值</strong>，这造成如下问题：</p>
+<ol>
+<li><p>当目标发生<strong>较大的形变</strong>时，会造成目标候选框与目标模板出现较大差异，从而导致跟踪失败。网络权值不更新导致要使用同一套网络结构和网络参数适应所有的跟踪场景，这是很难做到的。</p>
+</li>
+<li><p>对于没有处于复杂背景下的跟踪来说，该算法能基本平衡实时性与准确性要求，但是跟踪目标一旦发生<strong>遮挡、快速运动、相似外观</strong>，搜索图像的大小可能就覆盖不了目标，通过最后的相似性度量函数得出来的结果就是错误的，随着跟踪过程中发生的错误累加，导致<strong>跟踪不可恢复</strong>，所以孪生结构网络的跟踪性能在背景复杂的情况下会下降。</p>
+</li>
+</ol>
+<h3 id="失败原因"><a href="#失败原因" class="headerlink" title="失败原因"></a>失败原因</h3><ol>
+<li>目标特征不够具体、突出、全面 （AlexNet提取特征不够细致）</li>
+<li>没能利用好空间信息、运动信息 （运动模型不够合理）</li>
+<li>搜索域方法的局限性 （多尺度增加计算量，无法适应尺度变化）</li>
+<li>匹配与分类的本质差别 （分类对背景前景区分较好）</li>
+</ol>
+<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><ol>
+<li><p>加入在线更新的策略（增加目标信息，牺牲速度或者增强特征的提取）</p>
+</li>
+<li><p>需要对首帧标注图像做处理（抑制背景信息，增加前景和背景的区分度）<br>SiamFC选用第一帧作为模板并不予更新，因此首帧目标信息为关键信息，而SiamFC模型中，最后采用相似度学习，如果不能降模板图像中背景信息的干扰，则必然会对结果造成影响。 因此应当对标注图像进行进一步的目标提取，并对背景信息进行抑制。</p>
+</li>
+<li><p>利用空间信息，估计运动模型。在存在较多相似目标的场景中，可能特征匹配难以准确地判断哪个才是真正的目标。而人在这种场景下追踪目标的策略往往是根据：<br>（1）目标的空间信息，例如一队人中的第几个，或者目标周围有哪些参照物。这一点可以通过对目标旁边的背景进行建模实现。<br>（2）根据目标的运动轨迹进行预测，因为目标的变化(无论是位置还是外观)在序列中往往是连续可微的。</p>
+</li>
+</ol>
+<h3 id="轻量化方案"><a href="#轻量化方案" class="headerlink" title="轻量化方案"></a>轻量化方案</h3><ol>
+<li>从现有的高性能网络出发，优化网络结构，压缩网络参数，最终使网络满足边缘端部署的要求。（<strong>深度压缩、知识蒸馏、低位量化</strong>，这些工作需要在精度、帧率和参数的数量之间进行权衡，从而引入过多的人工参与。）</li>
+<li>直接设计轻量级结构，然后结合剪枝和量化，最终满足边缘-端部署的要求。(<strong>SqueezeNet、MobileNet</strong>，集中于减少网络的权重参数)</li>
+</ol>
+<h2 id="SiamMixer（内存优化）"><a href="#SiamMixer（内存优化）" class="headerlink" title="SiamMixer（内存优化）"></a>SiamMixer（内存优化）</h2><p><strong><a target="_blank" rel="noopener" href="https://www.webofscience.com/wos/alldb/full-record/WOS:000775437100001">SiamMixer: A Lightweight and Hardware-Friendly Visual Object-Tracking Network</a></strong></p>
+<p><font color="red"><strong>暂不需要</strong></font></p>
+<p>构建轻量级主干网络。</p>
+<p><img src="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/image-20230407200016229.png" alt="image-20230407200016229"></p>
+<p>骨干网络的主要目标是在有限的参数预算内对输入图像中的局部信息和全局信息进行建模。它在深度卷积层后应用一个1×1卷积层来进行结构编码。为了保持网络结构的简单性，用于结构编码的MobileNetV2块以相同的内核大小实现。</p>
+<p><img src="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/image-20230407200302997.png" alt="image-20230407200302997"></p>
+<p>为了降低运行时内存成本，我们按补丁的顺序（卷积后的每个值）进行卷积层。在卷积层推理过程中，一次处理一个小的图像补丁。一旦小的图像补丁被处理，它们占用的内存空间就会被释放，从而可以降低峰值内存成本。该方法的主要缺点是由于空间受限，无法对输入图像的全局信息进行编码。因此该作者设计了Mixer模块用于对卷积特征映射进行全局编码。</p>
+<p>未完待续。。。</p>
+<h2 id="SiamEE（速度优化）"><a href="#SiamEE（速度优化）" class="headerlink" title="SiamEE（速度优化）"></a>SiamEE（速度优化）</h2><p><strong><a target="_blank" rel="noopener" href="https://www.webofscience.com/wos/alldb/full-record/WOS:000709077100001">Early Exiting-Enabled Siamese Tracking for Edge Intelligence Applications</a></strong></p>
+<p><strong>1、允许模型在适用时提前退出。</strong></p>
+<p>受BranchyNet的启发，我们在每个卷积层之后引入三个出口分支，从第二层开始并产生四个出口点，包括主分支出口。出口分支位于除第一层之外的每个卷积层之后。实验上，我们发现第一层表示良好跟踪特征的能力较差。此外，从第一层获得的分数图尺寸较大，需要下采样到输出尺寸。这个早期分支的好处并不能合理地满足额外计算成本的需求。因此，我们不会在第一层之后直接附加早期退出分支。</p>
+<p><img src="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/image-20230407204523210.png" alt="image-20230407204523210"></p>
+<p>从离输入最近的出口分支开始，得到该分支的得分图。然后将最大分数与预定义的阈值 γb 进行比较。如果此分数大于 γb，则分数图作为最终输出返回，推理停止。否则，该过程将一直继续到最后一点，并依次检查每个出口分支的相应输出。对于单个样本，每个卷积层的输出仅计算一次，如果不满足退出条件，则将其馈送到下一层。</p>
+<p>由于我们的目标是在不寻求额外计算开销的情况下实现合理的准确性，因此我们不包含任何提前退出的动态规则。相反，我们定义固定阈值并在训练结束后调整它们。此外，这些手动指定的阈值在调整准确度-速度权衡时会派上用场。</p>
+<p>在在线跟踪期间，将搜索图像与初始模板图像进行比较，初始模板图像不会在每一帧中更新，这意味着模板图像的特征表示仅对所有出口分支计算一次，然后用于所有后续帧。这导致快速推理。</p>
+<p><strong>2、通过简单的跳跃规则跳过比例搜索</strong></p>
+<p>详尽的比例搜索策略是昂贵计算的另一个关键来源。由于本研究的目的是在允许合理的精度损失的同时降低计算成本，我们通过引入简单的跳跃规则修改了尺度搜索方法。跳过比例搜索可以显着节省计算量，因为在许多情况下，尤其是在高速运行时，比例差异在频繁帧中可以忽略不计。</p>
+<p>由于我们的模型不提供预测置信度，因此我们使用预测分数图的最大值代替。</p>
+<p>分数越高表示置信度越高。为了决定我们是否可以在下一帧中跳过多尺度搜索，我们观察这个得分值。如果分数在下降，我们就在下一帧应用多尺度搜索。在这项工作中，我们只将当前帧的分数与之前的分数进行比较。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a><a class="post-meta__tags" href="/tags/Deep-Learning/">Deep Learning</a></div><div class="post_share"><div class="social-share" data-image="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023.4/"><img class="next-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LeetCode--2023.4</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023.4/" title="LeetCode--2023.4"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="title">LeetCode--2023.4</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98--3%E6%9C%88%E5%8F%8A%E4%BB%A5%E5%89%8D/" title="LeetCode每日一题--3月及以前"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-04</div><div class="title">LeetCode每日一题--3月及以前</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Szh</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shen962806862"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎光临 我的快乐</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E9%9A%BE%E7%82%B9"><span class="toc-text">目标跟踪难点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95%E7%AE%80%E8%A6%81%E6%80%BB%E7%BB%93"><span class="toc-text">跟踪算法简要总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SiameseFC"><span class="toc-text">SiameseFC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%81%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">要做什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">解决什么问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-text">如何解决？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%88%E6%9E%9C%E5%A6%82%E4%BD%95%EF%BC%9F"><span class="toc-text">效果如何？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%86%E6%9E%B6%E7%BB%93%E6%9E%84"><span class="toc-text">框架结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="toc-text">网络结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E8%B6%B3%E4%B9%8B%E5%A4%84"><span class="toc-text">不足之处</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0"><span class="toc-text">失败原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF"><span class="toc-text">解决思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%BB%E9%87%8F%E5%8C%96%E6%96%B9%E6%A1%88"><span class="toc-text">轻量化方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SiamMixer%EF%BC%88%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96%EF%BC%89"><span class="toc-text">SiamMixer（内存优化）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SiamEE%EF%BC%88%E9%80%9F%E5%BA%A6%E4%BC%98%E5%8C%96%EF%BC%89"><span class="toc-text">SiamEE（速度优化）</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/" title="DL目标跟踪算法"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DL目标跟踪算法"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/" title="DL目标跟踪算法">DL目标跟踪算法</a><time datetime="2023-04-07T02:54:57.000Z" title="发表于 2023-04-07 10:54:57">2023-04-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/LeetCode--2023.4/" title="LeetCode--2023.4"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode--2023.4"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/LeetCode--2023.4/" title="LeetCode--2023.4">LeetCode--2023.4</a><time datetime="2023-04-01T02:32:55.000Z" title="发表于 2023-04-01 10:32:55">2023-04-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/uncategorized/CPP%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/" title="CPP基础笔记"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CPP基础笔记"/></a><div class="content"><a class="title" href="/uncategorized/CPP%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/" title="CPP基础笔记">CPP基础笔记</a><time datetime="2023-03-18T08:14:14.000Z" title="发表于 2023-03-18 16:14:14">2023-03-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Szh</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
