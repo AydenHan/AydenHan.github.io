@@ -745,3 +745,243 @@ public:
 
 
 
+## 2023.4.8
+
+### 203.移除链表元素
+
+#### 解法
+
+基本思路：**链表的删除**
+
+注意：
+
+- 创建的链表指针temp是**new**的，需要用**delete**手动释放；而tmp指向的是要删除的链表元素，因此也需要**delete**。
+- cur指针不是**new**或**malloc**分配了空间的，系统会自动释放内存。
+- **free**是C的API，适用于malloc和calloc；**delete**是C++的关键字，主要用于释放new分配的内存，也可用于malloc和calloc。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+        ListNode* temp = new ListNode(0, head);
+        ListNode* cur = temp;
+        while(cur->next){
+            if(cur->next->val == val){
+                ListNode* tmp = cur->next;
+                cur->next = cur->next->next;
+                delete tmp;
+            }
+            else
+                cur = cur->next;
+        }
+        head = temp->next;
+        delete temp;
+        return head;
+    }
+};
+```
+
+
+
+### 707.设计链表
+
+#### 题干
+
+你可以选择使用单链表或者双链表，设计并实现自己的链表。
+
+单链表中的节点应该具备两个属性：val 和 next 。val 是当前节点的值，next 是指向下一个节点的指针/引用。
+
+如果是双向链表，则还需要属性 prev 以指示链表中的上一个节点。假设链表中的所有节点下标从 0 开始。
+
+实现 **MyLinkedList** 类：
+
+- **MyLinkedList()** 初始化 MyLinkedList 对象。
+- int **get**(int index) 获取链表中下标为 index 的节点的值。如果下标无效，则返回 -1 。
+- void **addAtHead**(int val) 将一个值为 val 的节点插入到链表中第一个元素之前。在插入完成后，新节点会成为链表的第一个节点。
+- void **addAtTail**(int val) 将一个值为 val 的节点追加到链表中作为链表的最后一个元素。
+- void **addAtIndex**(int index, int val) 将一个值为 val 的节点插入到链表中下标为 index 的节点之前。如果 index 等于链表的长度，那么该节点会被追加到链表的末尾。如果 index 比长度更大，该节点将 不会插入 到链表中。
+- void **deleteAtIndex**(int index) 如果下标有效，则删除链表中下标为 index 的节点。
+
+**示例**
+
+```
+示例 1：
+输入：
+["MyLinkedList", "addAtHead", "addAtTail", "addAtIndex", "get", "deleteAtIndex", "get"]
+[[], [1], [3], [1, 2], [1], [1], [1]]
+输出：[null, null, null, null, 2, null, 3]
+```
+
+#### 解法
+
+基本思路：**链表的增删查**
+
+#### 代码
+
+```cpp
+class MyLinkedList {
+public:
+    MyLinkedList() {
+        dummy = new ListNode(0);
+        length = 0;
+    }
+    int get(int index) {
+        if(index >= length || index < 0)
+            return -1;
+        ListNode* cur = dummy->next;
+        while(index--)
+            cur = cur->next;
+        return cur->val;
+    }
+    void addAtHead(int val) {
+        ListNode* newNode = new ListNode(val);
+        newNode->next = dummy->next;
+        dummy->next = newNode;
+        length++;
+    }
+    void addAtTail(int val) {
+        ListNode* newNode = new ListNode(val);
+        ListNode* cur = dummy;
+        while(cur->next)
+            cur = cur->next;
+        cur->next = newNode;
+        length++;
+    }
+    void addAtIndex(int index, int val) {
+        if(index > length || index < 0)
+            return;
+        ListNode* newNode = new ListNode(val);
+        ListNode* cur = dummy;
+        while(index--)
+            cur = cur->next;
+        newNode->next = cur->next;
+        cur->next = newNode;
+        length++;
+    }
+    void deleteAtIndex(int index) {
+        if(index >= length || index < 0)
+            return;
+        ListNode* cur = dummy;
+        while(index--)
+            cur = cur->next;
+        ListNode* tmp = cur->next;
+        cur->next = cur->next->next;
+        delete tmp;
+        length--;
+    }
+private:
+    ListNode* dummy;
+    int length;
+};
+```
+
+
+
+### 206.反转链表
+
+#### 解法
+
+基本思路：**双指针**
+
+![img](LeetCode--2023.4/206.翻转链表.gif)
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* tmp;
+        ListNode* slow = nullptr;
+        ListNode* fast = head;
+        while(fast){
+            tmp = fast->next;
+            fast->next = slow;
+            slow = fast;
+            fast = tmp;
+        }
+        return slow;
+    }
+};
+```
+
+#### 优化
+
+基本思路：**虚拟头节点、头插法**
+
+建立一个新链表的虚拟头节点，指向nullptr。遍历原链表元素，依次插入到虚拟节点后。
+
+速度比双指针快一些。
+
+```cpp
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* dummy = new ListNode(0);
+        ListNode* cur = head;
+        while(cur){
+            ListNode* tmp = cur->next;
+            cur->next = dummy->next;
+            dummy->next = cur;
+            cur = tmp;
+        }
+        cur = dummy->next;
+        delete dummy;
+        return cur;
+    }
+};
+```
+
+
+
+### 24.两两交换链表中的节点
+
+#### 题干
+
+给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
+
+**示例**
+
+```
+示例 1：
+输入：head = [1,2,3,4]
+输出：[2,1,4,3]
+```
+
+```
+示例 2：
+输入：head = [1]
+输出：[1]
+```
+
+#### 解法
+
+基本思路：**模拟**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        ListNode* dummy = new ListNode(0, head);
+        ListNode* cur = dummy;
+        while(cur->next != nullptr && cur->next->next != nullptr){
+            ListNode* tmp = cur->next;
+            ListNode* tmp2 = cur->next->next->next;
+            cur->next = cur->next->next;
+            cur->next->next = tmp;
+            cur->next->next->next = tmp2;
+            cur = cur->next->next;
+        }
+        cur = dummy->next;
+        delete dummy;
+        return cur;
+    }
+};
+```
+
+
+
