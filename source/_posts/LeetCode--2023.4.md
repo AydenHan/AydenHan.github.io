@@ -985,3 +985,101 @@ public:
 
 
 
+## 2023.4.9
+
+### 2399.检查相同字母间的距离
+
+#### 解法
+
+基本思路：**哈希表**
+
+遍历，如果这个字符是第一次扫到（用**哈希表**存储判断），就判断与**该下标+对应distance+1处**的字符（**注意越界**）是否相同，任何一次不同就返回false。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool checkDistances(string s, vector<int>& distance) {
+        unordered_set<char> hash;
+        for(int i = 0; i < s.length(); ++i){
+            if(!hash.count(s[i])){
+                hash.emplace(s[i]);
+                int idx = i + distance[s[i] - 'a'] + 1;
+                if(idx >= s.length())
+                    return false;
+                if(s[i] != s[idx])
+                    return false;
+            }
+        }
+        return true;
+    }
+};
+```
+
+
+
+### 24.两两交换链表中的节点
+
+#### 题干
+
+给你一个链表，删除链表的倒数第 `n` 个结点，并且返回链表的头结点。
+
+**示例**
+
+```
+示例 1：
+输入：head = [1,2], n = 1
+输出：[1]
+```
+
+```
+示例 2：
+输入：head = [1], n = 1
+输出：[]
+```
+
+```
+示例 3：
+输入：head = [1,2,3,4,5], n = 2
+输出：[1,2,3,5]
+```
+
+#### 解法
+
+基本思路：**双指针、链表删除**
+
+双指针的间距为 **n - 1**。当快指针到末尾元素时，慢指针的下一个元素就是要删的元素。
+
+注意**删除的是末尾元素**和链表**只有一个元素**的情况。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while(n--)
+            fast = fast->next;
+        if(fast != nullptr){
+            while(fast->next != nullptr){
+                fast = fast->next;
+                slow = slow->next;
+            }
+            if(slow->next == fast)
+                slow->next = nullptr;
+            else{
+                ListNode* tmp = slow->next;
+                slow->next = slow->next->next;
+                delete tmp;
+            }
+        }
+        else
+            head = head->next;
+        return head;
+    }
+};
+```
+
