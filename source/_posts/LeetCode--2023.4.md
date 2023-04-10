@@ -1083,3 +1083,302 @@ public:
 };
 ```
 
+
+
+## 2023.4.10
+
+### 1019.链表中的下一个更大节点
+
+#### 题干
+
+给定一个长度为 **n** 的链表 **head**，对于列表中的每个节点，查找下一个 **更大节点** 的值。也就是说，对于每个节点，找到它旁边的第一个节点的值，这个节点的值 **严格大于** 它的值。
+
+返回一个整数数组 **answer** ，其中 **answer[i]** 是第 i 个节点( 从1开始 )的下一个**更大的节点的值**。如果第 i 个节点没有下一个更大的节点，设置 **answer[i] = 0** 。
+
+**示例**
+
+```
+示例 1：
+输入：head = [2,1,5]
+输出：[5,5,0]
+```
+
+```
+示例 2：
+输入：head = [2,1,5]
+输出：[5,5,0]
+```
+
+#### 解法
+
+基本思路：**单调栈**
+
+维护一个底大顶小的单调栈。假设前几个元素为9、7、5、3，此时没有任意一个更大的元素时，则把每个元素都压入栈。这时出现一个6，发现比栈顶的3大，那么把3出栈，更新该处的值为6。再跟栈顶的5比，还大，就继续出栈，更新。直至跟7比小了，就结束；然后把6入栈，记录该处的值为本身6。
+
+也就是说，入栈的元素栈底的必然比上面的大，而每次来一个较大元素，都把所有比他小的元素出栈，一直遍历到链表结束。此时栈中若还有元素，说明整个链表他们右边没有更大的了，那么值就是0，依次出栈记录0即可。
+
+用栈维护下标，值存储在数组中。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> nextLargerNodes(ListNode* head) {
+        vector<int> res;
+        stack<int> bigger;
+        for(ListNode* cur = head; cur; cur = cur->next){
+            while(!bigger.empty() && res[bigger.top()] < cur->val){
+                res[bigger.top()] = cur->val;
+                bigger.pop();
+            }
+            bigger.emplace(res.size());
+            res.push_back(cur->val);
+        }
+        while(!bigger.empty()){
+            res[bigger.top()] = 0;
+            bigger.pop();
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 面试题 02.07.链表相交
+
+#### 题干
+
+给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。
+
+图示两个链表在节点 c1 开始相交：
+
+<img src="LeetCode--2023.4/160_statement.png" alt="img" style="zoom: 67%;" />
+
+题目数据 **保证** 整个链式结构中不存在环。
+
+**注意**，函数返回结果后，链表必须 **保持其原始结构** 。
+
+**示例**
+
+```
+示例 1：
+输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3
+输出：Intersected at '8'
+```
+
+```
+示例 2：
+输入：intersectVal = 0, listA = [2,6,4], listB = [1,5], skipA = 3, skipB = 2
+输出：null
+```
+
+#### 解法
+
+基本思路：**双指针	**
+
+因为两个链表后半部分相同，因此只要将其末尾对齐，找有无公共节点即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode* a = headA;
+        ListNode* b = headB;
+        int aLen = 0, bLen = 0;
+        while(a){
+            a = a->next;
+            aLen++;
+        }
+        while(b){
+            b = b->next;
+            bLen++;
+        }
+        a = headA;
+        b = headB;
+        if(bLen > aLen){
+            swap(a, b);
+            swap(aLen, bLen);
+        }
+        int sub = aLen - bLen;
+        while(sub--)
+            a = a->next;
+        while(a){
+            if(a == b)
+                return a;
+            a = a->next;
+            b = b->next;
+        }
+        return NULL;
+    }
+};
+```
+
+#### 优化
+
+**天才解法**
+
+设链表a长度为a，b长度为b，公共部分长度为c。可知a到公共节点前长度为a - c，b为 b - c。
+
+双指针A、B指向a、b头部，A遍历完a后遍历b，B遍历完b后遍历a，当走到公共节点时，两者所走步数分别为a + b - c 和 b + a - c。
+
+此时指针A、B重合，**a + (b - c) = b + (a - c)** 必然成立，会有两种情况：
+
+- 有公共尾部，c ≠ 0，那么双指针肯定指向同一个节点，返回；
+- 无公共尾部，c = 0，那么双指针都指向末尾NULL，也返回。
+
+**真牛吧！**
+
+```cpp
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode *A = headA, *B = headB;
+        while (A != B) {
+            A = A != nullptr ? A->next : headB;
+            B = B != nullptr ? B->next : headA;
+        }
+        return A;
+    }
+};
+```
+
+
+
+### 142.环形链表 Ⅱ
+
+#### 题干
+
+给定一个链表的头节点  **head** ，返回链表开始入环的第一个节点。 如果链表无环，则返回 **null**。
+
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+
+不允许**修改** 链表。
+
+**示例**
+
+```
+示例 1：
+输入：head = [3,2,0,-4], pos = 1
+输出：返回索引为 1 的链表节点
+```
+
+```
+示例 2：
+输入：head = [1,2], pos = -1
+输出：返回NULL
+```
+
+#### 解法
+
+基本思路：**双指针**
+
+第一步：**快慢指针，统计环长**
+
+slow步长为1，fast步长为2。当第一次相遇时开始维护变量len，当第二次相遇时，len即为环长（由于双指针的速度差为1，当slow走完一圈时fast正好走完两圈相遇在同一位置，也就是slow动的次数即为环长）。
+
+注意：fast步长为2，循环时要考虑到fast**后两个节点**是否为NULL的情况。以及循环结束时根据**len值**判断有无环。
+
+第二步：**前后指针，找到进入环的节点**
+
+slow与fast步长均为1，fast先走len步。于是当slow到达环入口节点时，fast多走了一个环长也到了入口处，两者相遇处即为答案。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        int len = 0;
+        int count = 0;
+        while(fast && fast->next && fast->next->next){
+            slow = slow->next;
+            fast = fast->next->next;
+            if(count)   len++;   
+            if(slow == fast){
+                if(count)   break;   
+                count++;
+            }
+        }
+        if(len == 0)
+            return NULL;
+        slow = head;
+        fast = head;
+        while(len--)
+            fast = fast->next;
+        while(slow != fast){
+            fast = fast->next;
+            slow = slow->next;
+        }
+        return slow;
+    }
+};
+```
+
+
+
+### 287.寻找重复数
+
+#### 题干
+
+给定一个包含 **n + 1** 个整数的数组 **nums** ，其数字都在 **[1, n]** 范围内（包括 1 和 n），可知至少存在一个重复的整数。
+
+假设 **nums** 只有 **一个重复**的整数 ，返回 **这个重复的数** 。
+
+你设计的解决方案必须 **不修改** 数组 **nums** 且只用常量级 **O(1)** 的额外空间。
+
+**示例**
+
+```
+示例 1：
+输入：nums = [1,3,4,2,2]
+输出：2
+```
+
+```
+示例 2：
+输入：nums = [3,1,3,4,2]
+输出：3
+```
+
+#### 解法
+
+基本思路：**双指针**
+
+思路同上题 142.环形链表 Ⅱ 。
+
+居然把数组当成一个特殊链表来看，只有一个重复数就像只有一个环的入口。同时n+1的长度，元素在 [1，n] 范围内不存在越界问题。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        int slow = 0, fast = 0;
+        int len = 0, count = 0;
+        while(count != 2){
+            if(count)   len++;
+            if(nums[slow] == nums[fast])    count++;
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        }
+        slow = fast = 0;
+        while(len--)
+            fast = nums[fast];
+        while(nums[slow] != nums[fast]){
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return nums[slow];
+    }
+};
+```
+
+
+
