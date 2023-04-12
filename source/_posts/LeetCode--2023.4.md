@@ -1382,3 +1382,155 @@ public:
 
 
 
+## 2023.4.11
+
+### 1041.困于环中的机器人
+
+#### 题干
+
+在无限的平面上，机器人最初位于 **(0, 0)** 处，面朝**北方**。注意:
+
+- 北方向 是y轴的正方向。
+
+- 南方向 是y轴的负方向。
+- 东方向 是x轴的正方向。
+- 西方向 是x轴的负方向。
+
+机器人可以接受下列三条指令之一：
+
+- "G"：直走 1 个单位
+
+- "L"：左转 90 度
+- "R"：右转 90 度
+
+机器人按顺序执行指令 **instructions**，并一直重复它们。只有在平面中存在环使得机器人永远无法离开时，返回 **true**。否则，返回 **false。**
+
+**示例**
+
+```
+示例 1：
+输入：instructions = "GGLLGG"
+输出：true
+```
+
+```
+示例 2：
+输入：instructions = "GL"
+输出：true
+```
+
+#### 解法
+
+基本思路：**模拟**
+
+主要就是判断走完后的状态。若回到原点了，那一定是环。
+
+若没能回到原点，分四个方向：
+
+- 朝北，说明回不去了，因为相当于一直在朝一个方向移动。
+- 朝南，则下一次相当于原路返回原点，是环。
+- 朝西、朝东，都是相当于每次移动相同形状的轨迹，转90°，也是环。
+
+因此返回false的条件必须是**结束时不在原点且朝向北**。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool isRobotBounded(string instructions) {
+        int x = 0, y = 0, direct = 0;
+        vector<vector<int>> step = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        for(char c : instructions){
+            if(c == 'G'){
+                x += step[direct][0];
+                y += step[direct][1];
+            }
+            else if(c == 'L'){
+                direct += 3;
+                direct %= 4;
+            }
+            else{
+                direct++;
+                direct %= 4;
+            }
+        }
+        return !(direct == 0 && (x || y));
+    }
+};
+```
+
+
+
+## 2023.4.11
+
+### 1147.段式回文
+
+#### 题干
+
+你会得到一个字符串 text 。你应该把它分成 **k** 个子字符串 (subtext1, subtext2，…， subtextk) ，要求满足:
+
+subtexti 是 **非空** 字符串，所有子字符串的连接等于 text ( 即subtext1 + subtext2 + ... + subtextk == text )。对于所有 **i** 的**有效**值( 即 1 <= i <= k ) ，subtext**i** == subtext**k - i + 1** 均成立
+
+返回k可能**最大值**。
+
+**示例**
+
+```
+示例 1：
+输入：text = "ghiabcdefhelloadamhelloabcdefghi"
+输出：7
+```
+
+```
+示例 2：
+输入：text = "merchant"
+输出：1
+```
+
+#### 解法
+
+基本思路：**双指针**
+
+双指针指向字符串头尾，用于锁定为判断字符串的范围。
+
+因为要求最大值，因此字串长度要尽可能小。子串长度k从1开始（注意头串的尾部下标 < 尾串的头部下标），有相同的子串直接记录+2，双指针向中间移动k。
+
+缩小判断范围后重复上述过程。如果k平分了整个字符串都没有找到，那就返回整个串作为子串，记录只能+1，并直接结束。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int longestDecomposition(string text) {
+        auto checkSame = [&](int i, int j, int k){
+            while(k--)
+                if(text[i++] != text[j++])
+                    return false;
+            return true;
+        };
+        int res = 0;
+        for(int i = 0, j = text.length() - 1; i <= j;){
+            bool flag = false;
+            for(int k = 1; i + k - 1 < j - k + 1; ++k){
+                if(checkSame(i, j - k + 1, k)){
+                    res += 2;
+                    i += k;
+                    j -= k;
+                    flag = true;
+                    break;
+                }
+            }
+            if(!flag){
+                res++;
+                break;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
