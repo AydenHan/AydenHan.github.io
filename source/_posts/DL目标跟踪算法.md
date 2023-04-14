@@ -161,3 +161,11 @@ SiameseFC是一个模板匹配的任务，在跟踪过程中**并不更新目标
 
 
 
+## SiamRPN++
+
+**[SiamRPN++: Evolution of Siamese Visual Tracking with Very Deep Networks](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8954116&tag=1)**
+
+**[[视觉跟踪] Siamese Network方法概述：从SiamFC到SiamRPN系列](https://zhuanlan.zhihu.com/p/66757733)**
+
+
+
