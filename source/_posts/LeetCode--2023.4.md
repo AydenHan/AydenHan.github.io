@@ -1462,7 +1462,7 @@ public:
 
 
 
-## 2023.4.11
+## 2023.4.12
 
 ### 1147.段式回文
 
@@ -1527,6 +1527,148 @@ public:
                 break;
             }
         }
+        return res;
+    }
+};
+```
+
+#### 匿名函数
+
+**Lambda函数主体：**`[capture list] (params list) mutable exception-> return type { function body }`
+
+| 捕获形式    | 说明                                                         |
+| :---------- | ------------------------------------------------------------ |
+| []          | 不捕获任何外部变量                                           |
+| [变量名, …] | 默认以值得形式捕获指定的多个外部变量（用逗号分隔），如果引用捕获，需要显示声明（使用&说明符） |
+| [this]      | 以值的形式捕获this指针                                       |
+| [=]         | 以值的形式捕获所有外部变量                                   |
+| [&]         | 以引用形式捕获所有外部变量                                   |
+| [=, &x]     | 变量x以引用形式捕获，其余变量以传值形式捕获                  |
+| [&, x]      | 变量x以值的形式捕获，其余变量以引用形式捕获                  |
+
+- 若要**在匿名函数内**修改值引用的外部变量，可以在括号后使用 mutable 关键字（[a] () **mutable** { cout << ++a; }; 这里a在这个函数内部自加了，但是外部的a的值是**不变的**）。
+- return type若不指定，编译器会根据内部返回值的类型确定该匿名函数的返回值类型。
+
+## 2023.4.13
+
+### 2404.出现最频繁的偶数元素
+
+#### 题干
+
+给你一个整数数组 `nums` ，返回出现最频繁的偶数元素。
+
+如果存在多个满足条件的元素，只需要返回 **最小** 的一个。如果不存在这样的元素，返回 `-1` 。
+
+**示例**
+
+```
+示例 1：
+输入：nums = [0,1,2,2,4,4,1]
+输出：2
+```
+
+```
+示例 2：
+输入：nums = [29,47,21,41,13,37,25,7]
+输出：-1
+```
+
+#### 解法
+
+基本思路：**哈希表**
+
+用哈希表统计每个偶数元素出现的次数，然后遍历哈希表找到次数最多的元素中值最小的。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int mostFrequentEven(vector<int>& nums) {
+        unordered_map<int, int>  cnt;
+        for(int n : nums){
+            if(n % 2 == 0)
+                cnt[n]++;
+        }
+        if(cnt.empty())
+            return -1;
+        int maxNum = 0, minVal = INT_MAX;
+        for(auto c : cnt){
+            if(c.second > maxNum || c.second == maxNum && c.first < minVal){
+                maxNum = c.second;
+                minVal = c.first;
+            }   
+        }
+        return minVal;
+    }
+};
+```
+
+
+
+## 2023.4.14
+
+### 1023.驼峰式匹配
+
+#### 题干
+
+如果我们可以将**小写字母**插入模式串 **pattern** 得到待查询项 query，那么待查询项与给定模式串匹配。（我们可以在**任何位置**插入每个字符，也可以插入 **0** 个字符。）
+
+给定待查询列表 **queries**，和模式串 **pattern**，返回由布尔值组成的答案列表 answer。只有在待查项 queries[i] 与模式串 pattern 匹配时， answer[i] 才为 true，否则为 false。
+
+**示例**
+
+```
+示例 1：
+输入：queries = ["FooBar","FooBarTest","FootBall","FrameBuffer","ForceFeedBack"], pattern = "FB"
+输出：[true,false,true,true,false]
+```
+
+```
+示例 2：
+输入：queries = ["FooBar","FooBarTest","FootBall","FrameBuffer","ForceFeedBack"], pattern = "FoBaT"
+输出：[false,true,false,false,false]
+```
+
+#### 解法
+
+基本思路：**双指针**
+
+本质其实是字符串比较。规则是：**大写字符必须全部匹配**。
+
+双指针i、j指向query和pattern，以pattern为循环体，字符比较
+
+- 若不同
+- ——小写字符，i++继续比较；
+- ——大写字符直接false，不能有匹配不上的大写字符；
+- 若相同
+- ——i++、j++。
+
+如果j没结束时i就遍历完了，说明 j 有没匹配到的，false。
+
+如果j先遍历完了，遍历剩下的i，若有大写的false，全小写true。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<bool> camelMatch(vector<string>& queries, string pattern) {
+        vector<bool> res;
+        auto check = [](string s, string t){
+            int i = 0, j = 0;
+            for(; j < t.length(); ++i, ++j){
+                while(i < s.length() && s[i] != t[j] && s[i] > 96)
+                    ++i;
+                if(i == s.length() || s[i] != t[j])
+                    return false;
+            }
+            while(i < s.length() && s[i] > 96)
+                ++i;
+            return i == s.length();
+        };
+        for(auto str : queries)
+            res.push_back(check(str, pattern));
         return res;
     }
 };
