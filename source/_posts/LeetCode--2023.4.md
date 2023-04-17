@@ -1676,3 +1676,215 @@ public:
 
 
 
+## 2023.4.17
+
+### 2409.统计共同度过的日子数
+
+#### 解法
+
+基本思路：**模拟、数学计算**
+
+简单的日期转换，转换为当年的第多少天，然后求交集。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int getDays(string s){
+        int days[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        int res = 0;
+        int m = atoi(s.substr(0, 2).c_str());
+        int d = atoi(s.substr(3, 2).c_str());
+        for(int i = 1; i < m; ++i)
+            res += days[i];
+        return res + d;
+    }
+    int countDaysTogether(string arriveAlice, string leaveAlice, string arriveBob, string leaveBob) {
+        int aa = getDays(arriveAlice);
+        int la = getDays(leaveAlice);
+        int ab = getDays(arriveBob);
+        int lb = getDays(leaveBob);
+        if(aa > lb || ab > la)
+            return 0;
+        return min(la, lb) - max(aa, ab) + 1;
+    }
+};
+```
+
+
+
+### 242.有效的字母异位词
+
+#### 解法
+
+基本思路：**哈希表**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+        if(s.length() != t.length())
+            return false;
+        vector<int> hash(26, 0);
+        for(int i = 0; i < s.length(); ++i){
+            hash[s[i] - 'a']++;
+            hash[t[i] - 'a']--;
+        }
+        for(int n : hash)
+            if(n)   return false;
+        return true;
+    }
+};
+```
+
+
+
+### 383.赎金信
+
+#### 解法
+
+基本思路：**哈希表**
+
+和上题242.有效的字母异位词一个思路。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool canConstruct(string ransomNote, string magazine) {
+        vector<int> hash(26, 0);
+        for(char c : magazine)
+            hash[c - 'a']++;
+        for(char c : ransomNote)
+            hash[c - 'a']--;
+        for(int n : hash)
+            if(n < 0)   return false;
+        return true;
+    }
+};
+```
+
+
+
+### 49.字母异位词分组
+
+#### 题干
+
+给你一个字符串数组，请你将 **字母异位词** 组合在一起。可以按**任意顺序**返回结果列表。
+
+**字母异位词** 是由**重新排列**源单词的字母得到的一个新单词，所有源单词中的字母通常恰好只用**一次**。
+
+**示例**
+
+```
+示例 1：
+输入: strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+输出: [["bat"],["nat","tan"],["ate","eat","tea"]]
+```
+
+```
+示例 2：
+输入: strs = [""]
+输出: [[""]]
+```
+
+#### 解法
+
+基本思路：**哈希**
+
+因为所有的异位词在排序后都是相同的，那么就可以用哈希表存储vector保存属于同一种类的字符串。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        vector<vector<string>> res;
+        unordered_map<string, vector<string>> hash;
+        auto sortStr = [](string str){
+            sort(str.begin(), str.end());
+            return str;
+        };
+        for(string s : strs)
+            hash[sortStr(s)].push_back(s);
+        for(auto m : hash)
+            res.push_back(m.second);
+        return res;
+    }
+};
+```
+
+
+
+### 438.找到字符串中所有字母异位词
+
+#### 题干
+
+给定两个字符串 s 和 p，找到 s 中所有 p 的 **异位词** 的子串，返回这些子串的起始索引。不考虑答案输出的**顺序**。
+
+异位词 指由相同字母重排列形成的字符串（包括相同的字符串）。
+
+**示例**
+
+```
+示例 1：
+输入: s = "cbaebabacd", p = "abc"
+输出: [0,6]
+```
+
+```
+示例 2：
+输入: s = "abab", p = "ab"
+输出: [0,1,2]
+```
+
+#### 解法
+
+基本思路：**滑动窗口、双指针、哈希**
+
+第一想法是滑动窗口扫一遍，每次将窗口内字符排序后与排序后的p比较。实际是暴力解法，O(n^2)复杂度，其中有很多不必要的操作：
+
+例如[i, j]和[i+1, j+1]两个子串在暴力法第二步中，需要各遍历一次，完全没必要。其实[i+1, j+1]完全可以在[i, j]的基础上做判断，也就是去掉头部的字符（i位置），加上尾部的字符（j+1位置）。这样第一步的复杂度可以降到O(1)，整体复杂度降到O(n)。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> findAnagrams(string s, string p) {
+        if(s.length() < p.length())
+            return {};
+        vector<int> res;
+        vector<int> shash(26, 0);
+        vector<int> phash(26, 0);
+        for(char c : p)
+            phash[c - 'a']++;
+        for(int i = 0; i < p.length(); ++i)
+            shash[s[i] - 'a']++;
+        int i = p.length(), j = 0;
+        for(; i < s.length(); ++i, ++j){
+            if(shash == phash)
+                res.push_back(j);
+            shash[s[i] - 'a']++;
+            shash[s[j] - 'a']--;
+        }
+        if(shash == phash)
+            res.push_back(j);
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+
+
