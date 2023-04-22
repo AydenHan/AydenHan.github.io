@@ -1882,6 +1882,193 @@ public:
 
 
 
+## 2023.4.22
+
+### 349.两个数组的交集
+
+#### 解法
+
+基本思路：**哈希表**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> hash;
+        vector<int> res;
+        for(int n : nums1)
+            if(!hash.count(n))
+                hash.emplace(n);
+        for(int n : nums2){
+            if(hash.count(n)){
+                res.push_back(n);
+                hash.erase(n);
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 350.两个数组的交集Ⅱ
+
+#### 解法
+
+基本思路：**哈希表**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        unordered_map<int, int> hash;
+        vector<int> res;
+        for(int n : nums1)
+            ++hash[n];
+        for(int n : nums2){
+            if(hash.count(n) && hash[n] > 0){
+                res.push_back(n);
+                --hash[n];
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 202.快乐数
+
+#### 解法
+
+基本思路：**哈希表**
+
+这题的关键在于找到什么情况下是无解的？**当某次平方和的值重复出现的时候**，那么用哈希表做个判断即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool isHappy(int n) {
+        unordered_set<int> hash;
+        int sum = 0, unit;
+        while(1){
+            unit = n % 10;
+            sum += unit * unit;
+            n /= 10;
+            if(n == 0){
+                n = sum;
+                if(sum == 1)
+                    return true;
+                if(hash.count(sum))
+                    return false;
+                hash.emplace(sum);
+                sum = 0;
+            }
+        }
+        return true;
+    }
+};
+```
+
+
+
+### 1.两数之和
+
+#### 解法
+
+基本思路：**哈希表**
+
+将数组元素依次加入哈希表，并判断target - 当前元素的值是否在哈希表中。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> hashs; 
+        for (int i = 0; i < nums.size(); i++) {
+            auto iter = hashs.find(target - nums[i]);
+            if (iter != hashs.end()) return {iter->second, i};
+            hashs.insert({nums[i], i});
+        }
+        return {};
+    }
+};
+```
+
+
+
+### 454.四数相加Ⅱ
+
+#### 题干
+
+给你四个整数数组 nums1、nums2、nums3 和 nums4 ，数组长度都是 n ，请你计算有多少个元组 (i, j, k, l) 能满足：
+
+- 0 <= i, j, k, l < n
+
+- nums1[i] + nums2[j] + nums3[k] + nums4[l] == 0
+
+**示例**
+
+```
+示例 1：
+输入：nums1 = [1,2], nums2 = [-2,-1], nums3 = [-1,2], nums4 = [0,2]
+输出：2
+```
+
+```
+示例 2：
+输入：nums1 = [0], nums2 = [0], nums3 = [0], nums4 = [0]
+输出：1
+```
+
+#### 解法
+
+基本思路：**哈希**
+
+因为所有的异位词在排序后都是相同的，那么就可以用哈希表存储vector保存属于同一种类的字符串。
+
+乍一看有点懵，实际就是转换一下条件，变成：**nums1[i] + nums2[j] == -(nums3[k] + nums4[l]）**
+
+也就是先记录每一对1、2的和的数量存入哈希，然后将3、4的和放入哈希去找，若存在，直接增加记录的数量（因为和为该值的每一对1、2都能与这对3、4相匹配，所以直接加数量）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int fourSumCount(vector<int>& nums1, vector<int>& nums2, vector<int>& nums3, vector<int>& nums4) {
+        unordered_map<int, int> hash;
+        int res = 0;
+        for(int i : nums1)
+            for(int j : nums2)
+                ++hash[i+j];
+        for(int i : nums3)
+            for(int j : nums4)
+                if(hash.count(-i-j))
+                    res += hash[-i-j];
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+
+
 
 
 
