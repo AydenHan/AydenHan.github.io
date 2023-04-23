@@ -2063,6 +2063,185 @@ public:
 
 
 
+## 2023.4.23
+
+### 1105.填充书架
+
+#### 题干
+
+给定一个数组 **books** ，其中 **books[i] = [thicknessi, heighti]** 表示第 i 本书的厚度和高度。你也会得到一个整数 **shelfWidth** 。
+
+按**顺序** 将这些书摆放到总宽度为 **shelfWidth** 的书架上。
+
+先选几本书放在书架上（它们的**厚度**之和**小于等于**书架的宽度 shelfWidth ），然后再建一层书架。重复这个过程，直到把所有的书都放在书架上。例如，如果这里有 5 本书，那么可能的一种摆放情况是：第一和第二本书放在第一层书架上，第三本书放在第二层书架上，第四和第五本书放在最后一层书架上。
+
+每一层所摆放的书的最大高度为这一层书架的层高，书架整体高度为各层高之和。以这种方式布置书架，返回书架整体可能的**最小高度**。
+
+**示例**
+
+<img src="LeetCode--2023.4/shelves.png" alt="img" style="zoom: 50%;" />
+
+```
+示例 1：
+输入：books = [[1,1],[2,3],[2,3],[1,1],[1,1],[1,1],[1,2]], shelfWidth = 4
+输出：6
+```
+
+```
+示例 2：
+输入: books = [[1,3],[2,4],[3,2]], shelfWidth = 6
+输出: 4
+```
+
+#### 解法
+
+基本思路：**动态规划**
+
+设前i本书摆放完成后的总高度为 **f[i]** ,答案为 **f[n]** 。那么对于第i本书的w和h：1.若单独拜访一层有  **f[i] = f[i - 1] + h** ；2.若与之前 ？本书一起放，则需要找到这些书的最大高度作为该层层高。
+
+从第 i - 1 本书开始向前遍历，停止条件为累加书的w大于了shelfWidth。找到这些书中 的最大高度，那么可得 **f[i] = min(f[i], f[j - 1] + h)**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int minHeightShelves(vector<vector<int>>& books, int shelfWidth) {
+        int n = books.size();
+        vector<int> f(n + 1, 0);
+        for(int i = 1; i <= n; ++i){
+            int w = books[i - 1][0], h = books[i - 1][1];
+            f[i] = f[i - 1] + h;
+            for(int j = i - 1; j > 0; --j){
+                w += books[j - 1][0];
+                if(w > shelfWidth)  break;
+                h = max(h, books[j - 1][1]);
+                f[i] = min(f[i], f[j - 1] + h);
+            }
+        }
+        return f[n];
+    }
+};
+```
+
+
+
+### 344.反转字符串
+
+#### 解法
+
+基本思路：**双指针、swap**
+
+swap的实现方法有两种：1.是通过临时变量存储交换；2.是通过位运算(异或)交换。
+
+```cpp
+a ^= b;
+b ^= a;
+a ^= b;
+```
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    void reverseString(vector<char>& s) {
+        int l = 0, r = s.size() - 1;
+        while(l < r)
+            swap(s[l++], s[r--]);
+    }
+};
+```
+
+
+
+### 541.反转字符串Ⅱ
+
+#### 解法
+
+基本思路：**双指针、swap**
+
+在上题344.反转字符串的基础上，判断每段要反转的部分的两端位置即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string reverseStr(string s, int k) {
+        auto revStr = [&s](int l, int r){
+            while(l < r)
+                swap(s[l++], s[r--]);
+        };
+        int cnt = s.length() / (2 * k);
+        int unit = s.length() % (2 * k);
+        for(int i = 0; i < cnt; ++i)
+            revStr(i * k * 2, i * k * 2 + k - 1);
+        if(unit >= k)
+            revStr(cnt * k * 2, cnt * k * 2 + k - 1);
+        else
+            revStr(cnt * k * 2, s.length() - 1);
+        return s;
+    }
+};
+```
+
+
+
+### 剑指offer 05.替换空格
+
+#### 解法
+
+基本思路：**双指针、string::resize()函数**
+
+先统计空格数量，计算出要扩充的空间（cnt * 2）。
+
+扩充之后使用双指针分别指向原字符串的末尾和现在的末尾，将原来的依次填入，碰到空格填入"%20"即可。
+
+`resize(size_t n, char c)`
+
+c为可选参数，表示扩充后的位置填入的字符。
+
+n为扩充后的字符串长度。若n小于原长，删除 [0, n) 范围外的所有字符；若n大于原长，有c填入c，无c参数填入null。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string replaceSpace(string s) {
+        int cnt = 0;
+        for(char c : s)
+            cnt += c == ' ';
+        int l = s.length() - 1;
+        s.resize(s.length() + cnt * 2);
+        int r = s.length() - 1;
+        while(l >= 0){
+            if(s[l] != ' ')	s[r--] = s[l];
+            else{
+                s[r--] = '0';
+                s[r--] = '2';
+                s[r--] = '%';
+            }
+            l--;
+        }
+        return s;
+    }
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
