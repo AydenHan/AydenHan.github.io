@@ -2232,7 +2232,157 @@ public:
 
 
 
+### 151.反转字符串中的单词
 
+#### 题干
+
+给你一个字符串 s ，请你反转字符串中 **单词** 的顺序。**单词** 是由非空格字符组成的字符串。s 中使用至少一个空格将字符串中的 **单词** 分隔开。返回 单词 **顺序颠倒**且 单词 之间用**单个空格**连接的结果字符串。
+
+注意：输入字符串 s中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
+
+**示例**
+
+```
+示例 1：
+输入：s = "the sky is blue"
+输出："blue is sky the"
+```
+
+```
+示例 2：
+输入：s = "a good   example"
+输出："example good a"
+```
+
+#### 解法
+
+基本思路：**双指针**
+
+整体思路就是先处理掉多余空格，然后整体反转字符串，此时单词也是反的，再反转回来即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string reverseWords(string s) {
+        int cnt = 0;
+        for(int i = 0; i < s.length(); ++i){
+            // 只处理有字符的（每个单词的第一个字符）
+            if(s[i] != ' '){	
+                // 如果已经有单词填入了，那这时候进来说明找到下一个个词了，需用空格隔开
+                if(cnt != 0)   s[cnt++] = ' ';			
+                while(i < s.length() && s[i] != ' ')	// 双指针cnt和i，cnt是修改后的字符位置
+                    s[cnt++] = s[i++];					// 把一个完整单词填入
+            }
+        }
+        s.resize(cnt);						// 重置长度
+        auto revStr = [&s](int l, int r){	// 反转函数
+            while(l < r)
+                swap(s[l++], s[r--]);
+        };
+        revStr(0, s.length() - 1);			// 先整体反转
+        int start = 0;
+        for(int i = 0; i <= s.length(); ++i){
+            if(s[i] == ' ' || i == s.length()){			// 最后一个单词后没有空格，因此要多加一个判定条件
+                revStr(start, i - 1);		// 把每个单词再单独反转回来
+                start = i + 1;
+            }
+        }
+        return s;
+    }
+};
+```
+
+
+
+## 2023.4.24
+
+### 1163.按字典序排在最后的子串
+
+#### 题干
+
+给你一个字符串 `s` ，找出它的所有子串并按字典序排列，返回排在最后的那个子串。
+
+**示例**
+
+```
+示例 1：
+输入：s = "abab"
+输出："bab"
+```
+
+```
+示例 2：
+输入：s = "leetcode"
+输出："tcode"
+```
+
+#### 解法
+
+基本思路：**双指针**
+
+首先要明白如何判断是排最后的：**字母越大越靠后**、**子串末尾一定是s末尾**（假如存在非后缀的子串，那么再往后延伸一个字符一定更大）。
+
+维护快慢指针slow和fast，slow表示当前最大的子串，fast向后遍历找有无更大的子串。
+
+因为双指针指向两个子串的头部，因此如果判断相同位置字符相同时，往后移动判断需要另维护一个idx变量。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string lastSubstring(string s) {
+        int slow = 0, fast = 1, idx = 0;
+        while(fast + idx < s.length()){
+            if(s[slow + idx] == s[fast + idx]){
+                ++idx;
+            }
+            else if(s[slow + idx] < s[fast + idx]){
+                slow += idx + 1;
+                idx = 0;
+                if(slow >= fast)
+                    fast = slow + 1;
+            }
+            else{
+                fast += idx + 1;
+                idx = 0;
+            }
+        }
+        return s.substr(slow);
+    }
+};
+```
+
+
+
+## 2023.4.25
+
+### 2418.按身高排序
+
+#### 解法
+
+基本思路：**排序**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<string> sortPeople(vector<string>& names, vector<int>& heights) {
+        int n = heights.size();
+        vector<int> idx(n);
+        for(int i = 0; i < n; ++i)
+            idx[i] = i;
+        sort(idx.begin(), idx.end(), [&heights](int i, int j){return heights[i] > heights[j];});
+        vector<string> res;
+        for(int i : idx)
+            res.push_back(names[i]);
+        return res;
+    }
+};
+```
 
 
 
