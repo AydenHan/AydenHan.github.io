@@ -2386,7 +2386,145 @@ public:
 
 
 
+## 2023.4.26
 
+### 剑指offer 58.Ⅱ 左旋转字符串
+
+#### 解法
+
+基本思路：**双指针**
+
+在344.反转字符串的基础上，做多次反转。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string reverseLeftWords(string s, int n) {
+        auto revStr = [&s](int l, int r){	
+            while(l < r)
+                swap(s[l++], s[r--]);
+        };
+        revStr(0, n - 1);
+        revStr(n, s.length() - 1);
+        revStr(0, s.length() - 1);
+        return s;
+    }
+};
+```
+
+
+
+### 28.找出字符串中第一个匹配项的下标
+
+#### 题干
+
+给你两个字符串 **haystack** 和 **needle** ，请你在 **haystack** 字符串中找出 **needle** 字符串的第一个匹配项的下标（下标从 0 开始）。如果 needle 不是 haystack 的一部分，则返回  **-1** 。
+
+**示例**
+
+```
+示例 1：
+输入：haystack = "sadbutsad", needle = "sad"
+输出：0
+```
+
+```
+示例 2：
+输入：haystack = "leetcode", needle = "leeto"
+输出：-1
+```
+
+#### 解法
+
+基本思路：**字符串匹配、KMP**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> getNextArr(string p){
+        vector<int> next(p.length());
+        next[0] = -1;
+        int k = -1, j = 0;
+        while(j < p.length() - 1){
+            if(k == -1 || p[j] == p[k])
+                next[++j] = ++k;
+            else
+                k = next[k];
+        }
+        return next;
+    }
+
+    int kmp(string pattern, string word){
+        int i = 0, j = 0;
+        int pLen = pattern.length(), wLen = word.length();
+        vector<int> next = getNextArr(pattern);
+        while(i < wLen && j < pLen){
+            if(j == -1 || word[i] == pattern[j]){
+                ++i;
+                ++j;
+            }
+            else
+                j = next[j];
+            if(j == pLen)
+                return i - pLen;
+        }
+        return -1;
+    }
+
+    int strStr(string haystack, string needle) {
+        return kmp(needle, haystack);
+    }
+};
+```
+
+
+
+### 459.重复的子字符串
+
+#### 解法
+
+基本思路：**字符串匹配、KMP**
+
+对于最小重复子串的理解：
+
+![图四](LeetCode--2023.4/20220728212157.png)
+
+![image-20230426205832524](LeetCode--2023.4/image-20230426205832524.png)
+
+**数组长度减去最长相同前后缀的长度相当于是第一个周期的长度，也就是一个周期的长度，如果这个周期可以被整除，就说明整个数组就是这个周期的循环。**
+
+需要注意，如下的前缀表计算方式，存储的值是后移一位的，即next[2]对应的是到下标1（0~1）处的最长相同前后缀，因此在主程序中计算时做了特殊处理。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> getNextArr(string p){
+        vector<int> next(p.length());
+        next[0] = -1;
+        int k = -1, j = 0;
+        while(j < p.length() - 1){
+            if(k == -1 || p[j] == p[k])
+                next[++j] = ++k;
+            else
+                k = next[k];
+        }
+        return next;
+    }
+    bool repeatedSubstringPattern(string s) {
+        if(s.size() == 0)
+            return false;
+        vector<int> next = getNextArr(s+' ');
+        int l = next.size();
+        return next[l - 1] > 0 && (l - 1) % (l - 1 - next[l - 1]) == 0;
+    }
+};
+```
 
 
 
