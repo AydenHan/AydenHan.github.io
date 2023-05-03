@@ -1,5 +1,5 @@
 ---
-title: LeetCode--2023.4
+title: LeetCode--2023Q2
 date: 2023-04-01 10:32:55
 categories: 原理
 tags: 
@@ -101,7 +101,7 @@ public:
 
 相比于 59.螺旋矩阵Ⅱ ，这题的长宽不一定相同，因此不再适用按圈缩减的方法。
 
-![img](LeetCode--2023.4/spiral.jpg)
+![img](LeetCode--2023Q2/spiral.jpg)
 
 1. 维护上、下、左、右四个边界的下标。
 2. 第一次移动，从左到右移动一整行，移动后直接将1~4从上图中抹掉，变成了一个 4 x 2 的矩阵。如何抹掉？**维护的上边界加一**即可。因为**循环都是统一从一个边界到另一个边界的**。
@@ -361,7 +361,7 @@ public:
 
 对于该题，示例1：
 
-![image.png](LeetCode--2023.4/0bf18f9b86a2542d1f6aa8db6cc45475fce5aa329a07ca02a9357c2ead81eec1-image.png)
+![image.png](LeetCode--2023Q2/0bf18f9b86a2542d1f6aa8db6cc45475fce5aa329a07ca02a9357c2ead81eec1-image.png)
 
 深度优先遍历有「回头」的过程，在「回头」以后， 状态变量需要设置成为和先前一样 ，因此在回到上一层结点的过程中，需要**撤销**上一次的选择，这个操作称之为「**状态重置**」
 
@@ -511,7 +511,7 @@ public:
 
 以本题的示例1来说：
 
-![image.png](LeetCode--2023.4/1600386643-uhkGmW-image.png)
+![image.png](LeetCode--2023Q2/1600386643-uhkGmW-image.png)
 
 可以发现，对于一个重复数字，如果它的上一个相同数字已经被使用了（添加进了数组中），那么该数字是不影响接下来的使用的，因为是添加到上一个数字后面的。而对于未被使用（不在结果数组中）的相同数字，就会导致结果重复。1、1、2中选1和选1，剩下的都是1、2，那么结果也都是一样的，因此可以得到跳过的条件：
 
@@ -885,7 +885,7 @@ private:
 
 基本思路：**双指针**
 
-![img](LeetCode--2023.4/206.翻转链表.gif)
+![img](LeetCode--2023Q2/206.翻转链表.gif)
 
 #### 代码
 
@@ -1154,7 +1154,7 @@ public:
 
 图示两个链表在节点 c1 开始相交：
 
-<img src="LeetCode--2023.4/160_statement.png" alt="img" style="zoom: 67%;" />
+<img src="LeetCode--2023Q2/160_statement.png" alt="img" style="zoom: 67%;" />
 
 题目数据 **保证** 整个链式结构中不存在环。
 
@@ -2079,7 +2079,7 @@ public:
 
 **示例**
 
-<img src="LeetCode--2023.4/shelves.png" alt="img" style="zoom: 50%;" />
+<img src="LeetCode--2023Q2/shelves.png" alt="img" style="zoom: 50%;" />
 
 ```
 示例 1：
@@ -2491,9 +2491,9 @@ public:
 
 对于最小重复子串的理解：
 
-![图四](LeetCode--2023.4/20220728212157.png)
+![图四](LeetCode--2023Q2/20220728212157.png)
 
-![image-20230426205832524](LeetCode--2023.4/image-20230426205832524.png)
+![image-20230426205832524](LeetCode--2023Q2/image-20230426205832524.png)
 
 **数组长度减去最长相同前后缀的长度相当于是第一个周期的长度，也就是一个周期的长度，如果这个周期可以被整除，就说明整个数组就是这个周期的循环。**
 
@@ -2527,6 +2527,69 @@ public:
 ```
 
 
+
+# 打卡5月LeetCode
+
+## 2023.5.3
+
+### 1003.检查替换后的词是否有效
+
+#### 题干
+
+给你一个字符串 s ，请你判断它是否 **有效** 。
+字符串 s **有效** 需要满足：假设开始有一个**空**字符串 t = "" ，你可以执行 **任意次** 下述操作将 t 转换为 s ：
+
+- 将字符串 "**abc**" 插入到 t 中的**任意位置**。形式上，t 变为 tleft + "abc" + tright，其中 t == tleft + tright 。注意，tleft 和 tright 可能为 **空** 。
+
+如果字符串 s 有效，则返回 true；否则，返回 false。
+
+**示例**
+
+```
+示例 1：
+输入：s = "abcabcababcc"
+输出：true
+```
+
+```
+示例 2：
+输入：s = "abccba"
+输出：false
+```
+
+#### 解法
+
+基本思路：**模拟、栈**
+
+用string模拟栈，出栈用erase。
+
+将源字符串逐个入栈，直到入一个c，会同时消去上两个入的a、b。
+
+如果前两个不是a、b，说明这个c出现的顺序是有问题的，字符串是无效的，直接false了。
+
+如果最后栈空了，说明都消去了，字符串有效。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool isValid(string s) {
+        if(s.length() % 3 != 0)
+            return false;
+        string tmp = "";
+        for(int i = 0; i < s.length(); ++i){
+            tmp += s[i];
+            if(tmp.length() > 2 && s[i] == 'c')
+                if(tmp.substr(tmp.length() - 3, 3) == "abc")
+                    tmp.erase(tmp.end() - 3, tmp.end());
+                else
+                    return false;
+        }
+        return tmp.empty();
+    }
+};
+```
 
 
 
