@@ -2593,6 +2593,206 @@ public:
 
 
 
+## 2023.5.16
+
+### 232.用栈实现队列
+
+#### 解法
+
+基本思路：**模拟、栈**
+
+在push数据的时候，只要数据放进输入栈就好，**但在pop的时候，操作就复杂一些，输出栈如果为空，就把进栈数据全部导入进来（注意是全部导入）**，再从出栈弹出数据，如果输出栈不为空，则直接从出栈弹出数据就可以了。
+
+#### 代码
+
+```cpp
+class MyQueue {
+public:
+    MyQueue() {}
+    
+    void push(int x) {
+        In.push(x);
+    }
+    
+    int pop() {
+        if(Out.empty()){
+            while(!In.empty()){
+                Out.push(In.top());
+                In.pop();
+            }
+        }
+        int res = Out.top();
+        Out.pop();
+        return res;
+    }
+    
+    int peek() {
+        if(Out.empty()){
+            while(!In.empty()){
+                Out.push(In.top());
+                In.pop();
+            }
+        }
+        return Out.top();
+    }
+    
+    bool empty() {
+        return In.empty() && Out.empty();
+    }
+private:
+    stack<int> In;
+    stack<int> Out;
+};
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue* obj = new MyQueue();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->peek();
+ * bool param_4 = obj->empty();
+ */
+```
+
+
+
+### 225.用队列实现栈
+
+#### 解法
+
+基本思路：**模拟、队列**
+
+一个队列在模拟栈弹出元素的时候只要将队列头部的元素（除了最后一个元素外） 重新添加到队列尾部，此时再去弹出元素就是栈的顺序了。
+
+#### 代码
+
+```cpp
+class MyStack {
+public:
+    MyStack() { }
+    
+    void push(int x) {
+        Q.push(x);
+    }
+    
+    int pop() {
+        int len = Q.size() - 1;
+        while(len--){
+            Q.push(Q.front());
+            Q.pop();
+        }
+        int res = Q.front();
+        Q.pop();
+        return res;
+    }
+    
+    int top() {
+        return Q.back();
+    }
+    
+    bool empty() {
+        return Q.empty();
+    }
+private:
+    queue<int> Q;
+};
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack* obj = new MyStack();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->top();
+ * bool param_4 = obj->empty();
+ */
+```
+
+
+
+### 20.有效的括号
+
+#### 解法
+
+基本思路：**栈**
+
+因为右括号消去的必然是一组中最后出现的左括号，因此本质就是后进先出的栈。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> st;
+        for(char c : s){
+            if(st.empty())	st.push(c);
+            else{
+                if(c - st.top() == 1 || c - st.top() == 2)	st.pop();
+                else	st.push(c);
+            }
+        }
+        return st.empty();
+    }
+};
+```
+
+
+
+## 2023.5.17
+
+### 2446.判断两个事件是否存在冲突
+
+#### 解法
+
+基本思路：**字符串比较**
+
+不需要转换成int值，直接字符串比较即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool haveConflict(vector<string>& event1, vector<string>& event2) {
+        return !(event1[0] > event2[1] || event1[1] < event2[0]);
+    }
+};
+```
+
+
+
+## 2023.5.18
+
+### 1047.删除字符串中的所有相邻重复项
+
+#### 解法
+
+基本思路：**模拟、栈、字符串**
+
+依旧是模拟栈LIFO的模式，直接用字符串实现，节约空间和时间。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    string removeDuplicates(string s) {
+        string res = "";
+        for(char c : s){
+            if(res.empty() || res.back() != c)	
+                res += c;
+            else
+                res.pop_back();
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
 
 
 
