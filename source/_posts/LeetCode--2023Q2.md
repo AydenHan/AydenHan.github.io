@@ -2940,6 +2940,214 @@ public:
 
 
 
+# 打卡6月LeetCode
+
+## 2023.6.5
+
+### 2460.对数组执行操作
+
+#### 解法
+
+基本思路：**模拟**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> applyOperations(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> res(n, 0);
+        int cnt = 0;
+        for(int i = 0; i < n-1; ++i){
+            if(nums[i] == nums[i+1]){
+                nums[i] *= 2;
+                nums[i+1] = 0;
+            }
+            if(nums[i]) res[cnt++] = nums[i];
+        }
+        res[cnt] = nums[n - 1];
+        return res;
+    }
+};
+```
+
+
+
+### 239.滑动窗口最大值
+
+#### 题干
+
+给你一个整数数组 **nums**，有一个大小为 **k** 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回 滑动窗口中的**最大值** 。
+
+**示例**
+
+```
+示例 1：
+输入：nums = [1,3,-1,-3,5,3,6,7], k = 3
+输出：[3,3,5,5,6,7]
+```
+
+```
+示例 2：
+输入：nums = [1], k = 1
+输出：[1]
+```
+
+#### 解法
+
+基本思路：**单调队列、双向队列**
+
+维护一个单调的从大到小的双向队列（可以同时操作队首和队尾），**用于存储当次滑动窗口中可能是最大值的数的下标**。
+
+如何维护单调：
+
+每当窗口右移，将新加入的数与队尾下标所在元素比较，更大则将队尾下标出队，继续跟队尾比较，直至队列空或满足单调性质为止，将其入队。
+
+如何获取最大值：
+
+判断队首下标是否在滑动窗口区间内（存储下标而不是值的原因，值可以通过nums数组获取），若不在则出队，继续下一个队首，找到在区间内的第一个队首下标所在值，即为最大值。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        vector<int> res;
+        deque<int> q;
+        for(int i = 0; i < nums.size(); ++i){
+            while(!q.empty() && nums[i] >= nums[q.back()])
+                    q.pop_back();
+            q.emplace_back(i);
+            if(i > k - 2){
+                while(q.front() <= i - k)
+                    q.pop_front();
+                res.push_back(nums[q.front()]);
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 347.前K个高频元素
+
+#### 题干
+
+给你一个整数数组 `nums` 和一个整数 `k` ，请你返回其中出现频率前 `k` 高的元素。你可以按 **任意顺序** 返回答案。
+
+**示例**
+
+```
+示例 1：
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+```
+
+```
+示例 2：
+输入：nums = [1], k = 1
+输出：[1]
+```
+
+#### 解法
+
+基本思路：**优先队列、堆、哈希**
+
+先用哈希表统计每个元素出现的数量，再用优先队列按照出现数从大到小排序，优先队列长度维持在 K （当有元素入队时，队首元素出队，这就要求优先队列为从小到大排序，即小顶堆），最后将队列中剩下的元素记入vector。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        struct cmp{
+            bool operator()(pair<int, int> a,pair<int, int> b){	return a.second > b.second;	}
+        };
+        priority_queue<pair<int, int>, vector<pair<int, int>>, cmp> q;
+        unordered_map<int, int> cnt;
+        vector<int> res;
+        for(int n : nums)   cnt[n]++;
+        for(pair<int, int> p : cnt){
+            q.push(p);
+            if(q.size() > k)    q.pop();
+        }
+        while(!q.empty()){
+            res.push_back(q.top().first);
+            q.pop();
+        }
+        return res;
+    }
+};
+```
+
+
+
+## 2023.6.7
+
+### 2611.老鼠和奶酪
+
+#### 题干
+
+有两只老鼠和 **n** 块不同类型的奶酪，每块奶酪都只能被其中一只老鼠吃掉。下标为 **i** 处的奶酪被吃掉的得分为：
+
+- 如果第一只老鼠吃掉，则得分为 **reward1[i]** 。
+
+- 如果第二只老鼠吃掉，则得分为 **reward2[i]** 。
+
+给你一个正整数数组 **reward1** ，一个正整数数组 **reward2** ，和一个非负整数 **k** 。请你返回**第一只**老鼠恰好吃掉 **k** 块奶酪的情况下，**最大** 得分为多少。
+
+**示例**
+
+```
+示例 1：
+输入：reward1 = [1,1,3,4], reward2 = [4,4,1,1], k = 2
+输出：15
+```
+
+```
+示例 2：
+输入：reward1 = [1,1], reward2 = [1,1], k = 2
+输出：2
+```
+
+#### 解法
+
+基本思路：**贪心**
+
+因为要求第一只老鼠吃的数量，那么假设先全被第二只吃了，总得分为 **sum(reward2)**。
+
+当把第 i 块奶酪分给鼠1时，可以发现得分的变化量为 **reward1[i] - reward2[i]**。这意味着要想得到最高得分，分给鼠1的k块奶酪产生的变化量都是越大越好。那么将 **reward1[i] - reward2[i]**按照从大到小排序，数组的前 k 个值加上 sum，就是最大值了。
+
+注：sort排序中，若使用rbegin() 、rend()逆向迭代器，则为从大到小排序。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int miceAndCheese(vector<int>& reward1, vector<int>& reward2, int k) {
+        int res = 0;
+        for(int i = 0; i < reward1.size(); ++i){
+            res += reward2[i];
+            reward1[i] -= reward2[i];
+        }
+        sort(reward1.rbegin(), reward1.rend());
+        for(int i = 0; i < k; ++i)
+            res += reward1[i];
+        return res;
+    }
+};
+```
+
+
+
 
 
 
