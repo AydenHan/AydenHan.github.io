@@ -246,7 +246,7 @@ void _adjust_heap_S(_Iterator __first, _Distance __holeIndex, _Distance __len, _
     }
     // 当size()为偶数，且洞节点被移至这个最小的非叶节点时，需要特殊处理（因为只有左节点）
     if ((__len & 1) == 0 && __secondChild == (__len - 2) / 2) {
-        __secondChild = 2 * ( + 1);
+        __secondChild = 2 * (__secondChild + 1);
         *(__first + __holeIndex) = _GLIBCXX_MOVE(*(__first + (__secondChild - 1)));
         __holeIndex = __secondChild - 1;
     }
@@ -297,34 +297,17 @@ void _make_heap_S(_Iterator __first, _Iterator __last, _Compare __cp) {
 }
 ```
 
+<font color="red">注意：</font>这里有个关键点就是把**__parent**作为**__topIndex**参数传入，保证非叶节点在调整时不会和节点上方的父节点有交集，影响树的整体结构。
+
+举个例子：大根堆中，根节点序号0是整个堆的最小值，而最后一个非叶节点序号2是整个堆的最大值，此时按照**_adjust_heap_S()** 函数的逻辑，2将下沉至叶子节点然后上溯。若没有**__topIndex**限制，2回到原本位置后并不会停止，而是会继续向上与根节点比较，来到根节点的位置。此时根节点最小值被换到了2原本的位置，但2这个位置在**_make_heap_S()** 中已经遍历结束了，不再碰了。但实际上这个节点是比它的叶子节点更小的，却没有处理的机会了，这就破坏了堆的结构。
+
+
+
 TODO
 
+3.最后就是堆的插入、删除。插入就是上文中的上溯函数，删除pop函数如下：
+
 ```cpp
-template<typename _Iterator, typename _Compare>
-void _make_heap_S(_Iterator __first, _Iterator __last, _Compare __cp) {
-    typedef typename iterator_traits<_Iterator>::value_type
-    _ValueType;
-    typedef typename iterator_traits<_Iterator>::difference_type
-    _DistanceType;
-
-    if (__last - __first < 2)
-	    return;
-    // size()
-    const _DistanceType __len = __last - __first;
-    // 获取最后一个非叶子节点的位置
-    _DistanceType __parent = (__len - 2) / 2;
-    // 从后向前遍历所有非叶子节点，每个节点都仅与其下面的节点按照_Compare进行调整，不影响树的整体结构
-    while (true) {
-        // 取出每个非叶子节点的值
-        // _GLIBCXX_MOVE根据_Compare版本选择使用std::move还是直接赋值。
-        _ValueType __value = _GLIBCXX_MOVE(*(__first + __parent));
-        _adjust_heap_S(__first, __parent, __len, _GLIBCXX_MOVE(__value), __cp);
-        if (__parent == 0)
-            return;
-        __parent--;
-	}
-}
-
 template<typename _Iterator, typename _Compare> inline 
 void _pop_heap_S(_Iterator __first, _Iterator __last, _Iterator __res, _Compare __cp) {
     typedef typename iterator_traits<_Iterator>::value_type
@@ -337,6 +320,11 @@ void _pop_heap_S(_Iterator __first, _Iterator __last, _Iterator __res, _Compare 
         _GLIBCXX_MOVE(__value), __cp);
 }
 
+```
+
+
+
+```cpp
 // make heap
 template<typename _Iterator> inline 
 void make_heap_S(_Iterator _first, _Iterator _last) {
