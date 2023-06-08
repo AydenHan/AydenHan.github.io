@@ -29,31 +29,6 @@
     
     
     <entry>
-      <title>DL目标跟踪算法</title>
-      <link href="/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/"/>
-      <url>/%E5%8E%9F%E7%90%86/DL%E7%9B%AE%E6%A0%87%E8%B7%9F%E8%B8%AA%E7%AE%97%E6%B3%95/</url>
-      
-      
-      <categories>
-          
-          <category> 原理 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 算法 </tag>
-            
-            <tag> Deep Learning </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>LeetCode--2023Q2</title>
       <link href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q2/"/>
       <url>/%E5%8E%9F%E7%90%86/LeetCode--2023Q2/</url>
@@ -397,9 +372,9 @@
             
             <tag> PyQt5 </tag>
             
-            <tag> 小软件 </tag>
-            
             <tag> 加密与编码 </tag>
+            
+            <tag> 小软件 </tag>
             
         </tags>
       
