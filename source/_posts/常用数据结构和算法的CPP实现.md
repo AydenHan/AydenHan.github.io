@@ -201,6 +201,8 @@ public:
 
 刚好写了道算法题，打算测试2.0时，发现需要对 pair<int, int> 类型进行排序，也就意味着需要真正的泛型编程，支持自定义比较方式，才能支持底层容器vector能支持的全部类型。
 
+注意，使用template实现模板类和函数时，必须将实现也放在头文件中，因为模板类和函数的实例化都是在预处理阶段，而不是编译、链接。若将其声明和定义分开，在预处理阶段在CPP文件填入声明时，找不到定义会报错。
+
 **学习STL源码：**
 
 1.首先形成一个堆的核心结构在于两个算法：**上溯和下溯**。
@@ -295,36 +297,6 @@ void _make_heap_S(_Iterator __first, _Iterator __last, _Compare __cp) {
         __parent--;
 	}
 }
-```
-
-<font color="red">注意：</font>这里有个关键点就是把**__parent**作为**__topIndex**参数传入，保证非叶节点在调整时不会和节点上方的父节点有交集，影响树的整体结构。
-
-举个例子：大根堆中，根节点序号0是整个堆的最小值，而最后一个非叶节点序号2是整个堆的最大值，此时按照**_adjust_heap_S()** 函数的逻辑，2将下沉至叶子节点然后上溯。若没有**__topIndex**限制，2回到原本位置后并不会停止，而是会继续向上与根节点比较，来到根节点的位置。此时根节点最小值被换到了2原本的位置，但2这个位置在**_make_heap_S()** 中已经遍历结束了，不再碰了。但实际上这个节点是比它的叶子节点更小的，却没有处理的机会了，这就破坏了堆的结构。
-
-
-
-TODO
-
-3.最后就是堆的插入、删除。插入就是上文中的上溯函数，删除pop函数如下：
-
-```cpp
-template<typename _Iterator, typename _Compare> inline 
-void _pop_heap_S(_Iterator __first, _Iterator __last, _Iterator __res, _Compare __cp) {
-    typedef typename iterator_traits<_Iterator>::value_type
-    _ValueType;
-    typedef typename iterator_traits<_Iterator>::difference_type
-    _DistanceType;
-    _ValueType __value = _GLIBCXX_MOVE(*__res);
-    *__res = _GLIBCXX_MOVE(*__first);
-    _adjust_heap_S(__first, _DistanceType(0), _DistanceType(__last - __first),
-        _GLIBCXX_MOVE(__value), __cp);
-}
-
-```
-
-
-
-```cpp
 // make heap
 template<typename _Iterator> inline 
 void make_heap_S(_Iterator _first, _Iterator _last) {
@@ -336,7 +308,19 @@ void make_heap_S(_Iterator _first, _Iterator _last, _Compare _cp) {
     _make_heap_S(_first, _last, 
         __gnu_cxx::__ops::__iter_comp_iter(_cp));
 }
+```
 
+<font color="red">注意：</font>这里有个关键点就是把**__parent**作为**__topIndex**参数传入，保证非叶节点在调整时不会和节点上方的父节点有交集，影响树的整体结构。
+
+举个例子：大根堆中，根节点序号0是整个堆的最小值，而最后一个非叶节点序号2是整个堆的最大值，此时按照**_adjust_heap_S()** 函数的逻辑，2将下沉至叶子节点然后上溯。若没有**__topIndex**限制，2回到原本位置后并不会停止，而是会继续向上与根节点比较，来到根节点的位置。此时根节点最小值被换到了2原本的位置，但2这个位置在**_make_heap_S()** 中已经遍历结束了，不再碰了。但实际上这个节点是比它的叶子节点更小的，却没有处理的机会了，这就破坏了堆的结构。
+
+
+
+3.然后就是堆的**插入、删除**。
+
+插入就是在底层容器vector中加入新元素，然后调用上文中的上溯函数调整即可。
+
+```cpp
 // push heap
 template<typename _Iterator> inline 
 void push_heap_S(_Iterator _first, _Iterator _last) {
@@ -358,7 +342,22 @@ void push_heap_S(_Iterator _first, _Iterator _last, _Compare _cp) {
     _push_heap_S(_first, _DistanceType(_last - _first - 1), _DistanceType(0),
         _value, __gnu_cxx::__ops::__iter_comp_val(_cp));
 }
+```
 
+删除是对**_adjust_heap_S()** 函数的应用。
+
+```cpp
+template<typename _Iterator, typename _Compare> inline 
+void _pop_heap_S(_Iterator __first, _Iterator __last, _Iterator __res, _Compare __cp) {
+    typedef typename iterator_traits<_Iterator>::value_type
+    _ValueType;
+    typedef typename iterator_traits<_Iterator>::difference_type
+    _DistanceType;
+    _ValueType __value = _GLIBCXX_MOVE(*__res);
+    *__res = _GLIBCXX_MOVE(*__first);
+    _adjust_heap_S(__first, _DistanceType(0), _DistanceType(__last - __first),
+        _GLIBCXX_MOVE(__value), __cp);
+}
 //pop heap
 template<typename _Iterator> inline 
 void pop_heap_S(_Iterator _first, _Iterator _last) {
@@ -374,10 +373,48 @@ void pop_heap_S(_Iterator _first, _Iterator _last, _Compare _cp) {
         _pop_heap_S(_first, _last, _last, __gnu_cxx::__ops::__iter_comp_iter(_cp));
     }
 }
+```
 
+这里**__last**自减后再计算**_DistanceType(last - first)**，相当于忽略最后一个元素（被换下来的根节点），从第一个元素（被换到根节点的叶节点）开始进行下溯操作。
+
+
+
+4.最后是**堆排序**
+
+```cpp
+template<typename _Iterator, typename _Compare>
+void _sort_heap_S(_Iterator __first, _Iterator __last, _Compare __cp) {
+    typedef typename iterator_traits<_Iterator>::value_type
+    _ValueType;
+    typedef typename iterator_traits<_Iterator>::difference_type
+    _DistanceType;
+    while(__last - __first > 1){
+        --__last;
+        _pop_heap_S(__first, __last, __last, __cp);
+    }
+}
+template<typename _Iterator> inline 
+void sort_heap_S(_Iterator _first, _Iterator _last) {
+    _sort_heap_S(_first, _last, 
+        __gnu_cxx::__ops::__iter_less_iter());
+}
+template<typename _Iterator, typename _Compare> inline 
+void sort_heap_S(_Iterator _first, _Iterator _last, _Compare _cp) {
+    _sort_heap_S(_first, _last, 
+        __gnu_cxx::__ops::__iter_comp_iter(_cp));
+}
+```
+
+堆排序在建堆完成之后就非常简单了，就是不断将堆顶元素弹出，加入到迭代器末端end()的过程。之后end()前移，继续在 **[ begin(),  end() )** 范围内完成pop操作直至范围内仅剩一个元素。
+
+
+
+5.以上堆的方法函数设计好后，就可以通过它们定义一些利用堆特性的类了，例如**优先队列**。
+
+```cpp
 template<typename _Tp, typename _Sequence = vector<_Tp>,
 	typename _Compare  = less<typename _Sequence::value_type> >
-class Heap_S{
+class priority_queue_S{
 public:
     typedef typename _Sequence::value_type                value_type;
     typedef typename _Sequence::reference                 reference;
@@ -389,22 +426,21 @@ public:
     _Compare  cp;
 public:
     explicit
-    Heap_S(const _Sequence& _s, const _Compare& _c)
+    priority_queue_S(const _Sequence& _s, const _Compare& _c)
     : sq(_s), cp(_c) {
         make_heap_S(sq.begin(), sq.end(), cp);
     }
     explicit
-    Heap_S(const _Sequence& _s = _Sequence(), _Compare&& _c = _Compare())
+    priority_queue_S(const _Sequence& _s = _Sequence(), _Compare&& _c = _Compare())
     : sq(move(_s)), cp(_c) {
         make_heap_S(sq.begin(), sq.end(), cp);
     }
 
     bool empty() const { return sq.empty(); }
-
     size_type size() const { return sq.size(); }
-
     size_type depth() const { return ceil(log2(this->size() + 1)); }
-
+    void clear() { sq.clear(); }
+   
     const_reference top() const { 
         __glibcxx_requires_nonempty();
         return sq.front(); 
@@ -430,28 +466,64 @@ public:
         pop_heap_S(sq.begin(), sq.end(), cp);
         sq.pop_back();
     }
+};
+```
 
-    void clear() { sq.clear(); }
 
-    void print(){
-        if(empty())
-            cout << "null" << endl;
+
+# 算法
+
+## 排序
+
+### 堆排序 - O(n*log(n))
+
+#### 1.函数调用
+
+实现堆排序其实仅需两个步骤：建堆、排序（将堆顶元素依次下溯）。
+
+承接上文中的STL写法，实现仅需调用两个对应的函数：
+
+```cpp
+vector<int> a = {33, 1, 44, 2, 999, 77};
+make_heap_S(a.begin(), a.end(), greater<int>());
+sort_heap_S(a.begin(), a.end(), greater<int>());
+```
+
+注意，make heap和sort heap操作，要求**堆的比较方式是相同的**才行，也就是说如果不使用默认比较方式（less），就需要在两个函数中均传入同一个比较仿函数。
+
+再注意，**sort_heap_S()** 排序的容器内的元素必须为一个堆，在排序后，这些元素将不再组成一个堆。
+
+
+
+#### 2.简单数组实现
+
+```cpp
+void adjustHeap(vector<int>& arr, int start, int end) {
+    int parent = start;
+    // 这里选择左子节点，因为可能存在没有右子节点的情况
+    int child = 2 * start + 1;
+    while(child <= end){
+        if(child+1 <= end && arr[child] < arr[child+1])
+            ++child;
+        if(arr[child] < arr[parent])
+            return;
         else{
-            int dep = depth(), index = 0;
-            cout << "The Heap - depth: " << dep << "  " << "size: " << size() << endl;
-            cout << "--------" << endl;
-            for(int d = 0; d < dep; ++d){
-                for(int num = 0; num < pow<int, int>(2, d); ++num){
-                    if(index >= size())  break;
-                    cout << sq[index++] << " ";
-                }
-                cout << endl;
-            }
-            cout << "--------" << endl;
+            swap(arr[child], arr[parent]);
+            parent = child;
+            child = 2 * parent + 1;
         }
     }
-};
-
-#pragma endregion
+}
+void heapSort(vector<int>& arr){
+    int len = arr.size();
+    // 第一步：建堆
+    for(int i = (len - 2) / 2; i >= 0; --i)
+        adjustHeap(arr, i, len - 1);
+    // 第二步：排序
+    for(int i = len - 1; i > 0; --i){
+        swap(arr[i], arr[0]);
+        adjustHeap(arr, 0, i - 1);
+    }
+}
 ```
 
