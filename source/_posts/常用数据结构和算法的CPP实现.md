@@ -95,8 +95,114 @@ struct TreeNode {
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
+```
+
+#### 前中后序遍历（递归）
+
+```cpp
+void traversal(TreeNode* cur, vector<int>& vec) {
+    if (cur == NULL) return;
+    vec.push_back(cur->val);    // 中
+    traversal(cur->left, vec);  // 左
+    traversal(cur->right, vec); // 右
+}
+```
+
+- 前序：中左右
+- 中序：左中右
+- 后序：左右中
+
+#### 前序遍历（迭代）
+
+```cpp
+void traversal(TreeNode* root, vector<int>& vec) {
+    stack<TreeNode*> st;
+    if(root == nullptr)	return;
+    st.push(root);
+    while(!st.empty()){
+        TreeNode* node = st.top();
+        st.pop();
+        vec.push_back(node->val);
+        if(node->right)	st.push(node->right);
+        if(node->left)	st.push(node->left);	// 因为读完根节点后是左节点，因此需要先将右节点压栈，才能先读左节点
+    }
+}
+```
+
+#### 后序遍历（迭代）
+
+前序是中左右，反一下遍历子节点的顺序，先右再左，就是中右左；而后续是左右中，两者相反，只需在中序的基础上反转数组即可。
+
+```cpp
+void traversal(TreeNode* root, vector<int>& vec) {
+    stack<TreeNode*> st;
+    if(root == nullptr)	return;
+    st.push(root);
+    while(!st.empty()){
+        TreeNode* node = st.top();
+        st.pop();
+        vec.push_back(node->val);
+        if(node->left)	st.push(node->left);	
+        if(node->right)	st.push(node->right);
+    }
+    reverse(vec.begin(), vec.end());
+}
+```
+
+#### 中序遍历（迭代）
+
+比较特殊，存在**访问节点（遍历节点）和处理节点（将元素放进结果集）不一致**的情况。
+
+因为中序是左中右的顺序，所以需要先遍历到最左侧的左节点（**没下一个左节点时**），加入结果中。此时该节点为局部根节点（相当于中），然后就访问右节点。（右节点可能存在左节点和右节点，所以跟根节点的遍历一样处理）。
+
+```cpp
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> res;
+        stack<TreeNode*> st;
+        TreeNode* cur = root;
+        if(root == nullptr) return res;
+        while(!st.empty() || cur){
+            if(cur){
+                st.push(cur);
+                cur = cur->left;
+            }
+            else {
+                cur = st.top();
+                st.pop();
+                res.push_back(cur->val);
+                cur = cur->right;
+            }            
+        }
+        return res;
+    }
+};
+```
+
+#### 层序遍历
+
+```cpp
+void levelOrder(TreeNode* root, vector<vector<int>>& res) {
+    if(root == nullptr)  return;
+    queue<TreeNode*> q;
+    q.push(root);
+    while(!q.empty()){
+        vector<int> layer;
+        int n = q.size();
+        for(int i = 0; i < n; ++i){
+            TreeNode* node = q.front();
+            q.pop();
+            layer.push_back(node->val);
+            if(node->left)  q.push(node->left);
+            if(node->right)  q.push(node->right);
+        }
+        res.push_back(layer);
+    }
+    return;
+}
 ```
 
 

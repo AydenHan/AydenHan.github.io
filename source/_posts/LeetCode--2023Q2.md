@@ -3148,9 +3148,191 @@ public:
 
 
 
+## 2023.6.13
+
+### 144.二叉树的前序遍历
+
+#### 解法
+
+基本思路：**递归、栈**
+
+#### 代码
+
+**递归**：前、中、后序都差不多，无非是**push_back**的位置换了一下。
+
+```cpp
+class Solution {
+public:
+    void travelsal(TreeNode* cur, vector<int>& res) {
+        if(cur == nullptr) return;
+        res.push_back(cur->val);
+        travelsal(cur->left, res);
+        travelsal(cur->right, res);
+    }
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> res;
+        travelsal(root, res);
+        return res;
+    }
+};
+```
+
+**迭代：**
+
+```cpp
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        stack<TreeNode*> st;
+        vector<int> res;
+        if(root == nullptr) return res;
+        st.push(root);
+        while(!st.empty()){
+            TreeNode* node = st.top();
+            st.pop();
+            res.push_back(node->val);
+            if(node->right) st.push(node->right);
+            if(node->left) st.push(node->left);
+        }
+        return res;
+    }
+};
+```
 
 
 
+### 94.二叉树的中序遍历
+
+#### 解法
+
+基本思路：**迭代、栈**
+
+中序属于**访问节点（遍历节点）和处理节点（将元素放进结果集）不一致**的情况。
+
+因为中序是左中右的顺序，所以需要先遍历到最左侧的左节点（**没下一个左节点时**），加入结果中。此时该节点为局部根节点（相当于中），然后就访问右节点。（右节点可能存在左节点和右节点，所以跟根节点的遍历一样处理）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> res;
+        stack<TreeNode*> st;
+        TreeNode* cur = root;
+        if(root == nullptr) return res;
+        while(!st.empty() || cur){
+            if(cur){
+                st.push(cur);
+                cur = cur->left;
+            }
+            else {
+                cur = st.top();
+                st.pop();
+                res.push_back(cur->val);
+                cur = cur->right;
+            }            
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 145.二叉树的后序遍历
+
+#### 解法
+
+基本思路：**迭代、栈**
+
+可以发现，前序是中左右，但是把前序先左后右的顺序反一下，就是中右左。后序是左右中，刚好反过来。
+
+实现相比于中序更加简单。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        stack<TreeNode*> st;
+        vector<int> res;
+        if(root == nullptr) return res;
+        st.push(root);
+        while(!st.empty()){
+            TreeNode* node = st.top();
+            st.pop();
+            res.push_back(node->val);
+            if(node->left) st.push(node->left);
+            if(node->right) st.push(node->right);
+        }
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
+```
+
+
+
+### 102.二叉树的层序遍历
+
+### 107.二叉树的层序遍历Ⅱ
+
+#### 题干
+
+1.给你二叉树的根节点 `root` ，返回其节点值的 **层序遍历** 。 （即逐层地，从左到右访问所有节点）。
+
+2.给你二叉树的根节点 `root` ，返回其节点值 **自底向上的层序遍历** 。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+
+**示例**
+
+```
+示例 1：
+输入：root = [3,9,20,null,null,15,7]
+输出：[[3],[9,20],[15,7]]
+```
+
+```
+示例 2：
+输入：root = []
+输出：[]
+```
+
+#### 解法
+
+基本思路：**广度优先、队列**
+
+1.如下
+
+2.返回前反转res数组即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        vector<vector<int>> res;
+        if(root == nullptr)  return res;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()){
+            vector<int> layer;
+            int n = q.size();
+            for(int i = 0; i < n; ++i){
+                TreeNode* node = q.front();
+                q.pop();
+                layer.push_back(node->val);
+                if(node->left)  q.push(node->left);
+                if(node->right)  q.push(node->right);
+            }
+            res.push_back(layer);
+        }
+        return res;
+    }
+};
+```
 
 
 
