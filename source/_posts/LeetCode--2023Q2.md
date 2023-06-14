@@ -3336,15 +3336,286 @@ public:
 
 
 
+## 2023.6.14
+
+### 226.翻转二叉树
+
+#### 解法
+
+基本思路：**迭代、栈、前序**
+
+只需要在前序的时候，先交换节点再往下压栈即可。
+
+#### 代码
+
+```cpp
+res.push_back(node->val);	// old
+swap(node->left, node->right);	// new
+```
 
 
 
+### 589.N叉树的前序遍历
+
+### 590.N叉树的后序遍历
+
+#### 解法
+
+基本思路：**迭代、栈、前序**
+
+1. 2变N，顺序一样都是前序，那就是从左到右，所以遍历vector压栈时从后往前即可。
+2. 对于后序，跟二叉树一样，先把遍历顺序改为从右到左（也就是从前往后遍历vector），最后反转结果数组即可。
+
+#### 代码
+
+```cpp
+// old
+if(node->right) st.push(node->right);
+if(node->left) st.push(node->left);   
+// new
+for(int i = nd->children.size() - 1; i >= 0; --i)
+    st.push(nd->children[i]);
+```
 
 
 
+### 199.二叉树的右视图
+
+#### 题干
+
+给定一个二叉树的 **根节点** `root`，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
+
+**示例**
+
+```
+示例 1：
+输入: [1,2,3,null,5,null,4]
+输出: [1,3,4]
+```
+
+```
+示例 2：
+输入: []
+输出: []
+```
+
+#### 解法
+
+基本思路：**迭代、队列、层序**
+
+在层序遍历的过程中，只将每一层最右边的节点（**每层队列的队尾**）加入结果数组即可。
+
+#### 代码
+
+```cpp
+layer.push_back(node->val);		// old
+if(i == n - 1)  res.push_back(node->val);	// new
+```
 
 
 
+### 637.二叉树的层平均值
+
+#### 解法
+
+基本思路：**迭代、队列、层序**
+
+用层序遍历，sum要注意越界问题。
+
+#### 代码
+
+```cpp
+double sum = 0;
+sum += node->val;
+res.push_back(sum / n);
+```
+
+
+
+### 429.N叉树的层序遍历
+
+#### 代码
+
+```cpp
+// old
+if(node->left)  q.push(node->left);
+if(node->right)  q.push(node->right);
+// new
+for(auto nd : node->children)
+	q.push(nd);
+```
+
+
+
+### 515.在每个树行中找最大值
+
+#### 解法
+
+基本思路：**迭代、队列、层序**
+
+每层维护一个最大值即可。
+
+#### 代码
+
+```cpp
+int maxNum = INT_MIN;
+if(maxNum < node->val) maxNum = node->val;
+```
+
+
+
+### 116.填充每个节点的下一个右侧节点指针
+
+### 117.填充每个节点的下一个右侧节点指针 Ⅱ
+
+#### 题干
+
+给定一个 **完美二叉树** ，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：
+
+```cpp
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+```
+
+填充它的每个 **next** 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 **next** 指针设置为 **NULL**。
+
+初始状态下，所有 **next** 指针都被设置为 **NULL**。
+
+#### 解法
+
+基本思路：**迭代、队列、层序**
+
+在层序遍历中，维护一个Node*指针，指向每层上一个节点，将其next指针赋为当前指针。
+
+每层n个节点，需要设置的为 **[0, n - 2]** ，因此可以用 **[1, n - 1]** 的节点来设置上一个。
+
+两题一样的代码。
+
+#### 代码
+
+```cpp
+Node* pre = NULL;
+if(pre) pre->next = node;
+pre = node;
+```
+
+
+
+### 104.二叉树的最大深度
+
+#### 解法
+
+基本思路：**迭代、队列、层序**
+
+计数层序遍历一共遍历了多少层即可。
+
+
+
+### 111.二叉树的最小深度
+
+#### 解法
+
+基本思路：**迭代、队列、层序**
+
+计数层序遍历的层数。维护一个标志位，当某层出现叶子节点时，直接break循环返回计数值即可。
+
+
+
+### 101.对称二叉树
+
+#### 解法
+
+基本思路：**迭代、队列；递归**
+
+迭代和递归的思路都是一样的，这里遍历不需要去考虑用前中后和层序哪种遍历，是独有的，但可以参考层序中队列的用法。
+
+1.通过队列存储一对需要比较的节点（**左子树和右子树的内侧、外侧**）。因为存储的节点是对应的，那么它们的**下一层采用相同的方式存储后，取出的两个节点依旧是对应的**，这是循环的必要条件。
+
+2.每次出队两个节点，设立判定条件：
+
+- 若两个节点**均为空**，进入下一对节点判断
+- 若只有**一个空**或都不空但**不相等**，直接return false
+- 若循环**结束**了，那么就是遍历完了所有都没出问题，return true
+
+递归也是一样的思路：
+
+1.先**确立递归函数的参数和返回值**：左右子节点，bool。
+
+2.确定**中止条件**：同上2
+
+3.确定**单层递归的逻辑**：顺序也和迭代一样
+
+- 先取一对节点（递归省略了这个过程）
+- 判定条件（这里和迭代不同的点在于条件1直接返回了true，这是因为会调用多次递归函数，直接返回true表示这条路径走到头了都没有问题）
+- 最后的总return要综合一对节点下的两对节点的判断情况（递归了）作为结果。
+
+#### 代码
+
+```cpp
+// 迭代
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        queue<TreeNode*> q;
+        q.push(root->left);
+        q.push(root->right);
+        while(!q.empty()) {
+            TreeNode* ln = q.front();	q.pop();
+            TreeNode* rn = q.front();	q.pop();
+            if(!ln && !rn) continue;
+            if(!ln || !rn || (ln->val != rn->val))  return false;
+            q.push(ln->left);
+            q.push(rn->right);
+            q.push(ln->right);
+            q.push(rn->left);
+        }
+        return true;
+    }
+};
+```
+
+```cpp
+// 递归
+class Solution {
+public:
+    bool recursion(TreeNode* left, TreeNode* right) {
+        if(!left && !right) return true;
+        if(!left || !right || (left->val != right->val))  return false;
+        return recursion(left->left, right->right) && recursion(left->right, right->left);
+    }
+    bool isSymmetric(TreeNode* root) {
+        return recursion(root->left, root->right);
+    }
+};
+```
+
+#### 相似题目
+
+**100.相同的树**
+
+解法和上述相同，甚至题目本身提供的函数就是一个递归函数的样子，直接写递归即可。
+
+**572.另一个树的子树**
+
+在100.相同的树的基础上，以自身为递归函数再实现一个dfs即可。
+
+```cpp
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        if(!p && !q)    return true;
+        if(!p || !q || (p->val != q->val))  return false;
+        return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+    }
+    bool isSubtree(TreeNode* root, TreeNode* subRoot) {
+        return root && (isSameTree(root, subRoot) || isSubtree(root->left, subRoot) || isSubtree(root->right, subRoot));
+    }
+};
+```
 
 
 
