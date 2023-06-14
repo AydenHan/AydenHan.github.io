@@ -3595,11 +3595,11 @@ public:
 
 #### 相似题目
 
-**100.相同的树**
+### 100.相同的树
 
 解法和上述相同，甚至题目本身提供的函数就是一个递归函数的样子，直接写递归即可。
 
-**572.另一个树的子树**
+### 572.另一个树的子树
 
 在100.相同的树的基础上，以自身为递归函数再实现一个dfs即可。
 
@@ -3613,6 +3613,177 @@ public:
     }
     bool isSubtree(TreeNode* root, TreeNode* subRoot) {
         return root && (isSameTree(root, subRoot) || isSubtree(root->left, subRoot) || isSubtree(root->right, subRoot));
+    }
+};
+```
+
+
+
+### 222.完全二叉树的节点个数
+
+#### 题干
+
+给你一棵 **完全二叉树** 的根节点 **root** ，求出该树的**节点个数**。
+
+**示例**
+
+```
+示例 1：
+输入：root = [1,2,3,4,5,6]
+输出：6
+```
+
+```
+示例 2：
+输入: []
+输出: 0
+```
+
+#### 解法
+
+基本思路：**后序（递归）、层序（迭代）**
+
+1. 最容易想到的解法就是**层序遍历**，得到深度h后，前 **h - 1** 就是满二叉树直接计算节点数，再加上最后一层队列中的元素数量即可。
+2. 另一种简单的写法就是**后续遍历**，用迭代的方式遍历一遍。
+3. 最后就是利用完全二叉树叶子节点均靠左的特性，**仅遍历部分节点**即可：分别向左节点的左侧和右节点的右侧向下遍历，来判断当前子树是否为满二叉树，直至找到一个满二叉子树时，结束递归（依旧是方法2的思路），返回该子树的节点数（直接计算可得）。
+
+#### 代码
+
+**方法2**
+
+```cpp
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if (root == NULL) return 0;
+        // 这里求了左子树的节点数 + 右子树节点数 + 中间节点数（1），实际是一个后序遍历过程
+        return 1 + countNodes(root->left) + countNodes(root->right);	
+    }
+};
+```
+
+**方法3**
+
+```cpp
+class Solution {
+public:
+    int calcDepth(TreeNode* cur, bool isLeft) {
+        int cnt = 0;
+        while(cur) {
+            cur = isLeft ? cur->left : cur->right;
+            ++cnt;
+        }
+        return cnt;
+    }
+    int countNodes(TreeNode* root) {
+        if(root == nullptr) return 0;
+        int lchildDep = calcDepth(root->left, true);
+        int rchildDep = calcDepth(root->right, false);
+        if(lchildDep == rchildDep)
+            return (2 << lchildDep) - 1;
+        return countNodes(root->left) + countNodes(root->right) + 1;
+    }
+};
+```
+
+
+
+### 110.平衡二叉树
+
+#### 题干
+
+**平衡二叉树**定义为：一个二叉树*每个节点* 的左右两个子树的高度差的绝对值不超过 1 。
+
+#### 解法
+
+基本思路：**后序（递归）**
+
+**凡是求高度的，都是后序遍历；求深度的，都是前序遍历。**
+
+理论上，**层序遍历**都可实现，但是效率较低，尤其涉及回溯问题，不如迭代效果好。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int treeHeight(TreeNode* cur) {
+        if(cur == nullptr)  return 0;
+        int lheight = treeHeight(cur->left);
+        if(lheight == -1)   return -1;
+        int rheight = treeHeight(cur->right);
+        if(rheight == -1)   return -1;
+        return abs(lheight - rheight) > 1 ? -1 : max(lheight, rheight) + 1;
+    }
+    bool isBalanced(TreeNode* root) {
+        return treeHeight(root) != -1;
+    }
+};
+```
+
+
+
+### 257.二叉树的所有路径
+
+#### 题干
+
+给你一个二叉树的根节点 `root` ，按 **任意顺序** ，返回所有从根节点到叶子节点的路径。
+
+**示例**
+
+```
+示例 1：
+输入：root = [1,2,3,null,5]
+输出：["1->2->5","1->3"]
+```
+
+```
+示例 2：
+输入：root = [1]
+输出：["1"]
+```
+
+#### 解法
+
+基本思路：**前序（递归）、回溯**
+
+从根节点到叶子节点，自然用到了**前序遍历**：中左右的顺序——递归中先判断当前节点的终止条件，再进入左右子节点递归。
+
+递归参数：除了节点指针，最后**记录完整路径**的数组（res），还需要一个用于回溯的数组（path），记录从根节点到当前节点经过的节点（记录值方便加入res）。当到达叶子节点后，需要数组回退一位，拐入父节点的另一个子节点（如果存在）。
+
+终止条件：遇到叶子节点（左右子节点均为空），将回溯数组中经过的节点打印为字符串，加入res。
+
+单层逻辑：回溯数组的压入和弹出。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    void traversal(TreeNode* cur, vector<int>& path, vector<string>& res) {
+        path.push_back(cur->val);
+        if(!cur->left && !cur->right) {
+            string pth = "";
+            for(int i = 0; i < path.size() - 1; ++i)
+                pth += to_string(path[i]) + "->";
+            pth += to_string(path[path.size() - 1]);
+            res.push_back(pth);
+            return;
+        }
+        if(cur->left) {
+            traversal(cur->left, path, res);
+            path.pop_back();
+        }
+        if(cur->right) {
+            traversal(cur->right, path, res);
+            path.pop_back();
+        }
+    }
+    vector<string> binaryTreePaths(TreeNode* root) {
+        vector<string> res;
+        vector<int> path;
+        traversal(root, path, res);
+        return res;
     }
 };
 ```
