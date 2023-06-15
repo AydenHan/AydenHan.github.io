@@ -97,6 +97,33 @@ tags:
 
 
 
+### 二叉树的构造
+
+#### 后序 + 中序
+
+<img src="常用数据结构和算法的CPP实现/20210203154249860.png" alt="106.从中序与后序遍历序列构造二叉树" style="zoom: 50%;" />
+
+- 第一步：如果数组大小为零的话，说明是空节点
+- 第二步：如果不为空，那么取后序数组最后一个元素作为节点元素
+- 第三步：找到后序数组最后一个元素在中序数组的位置，作为切割点
+- 第四步：切割中序数组，切成中序左数组和中序右数组 
+- 第五步：切割后序数组，切成后序左数组和后序右数组（切割后的两个数组长度依旧和中序的相等）
+- 第六步：递归处理左区间和右区间
+
+#### 前序 + 中序
+
+前序和后序的构造步骤差不多，区别在于第二步，前序是从序列头部取第一个值。
+
+#### 前序 + 后序 X
+
+**前序和后序不能唯一确定一棵二叉树！**，因为没有中序遍历无法确定左右部分，也就是无法分割。例如：
+
+<img src="常用数据结构和算法的CPP实现/20210203154720326.png" alt="106.从中序与后序遍历序列构造二叉树2" style="zoom:50%;" />
+
+tree1 和 tree2 的前序遍历都是[1 2 3]， 后序遍历都是[3 2 1]。
+
+
+
 ### 二叉树的实现
 
 #### 链表：节点实现
@@ -106,7 +133,9 @@ struct TreeNode {
     int val;
     TreeNode *left;
     TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 ```
 
@@ -214,6 +243,44 @@ void levelOrder(TreeNode* root, vector<vector<int>>& res) {
     }
     return;
 }
+```
+
+#### 前中序构造
+
+```cpp
+TreeNode* buildChild(vector<int>& preorder, vector<int>& inorder, int preHead, int inHead, int len) { 
+    if(len == 0)    return nullptr;
+    TreeNode* node = new TreeNode(preorder[preHead]);
+    if(len == 1)    return node;
+    int seg;
+    for(seg = inHead; seg < inHead + len; ++seg) 
+        if(inorder[seg] == node->val)
+            break;
+    int rightLen = inHead + len - seg - 1;
+    node->left = buildChild(preorder, inorder, preHead + 1, inHead, seg - inHead);
+    node->right = buildChild(preorder, inorder, preHead + 1 + seg - inHead, seg + 1, rightLen);
+    return node;
+}
+buildChild(preorder, inorder, 0, 0, preorder.size());
+```
+
+#### 中后序构造
+
+```cpp
+TreeNode* buildChild(vector<int>& inorder, vector<int>& postorder, int inHead, int postTail, int len) {
+    if(len == 0)    return nullptr;
+    TreeNode* node = new TreeNode(postorder[postTail]);
+    if(len == 1)    return node;
+    int seg;
+    for(seg = inHead; seg < inHead + len; ++seg) 
+        if(inorder[seg] == node->val)
+            break;
+    int rightLen = inHead + len - seg - 1;
+    node->left = buildChild(inorder, postorder, inHead, postTail - rightLen - 1, seg - inHead);
+    node->right = buildChild(inorder, postorder, seg + 1, postTail - 1, rightLen);
+    return node;
+}
+buildChild(inorder, postorder, 0, postorder.size() - 1, postorder.size());
 ```
 
 

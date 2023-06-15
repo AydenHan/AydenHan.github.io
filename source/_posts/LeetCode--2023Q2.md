@@ -3790,3 +3790,292 @@ public:
 
 
 
+## 2023.6.15
+
+### 404.左叶子之和
+
+#### 解法
+
+基本思路：**后序（递归）**
+
+因为遍历的是叶子节点，所以用后序。终止条件为左叶子节点（判定条件需要在父节点上进行）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int sumOfLeftLeaves(TreeNode* root) {
+        if(!root || !root->left && !root->right)  return 0;			// 终止条件
+        int lLeaf = sumOfLeftLeaves(root->left);					// 左
+        if(root->left && !root->left->left && !root->left->right)	// 返回值是0不能直接递归，要把值取出来
+            lLeaf = root->left->val;
+        return lLeaf + sumOfLeftLeaves(root->right);				// 右 -> 中
+    }
+};
+```
+
+
+
+### 513.找树左下角的值
+
+#### 题干
+
+给定一个二叉树的 **根节点** `root`，请找出该二叉树的 **最底层 最左边** 节点的值。
+
+#### 解法
+
+基本思路：**层序（迭代）**
+
+在计算深度的同时，找最左侧的节点，很容易想到层序的队列，更加方便。
+
+#### 代码
+
+```cpp
+res = q.front()->val;	// 在每次进入下一层时取队首值即可
+```
+
+
+
+### 112.路径总和
+
+#### 题干
+
+给你二叉树的根节点 **root** 和一个表示目标和的整数 **targetSum** 。判断该树中是否存在 **根节点到叶子节点** 的路径，这条路径上所有节点值相加等于目标和 **targetSum** 。如果存在，返回 **true** ；否则，返回 **false** 。
+
+**示例**
+
+```
+示例 1：
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22
+输出：true
+```
+
+```
+示例 2：
+输入：root = [], targetSum = 0
+输出：false
+```
+
+#### 解法
+
+基本思路：**前序（递归）、回溯**
+
+参考**257.二叉树的所有路径**，在其基础上计算一个和。不同的是，用于回溯的数组可以直接用这个和来代替。
+
+递归参数：节点指针，**去掉当前节点后**的目标和（计算求和并不好处理，需要额外开辟变量，可以用当前和减去当前值，直接利用输入参数处理）
+
+终止条件：遇到叶子节点（左右子节点均为空），且 **当前剩余目标和被减到0** 时，返回 true
+
+单层逻辑：分别向左右子节点递归，有一个返回true就是true。
+
+**回溯：**
+
+代码中的回溯表现不明显，实际上当我们使用 **去掉当前节点后**的目标和 时，回溯表现在：当前叶子节点不是正确路径时，需要退回父节点进入其另一个子节点，此时 **targetSum**需要回溯至上一个状态（加回当前节点值）。
+
+而这里直接将 **targetSum - root->val** 输入递归函数，省去了这一加减过程，从一个节点退出来可以直接进入另一个。d熬制在递归中不能直接减去当前值  **targetSum - root->val** 后判断是否等于0，而是直接判断两者是否相等，更加省事儿。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool hasPathSum(TreeNode* root, int targetSum) {
+        if(root == nullptr) return false;
+        if(!root->left && !root->right && targetSum == root->val)
+            return true;
+        return hasPathSum(root->left, targetSum - root->val) || hasPathSum(root->right, targetSum - root->val);
+    }
+};
+```
+
+
+
+### 113.路径总和 Ⅱ
+
+#### 题干
+
+给你二叉树的根节点 `root` 和一个整数目标和 `targetSum` ，找出所有 **从根节点到叶子节点** 路径总和等于给定目标和的路径。
+
+**示例**
+
+```
+示例 1：
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
+输出：[[5,4,11,2],[5,8,4,5]]
+```
+
+```
+示例 2：
+输入：root = [], targetSum = 1
+输出：[]
+```
+
+#### 解法
+
+基本思路：**前序（递归）、回溯**
+
+这题纯是**257.二叉树的所有路径** 和**112.路径总和**的结合体，因为要找到所有的路径而不是判断有没有，就不能只用sum作为回溯条件了，需要开数组存路径。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    void traversal(TreeNode* cur, int targetSum, vector<vector<int>>& res, vector<int>& path) {
+        path.push_back(cur->val);
+        if(!cur->left && !cur->right && cur->val == targetSum) {
+            res.push_back(path);
+            return;
+        }
+        if(cur->left) {
+            traversal(cur->left, targetSum - cur->val, res, path);
+            path.pop_back();		// 回溯
+        }
+        if(cur->right) {
+            traversal(cur->right, targetSum - cur->val, res, path);
+            path.pop_back();
+        }
+    }
+    vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+        vector<vector<int>> res;
+        if(root == nullptr) return res;
+        vector<int> path;
+        traversal(root, targetSum, res, path);
+        return res;
+    }
+};
+```
+
+
+
+### 106.从中序和后序遍历序列构造二叉树
+
+#### 题干
+
+给定两个整数数组 **inorder** 和 **postorder** ，其中 **inorder** 是二叉树的**中序**遍历， **postorder** 是同一棵树的**后序**遍历，请你构造并返回这颗 **二叉树** 。
+
+**示例**
+
+```
+示例 1：
+输入：inorder = [9,3,15,20,7], postorder = [9,15,7,20,3]
+输出：[3,9,20,null,null,15,7]
+```
+
+```
+示例 2：
+输入：inorder = [-1], postorder = [-1]
+输出：[-1]
+```
+
+#### 解法
+
+基本思路：**递归**
+
+根据中序和后序来构造二叉树，分为如下几步：
+
+- 第一步：如果数组大小为零的话，说明是空节点
+- 第二步：如果不为空，那么取后序数组最后一个元素作为节点元素
+- 第三步：找到后序数组最后一个元素在中序数组的位置，作为切割点
+- 第四步：切割中序数组，切成中序左数组和中序右数组 
+- 第五步：切割后序数组，切成后序左数组和后序右数组（切割后的两个数组长度依旧和中序的相等）
+- 第六步：递归处理左区间和右区间
+
+确定参数：在代码随想录中，切割数组后新开辟了数组来存储子数组，但这样较为浪费空间，实际只需要传入原数组和每次分割时的下标即可。又因为任意子树的中序和后序数组长度均相等，最后仅需五个参数用于递归即可（后序采用**尾部下标**是为了便于取当前子树根节点的值）
+
+终止条件：传入的数组长度为0（**len == 0**）说明节点为空；为1表示该节点是叶子节点，没有子节点了，直接返回。
+
+单层逻辑：计算当前节点在中序数组中的位置，以此为凭分割中序数组（分割为两个子树），再分割后序数组，分别传入数组下标构造子树，开始递归。
+
+在分割数组时，始终遵从**左闭右开**原则。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* buildChild(vector<int>& inorder, vector<int>& postorder, int inHead, int postTail, int len) {
+        if(len == 0)    return nullptr;
+        TreeNode* node = new TreeNode(postorder[postTail]);
+        if(len == 1)    return node;
+        int seg;
+        for(seg = inHead; seg < inHead + len; ++seg) 
+            if(inorder[seg] == node->val)
+                break;
+        int rightLen = inHead + len - seg - 1;
+        node->left = buildChild(inorder, postorder, inHead, postTail - rightLen - 1, seg - inHead);
+        node->right = buildChild(inorder, postorder, seg + 1, postTail - 1, rightLen);
+        return node;
+    }
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        return buildChild(inorder, postorder, 0, postorder.size() - 1, postorder.size());
+    }
+};
+```
+
+#### 相关题目
+
+### 105.从前序与中序遍历序列构造二叉树
+
+#### 解法
+
+基本思路：**递归**
+
+和106一样的，就是前序是从序列头部取值作为当前节点值。
+
+### 654.最大二叉树
+
+#### 题干
+
+给定一个**不重复**的整数数组 **nums** 。 **最大二叉树** 可以用下面的算法从 **nums** 递归地构建:
+
+- 创建一个根节点，其值为 **nums** 中的最大值。
+
+- 递归地在最大值 **左边** 的 **子数组前缀上** 构建左子树。
+- 递归地在最大值 **右边** 的 **子数组后缀上** 构建右子树。
+
+返回 **nums** 构建的 **最大**二叉树 。
+
+**示例**
+
+```
+示例 1：
+输入：nums = [3,2,1,6,0,5]
+输出：[6,3,5,null,2,0,null,null,1]
+```
+
+```
+示例 2：
+输入：nums = [3,2,1]
+输出：[3,null,2,null,1]
+```
+
+#### 解法
+
+基本思路：**递归**
+
+递归思路同上，但是简化了操作，仅从一个数组中构建，也就少了一个参数。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* buildChild(vector<int>& nums, int head, int len) {
+        if(len == 0)    return nullptr;
+        int idx = head + 1, maxIdx = head;
+        for(; idx < head + len; ++idx) 
+            if(nums[idx] > nums[maxIdx])
+                maxIdx = idx;
+        TreeNode* node = new TreeNode(nums[maxIdx]);
+        node->left = buildChild(nums, head, maxIdx - head);
+        node->right = buildChild(nums, maxIdx + 1, len - (maxIdx - head) - 1);
+        return node;
+    }
+    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+        return buildChild(nums, 0, nums.size());
+    }
+};
+```
+
