@@ -4079,3 +4079,230 @@ public:
 };
 ```
 
+
+
+## 2023.6.18
+
+### 617.合并二叉树
+
+#### 解法
+
+基本思路：**前序（递归）**
+
+遍历两棵树和一棵树都一样，哪种遍历应该都可以，例如前序就遵从中左右的方式。
+
+确立终止条件：**两个节点有一个为空就直接返回另一个**（另一个也空正好返回nullptr）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* mergeTrees(TreeNode* root1, TreeNode* root2) {
+        if(root1 == nullptr)    return root2;
+        if(root2 == nullptr)    return root1;
+        root1->val += root2->val;
+        root1->left = mergeTrees(root1->left, root2->left);
+        root1->right = mergeTrees(root1->right, root2->right);
+        return root1;
+    }
+};
+```
+
+
+
+### 700.二叉搜索树中的搜索
+
+#### 解法
+
+基本思路：**递归、BST**
+
+类似二分查找，做一个递归即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* searchBST(TreeNode* root, int val) {
+        if(root == nullptr || root->val == val)    
+            return root;
+        else if(root->val < val)     
+            return searchBST(root->right, val);
+        else
+            return searchBST(root->left, val);
+        return nullptr;
+    }
+};
+```
+
+
+
+### 98.验证二叉搜索树
+
+#### 题干
+
+给你一个二叉树的根节点 `root` ，判断其是否是一个**有效**的二叉搜索树。
+
+#### 解法
+
+基本思路：**中序、递归、BST**
+
+在BST中，通过中序遍历得到的数组必然是有序的，可以以此来判断。递归时记录上一个节点的指针，用于比较。
+
+#### 代码
+
+```cpp
+class Solution {
+private:
+    TreeNode* pre = nullptr;
+public:
+    bool isValidBST(TreeNode* root) {
+        if(root == nullptr) return true;
+        bool left = isValidBST(root->left);
+        if(pre && pre->val >= root->val)    
+            return false;
+        pre = root;
+        bool right = isValidBST(root->right);
+        return left && right;
+    }
+};
+```
+
+
+
+### 530.二叉搜索树的最小绝对差
+
+#### 题干
+
+给你一个二叉搜索树的根节点 `root` ，返回 **树中任意两不同节点值之间的最小绝对差值** 。
+
+#### 解法
+
+基本思路：**中序、递归、BST**
+
+思路和上题98一致，只是比较大小改为了计算差值。
+
+这里需要注意递归的第一步是确定递归参数，因为主函数要返回int，和void简单递归相比较为麻烦，因此不直接用主函数递归。
+
+#### 代码
+
+```cpp
+class Solution {
+private:
+    int minSub = INT_MAX; 
+    TreeNode* pre = nullptr;
+public:
+    void traversal(TreeNode* cur) {
+        if(cur == nullptr)  return;
+        traversal(cur->left);
+        if(pre) minSub = min(minSub, cur->val - pre->val);
+        pre = cur;
+        traversal(cur->right);
+    }
+    int getMinimumDifference(TreeNode* root) {
+        traversal(root);
+        return minSub;
+    }
+};
+```
+
+
+
+### 501.二叉搜索树中的众数
+
+#### 题干
+
+给你一个**含重复值**的二叉搜索树（BST）的根节点 **root** ，找出并返回 BST 中的所有 **众数**（即，**出现频率最高的元素**）。
+
+如果树中有不止一个众数，可以按 **任意顺序** 返回。
+
+#### 解法
+
+基本思路：**中序、递归、BST**
+
+依旧承接上两题98、530的思路，中间操作改为了维护众数数组。
+
+#### 代码
+
+```cpp
+class Solution {
+private:
+    TreeNode* pre = nullptr;
+    int cnt = 0, maxNum = 0;
+public:
+    void traversal(TreeNode* cur, vector<int>& res) {
+        if(cur == nullptr)  return;
+        traversal(cur->left, res);
+        if(pre == nullptr)  cnt = 1;
+        else if(pre->val == cur->val)   ++cnt;
+        else    cnt = 1;
+        pre = cur;
+        if(cnt == maxNum)   res.push_back(cur->val);
+        else if (cnt > maxNum) {
+            maxNum = cnt;
+            res.clear();
+            res.push_back(cur->val);
+        }
+        traversal(cur->right, res);
+    }
+    vector<int> findMode(TreeNode* root) {
+        vector<int> res;
+        traversal(root, res);
+        return res;
+    }
+};
+```
+
+
+
+### 236.二叉树的最近公共祖先
+
+#### 题干
+
+最近公共祖先定义为：**对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大**（一个节点也可以是它自己的祖先）。
+
+#### 解法
+
+基本思路：**后序、递归**
+
+最大深度——>高度尽可能低——>从下往上（后序）。
+
+**确定递归参数**：可以直接使用主函数。
+
+**确定终止条件**：这里需要和单层逻辑一起思考，遇到p、q就返回的作用是什么？
+
+**单层递归逻辑**：
+
+回溯的最开始就是深入到了最左叶子节点，此时**递归往下时左右均为空，返回NULL**（状态1）；那么该叶节点的父节点得到的左节点递归返回值就是NULL；同理右节点也是如此；也就是父节点也处于状态1，返回NULL；也就是说一路向上回溯时，只有找到p、q，返回值才不为空。
+
+假设找到了 **q**，此时 **q**的父节点接到的其中一个子节点不为NULL了，又延伸出了两种情况：
+
+1. 另一个子节点是 **p**，那么最近公共祖先就是该节点，单层逻辑的第一步：左右都不空，直接返回当前递归中的root节点。
+2. **p**还在上面，此时为单层逻辑的另一步：有一个子节点不空，就返回这个不空的节点。
+
+注意这里返回只是传递给了上层递归的left和right。那么接着往下走，还是两种情况：
+
+1. 对于1，公共祖先已经找到了，那么对于整棵树的根节点，也就是第一层递归来说，拿到的必然是一个子节点空一个不空的递归结果，最后顺利返回不空的那个节点，就是一路传上来的root。
+2. 对于2，在往上的过程中，找到了 **p**，那么p的父节点此时得到了两个非空返回值，那么就等同于情况1了，返回当前这个root，也就是最近公共祖先了。
+
+上述情况均为p、q在不同分支上时。若p、q在同一分支时，应取两者高度高的为最近公共祖先。这也是要把 **当前节点 == p、q**设为终止条件的原因：若处于同一分支，在找到的一开始可以跳过再往这个分支下遍历的动作，因为已经找到了祖先。那么回到第一层递归时，也**只有一个分支**返回非空，也就返回了正确的公共祖先。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root == p || root == q || root == NULL)    return root;
+        TreeNode* left = lowestCommonAncestor(root->left, p, q);
+        TreeNode* right = lowestCommonAncestor(root->right, p, q);
+        if(left && right)   return root;
+        if(left == NULL)    return right;
+        return left;
+    }
+};
+```
+
+
+
