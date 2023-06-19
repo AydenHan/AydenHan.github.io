@@ -52,12 +52,95 @@ tags:
 
 ### 二叉树的属性
 
+#### 对称性
+
+采用**类前序遍历**，比较的是左右子树是否对称，左子树按照中左右的顺序，那么右子树就是中右左的顺序。
+
+递归处理顺序为：
+
+1. 比较当前左右节点
+2. 比较左节点的左子节点和右子树右子节点
+3. 比较左节点的右子节点和右子树左子节点
+
+```cpp
+    bool recursion(TreeNode* left, TreeNode* right) {
+        if(!left && !right) return true;
+        if(!left || !right || (left->val != right->val))  return false;
+        return recursion(left->left, right->right) && recursion(left->right, right->left);
+    }
+    bool isSymmetric(TreeNode* root) {
+        return recursion(root->left, root->right);
+    }
+```
+
+#### 节点数
+
+采用**后序遍历**，递归好写：
+
+```cpp
+int countNodes(TreeNode* root) {
+    if (root == NULL) return 0;
+    return 1 + countNodes(root->left) + countNodes(root->right);
+}
+```
+
+- 时间复杂度：O(n)
+- 空间复杂度：O(log n)，算上了递归系统栈占用的空间
+
+
+
 #### 深度 & 高度
 
 - 二叉树节点的**深度**：指从**根节点**到**该节点**的最长简单路径边的长度。（多用**前序**）
 - 二叉树节点的**高度**：指从**该节点**到**叶子节点**的最长简单路径边的长度。（多用**后序**）
 
 <img src="常用数据结构和算法的CPP实现/20210203155515650.png" alt="110.平衡二叉树2" style="zoom:50%;" />
+
+#### 最近公共祖先LCA
+
+LCA（Lowest Common Ancestor）又分为普通二叉树和搜索二叉树两种遍历方式。
+
+**普通二叉树**
+
+1. 从根节点开始遍历整个二叉树。
+2. 如果当前节点为空节点或者等于其中一个目标节点，那么当前节点就是**其中一个目标节点**或者**其中一个目标节点的祖先**。返回当前节点。
+3. 递归在当前节点的左子树中寻找两个目标节点的LCA，返回结果为left。
+4. 递归在当前节点的右子树中寻找两个目标节点的LCA，返回结果为right。
+5. 如果left和right都不为空，说明两个目标节点分别位于当前节点的左右子树中，那么**当前节点**就是它们的LCA。返回当前节点。
+6. 如果left为空，说明两个目标节点都不在当前节点的左子树中，LCA一定在右子树中。返回right。
+7. 如果right为空，说明两个目标节点都不在当前节点的右子树中，LCA一定在左子树中。返回left。
+
+这个递归的过程会自底向上地找到LCA。在遍历过程中，每个节点都会被访问一次，因此时间复杂度为**O(N)**，其中N是二叉树中的节点数。递归过程中使用的**额外空间**取决于**二叉树的高度**，最坏情况下为**O(N)**。
+
+```cpp
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if(root == p || root == q || root == NULL)    return root;
+    TreeNode* left = lowestCommonAncestor(root->left, p, q);
+    TreeNode* right = lowestCommonAncestor(root->right, p, q);
+    if(left && right)   return root;
+    if(left == NULL)    return right;
+    return left;
+}
+```
+
+**二叉搜索树BST**
+
+1. 从根节点开始，将目标节点的值与当前节点的值进行比较。
+2. 如果当前节点的值大于两个目标节点的值，说明两个目标节点都位于当前节点的左子树中，那么继续在左子树中寻找LCA。
+3. 如果当前节点的值小于两个目标节点的值，说明两个目标节点都位于当前节点的右子树中，那么继续在右子树中寻找LCA。
+4. 如果以上两种情况都不满足，那么当前节点就是我们要找的LCA。
+
+这是因为根据BST的性质，对于任意节点x，其左子树中的所有节点值都小于x的值，右子树中的所有节点值都大于x的值。因此，**如果两个目标节点分别位于x的左右子树中，那么x就是它们的LCA。**
+
+这个方法的时间复杂度取决于树的高度，**最坏**情况下为**O(H)**，其中H是树的高度。递归过程中使用的**额外空间**取决于递归栈的深度，**最坏**情况下为**O(H)**。
+
+```cpp
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if(root->val > p->val && root->val > q->val)	return lowestCommonAncestor(root->left, p, q);
+    else if(root->val < p->val && root->val < q->val)	return lowestCommonAncestor(root->right, p, q);
+    else	return root;
+}
+```
 
 
 
@@ -282,6 +365,129 @@ TreeNode* buildChild(vector<int>& inorder, vector<int>& postorder, int inHead, i
 }
 buildChild(inorder, postorder, 0, postorder.size() - 1, postorder.size());
 ```
+
+#### 删除
+
+```cpp
+TreeNode* deleteNode(TreeNode* root, int key) {
+    if (root == nullptr) return root;
+    if (root->val == key) {
+        if (root->right == nullptr) { // 这里第二次操作目标值：最终删除的作用
+            return root->left;
+        }
+        TreeNode *cur = root->right;
+        while (cur->left) {
+            cur = cur->left;
+        }
+        swap(root->val, cur->val); // 这里第一次操作目标值：交换目标值其右子树最左面节点。
+    }
+    root->left = deleteNode(root->left, key);
+    root->right = deleteNode(root->right, key);
+    return root;
+}
+```
+
+
+
+#### BST插入
+
+**递归**
+
+```cpp
+TreeNode* insertIntoBST(TreeNode* root, int val) {
+    if(root ==nullptr)  
+        return new TreeNode(val);
+    if(root->val > val) 
+        root->left = insertIntoBST(root->left, val);
+    else  				
+        root->right = insertIntoBST(root->right, val);
+    return 	root;
+}
+```
+
+**迭代**
+
+```cpp
+TreeNode* insertIntoBST(TreeNode* root, int val) {
+    if(root == nullptr) return new TreeNode(val);
+    TreeNode* cur = root;
+    TreeNode* parent = root;
+    while(cur) {
+        parent = cur;
+        if(cur->val > val)  
+            cur = cur->left;
+        else    
+            cur = cur->right;
+    }
+    if(parent->val > val)  
+        parent->left = new TreeNode(val);
+    else    
+        parent->right = new TreeNode(val);
+    return root;
+}
+```
+
+#### BST删除（迭代）
+
+```cpp
+TreeNode* deleteNode(TreeNode* root, int key) {
+    if(root == nullptr) return root;
+    if(root->val > key)
+        root->left = deleteNode(root->left, key);
+    else if(root->val < key)
+        root->right = deleteNode(root->right, key);
+    else {
+        if(!root->left && !root->right) {	// 全空，叶子节点不用调整结构
+            delete root;
+            return nullptr;
+        }
+        if(!root->left) {					// 只有右子树，把右子树挪上来
+            TreeNode* tmp = root->right;
+            delete root;
+            return tmp;
+        }
+        if(!root->right) {					// 只有左子树，把左子树挪上来
+            TreeNode* tmp = root->left;
+            delete root;
+            return tmp;
+        }
+        else {								// 左右子树均有，左子树归入右子树的最左侧叶子节点下，右子树上挪
+            TreeNode* cur = root->right;
+            while(cur->left)
+                cur = cur->left;
+            cur->left = root->left;
+            TreeNode* tmp = root->right;
+            delete root;
+            return tmp;
+        }
+    }
+    return root;
+}
+```
+
+#### 有序数组构造高度平衡BST（递归）
+
+迭代会较为麻烦，因为需要开辟多个队列存储数组下标和节点信息。
+
+```cpp
+TreeNode* sortedArrayToSubBST(vector<int>& nums, int l, int r) {
+    if(l > r)   return nullptr;
+    int mid = l + (r - l) / 2;
+    TreeNode* nd = new TreeNode(nums[mid]);
+    nd->left = sortedArrayToSubBST(nums, l, mid - 1);
+    nd->right = sortedArrayToSubBST(nums, mid + 1, r);
+    return nd;
+}
+TreeNode* sortedArrayToBST(vector<int>& nums) {
+    return sortedArrayToSubBST(nums, 0, nums.size() - 1);
+}
+```
+
+### 注
+
+- 涉及到二叉树的构造，无论普通二叉树还是二叉搜索树一定前序，都是先构造中节点。
+- 求普通二叉树的属性，一般是后序，一般要通过递归函数的返回值做计算。
+- 求二叉搜索树的属性，一定是中序了，要不白瞎了有序性了。
 
 
 

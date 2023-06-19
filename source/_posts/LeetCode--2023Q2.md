@@ -4306,3 +4306,262 @@ public:
 
 
 
+## 2023.6.19
+
+### 235.二叉搜索树的公共祖先
+
+#### 解法
+
+基本思路：**LCA（Lowest Common Ancestor）、BST**
+
+根据BST的性质，对于任意节点x，其左子树中的所有节点值都小于x的值，右子树中的所有节点值都大于x的值。因此，如果两个目标节点分别位于x的左右子树中，那么x就是它们的LCA。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root->val > p->val && root->val > q->val)
+            return lowestCommonAncestor(root->left, p, q);
+        else if(root->val < p->val && root->val < q->val)
+            return lowestCommonAncestor(root->right, p, q);
+        else
+            return root;
+    }
+};
+```
+
+
+
+### 701.二叉搜索树的插入操作
+
+#### 解法
+
+基本思路：**递归、迭代、BST**
+
+根据BST性质，一直比较要插入节点的值与当前节点的值的大小，大了往右小了往左，直至碰到空节点，那就是该呆的地方了。
+
+这里用递归的返回值实现父子节点赋值操作，正常情况，在进入分支时，该分支的返回值都是root，即子节点本身，不影响树结构，直至空节点时，才构建要插入的节点连上。
+
+迭代则需要记录父节点的指针，才能完成插入操作。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        if(root ==nullptr)  return new TreeNode(val);
+        if(root->val > val) root->left = insertIntoBST(root->left, val);
+        else  				root->right = insertIntoBST(root->right, val);
+        return 				root;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        if(root == nullptr) return new TreeNode(val);
+        TreeNode* cur = root;
+        TreeNode* parent = root;
+        while(cur) {
+            parent = cur;
+            if(cur->val > val)  cur = cur->left;
+            else    cur = cur->right;
+        }
+        if(parent->val > val)  parent->left = new TreeNode(val);
+        else    parent->right = new TreeNode(val);
+        return root;
+    }
+};
+```
+
+
+
+### 450.删除二叉搜索树的节点
+
+#### 解法
+
+基本思路：**递归、迭代、BST**
+
+递归思路和上题701相同，只是插入节点变为删除，涉及到了结构调整，情况复杂一些。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if(root == nullptr) return root;
+        if(root->val > key)
+            root->left = deleteNode(root->left, key);
+        else if(root->val < key)
+            root->right = deleteNode(root->right, key);
+        else {
+            if(!root->left && !root->right) {	// 全空，叶子节点不用调整结构
+                delete root;
+                return nullptr;
+            }
+            if(!root->left) {					// 只有右子树，把右子树挪上来
+                TreeNode* tmp = root->right;
+                delete root;
+                return tmp;
+            }
+            if(!root->right) {					// 只有左子树，把左子树挪上来
+                TreeNode* tmp = root->left;
+                delete root;
+                return tmp;
+            }
+            else {								// 左右子树均有，左子树归入右子树的最左侧叶子节点下，右子树上挪
+                TreeNode* cur = root->right;
+                while(cur->left)
+                    cur = cur->left;
+                cur->left = root->left;
+                TreeNode* tmp = root->right;
+                delete root;
+                return tmp;
+            }
+        }
+        return root;
+    }
+};
+```
+
+
+
+### 669.修剪二叉搜索树
+
+#### 题干
+
+给你二叉搜索树的根节点 **root** ，同时给定最小边界**low** 和最大边界 **high**。通过修剪二叉搜索树，使得所有节点的值在**[low, high]**中。修剪树 **不应该** 改变保留在树中的元素的**相对结构** (即如果没有被移除，原有的父代子代关系都应当保留)。可以证明，存在**唯一的答案** 。
+
+所以结果应当返回修剪好的二叉搜索树的**新的根节点**。注意，根节点可能会根据给定的边界发生改变。
+
+#### 解法
+
+基本思路：**递归、迭代、BST**
+
+思路还是上两题701和450的思路，但其实比450操作要少很多，因为只保留范围内，意味着左边某个小于low的节点开始，只保留它的右子树，右边同理。那么只需**把子树接到原本节点的位置**即可。
+
+迭代也是相同的思路，但是比递归要多处理一步，即**先确定root节点在范围内**。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* trimBST(TreeNode* root, int low, int high) {
+        if(root == nullptr) return root;
+        if(root->val < low) return trimBST(root->right, low, high);
+        if(root->val > high)    return trimBST(root->left, low, high);
+        root->left = trimBST(root->left, low, high);
+        root->right = trimBST(root->right, low, high);
+        return root;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    TreeNode* trimBST(TreeNode* root, int low, int high) {
+        if(root == nullptr) return nullptr;
+        while(root && (root->val < low || root->val > high)) {
+            if(root->val < low) root = root->right;
+            else root = root->left;
+        }
+        TreeNode* cur = root;
+        while(cur) {
+            while(cur->left && cur->left->val < low) {
+                cur->left = cur->left->right;
+            }
+            cur = cur->left;
+        }
+        cur = root;
+        while(cur) {
+            while(cur->right && cur->right->val > high) {
+                cur->right = cur->right->left;
+            }
+            cur = cur->right;
+        }
+        return root;
+    }
+};
+```
+
+
+
+### 108.将有序数组转化为二叉搜索树
+
+#### 题干
+
+给你一个整数数组 `nums` ，其中元素已经按 **升序** 排列，请你将其转换为一棵 **高度平衡** 二叉搜索树。
+
+#### 解法
+
+基本思路：**递归、BST**
+
+类似于二分查找的递归的反向操作。取中间值为节点，然后分为两个子数组，继续在子数组中取中间值为子节点......直至为空。
+
+这题用迭代法会较为麻烦，因为需要开辟多个队列存储数组下标和节点信息。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    TreeNode* sortedArrayToSubBST(vector<int>& nums, int l, int r) {
+        if(l > r)   return nullptr;
+        int mid = l + (r - l) / 2;
+        TreeNode* nd = new TreeNode(nums[mid]);
+        nd->left = sortedArrayToSubBST(nums, l, mid - 1);
+        nd->right = sortedArrayToSubBST(nums, mid + 1, r);
+        return nd;
+    }
+    TreeNode* sortedArrayToBST(vector<int>& nums) {
+        return sortedArrayToSubBST(nums, 0, nums.size() - 1);
+    }
+};
+```
+
+
+
+### 538.把二叉搜索树转换为累加树
+
+#### 题干
+
+给出二叉搜索树的根节点，该树的节点值**各不相同**，请你将其转换为**累加树**（Greater Sum Tree），使每个节点 **node** 的新值等于原树中**大于或等于 node.val 的值之和**。
+
+#### 解法
+
+基本思路：**递归、BST、反中序**
+
+需要理解累加的顺序，BST是有序的，也就是最大的值（右下角）不用累加，之后是其父节点，再后是父节点的左子树的最右节点，都是在前面和的基础上加上自身值。可以发现遍历顺序为**右——>中——>左**，也就是中序的反过来，在递归中很好写，换下处理顺序即可。
+
+迭代也是类似于中序的迭代写法，更换左右顺序，替换处理方式即可。
+
+#### 代码
+
+```cpp
+class Solution {
+private:
+    int preSum = 0;
+public:
+    void traversal(TreeNode* cur) {
+        if(cur == nullptr)  return;
+        traversal(cur->right);
+        preSum += cur->val;
+        cur->val = preSum; 
+        traversal(cur->left);
+    }
+    TreeNode* convertBST(TreeNode* root) {
+        preSum = 0;
+        traversal(root);
+        return root;
+    }
+};
+```
+
