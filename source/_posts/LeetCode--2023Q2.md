@@ -4565,3 +4565,217 @@ public:
 };
 ```
 
+
+
+## 2023.6.20
+
+### 77.组合
+
+#### 题干
+
+给定两个整数 `n` 和 `k`，返回范围 `[1, n]` 中所有可能的 `k` 个数的组合。你可以按 **任何顺序** 返回答案。
+
+#### 解法
+
+基本思路：**回溯、Lambda**
+
+组合问题，常用回溯算法解决，即递归暴力枚举。这里用的是Lambda函数的递归写法，注意这里的 `++idx` 和普通函数中传参 `idx + 1` 的区别。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>> res;
+        vector<int> path;
+        auto backTracking = [
+            circle = [&](auto&& self, int idx) -> void {
+                if(path.size() == k) {
+                    res.push_back(path);
+                    return;
+                }
+                for(int i = idx; i <= n; ++i) {
+                    path.push_back(i);
+                    self(self, ++idx);
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, 1); };
+        backTracking();
+        return res;
+    }
+};
+```
+
+#### 相关题目
+
+### 216.组合总和 Ⅲ
+
+#### 解法
+
+基本思路：**回溯、Lambda**
+
+跟77思路一样，无非是递归的终止条件改为： **path** 元素数为k时，该数组和为n。循环改为固定9。
+
+
+
+### 17.电话号码的字母组合
+
+#### 解法
+
+基本思路：**回溯、Lambda**
+
+相比于上两题77和216，这题稍微复杂一些，因为是一个双层的循环，这里注意的是 `idx++` 的位置，因为控制的是外层循环的下标（即递归函数看作外层循环），因此要加在for循环前。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    const string numMap[8] = {
+        "abc", "def", "ghi", "jkl", "mno", "pqrs","tuv","wxyz"
+    };
+    vector<string> letterCombinations(string digits) {
+        if(digits.length() == 0)    return {};
+        vector<string> res;
+        string path;
+        auto backTrack = [
+            circle = [&](auto&& self, int idx) -> void {
+                if(path.length() == digits.length()) {
+                    res.push_back(path);
+                    return;
+                }
+                string str = numMap[digits[idx++] - '2'];
+                for(int i = 0; i < str.length(); ++i) {
+                    path.push_back(str[i]);
+                    self(self, idx);
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+
+
+### 39.组合总和
+
+#### 题干
+
+给你一个 **无重复元素** 的整数数组 **candidates** 和一个目标整数 **target** ，找出 **candidates** 中可以使数字**和**为目标数 **target** 的 **所有** 不同组合 ，并以列表形式返回。你可以按 **任意顺序** 返回这些组合。
+
+candidates 中的 **同一个** 数字可以 **无限制重复被选取** 。如果至少一个数字的被选数量不同，则两种组合是不同的。 
+
+#### 解法
+
+基本思路：**回溯、Lambda**
+
+跟上面三题同样思路，区别仅在于递归参数的传入上，因为可以重复选取，就不用自加idx了。但是依旧要注意，当最外层使用第二个数时，后面的也只能从第二个开始往后找，因为第一个数的组合已经列完了，再列是重复的，所以以for循环的 **i** 作为 **idx**的输入来控制搜索范围。
+
+若觉得 **accumulate**计算和会慢，也可以将 **target**加入回溯中，在 **self**前后自减自加即可，终止条件就只需要比较 `== 0` 和 ` < 0` 了。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int> > res;
+        vector<int> path;
+        auto backTrack = [
+            circle = [&](auto&& self, int idx) -> void {
+                if(accumulate(path.begin(), path.end(), 0) > target)
+                    return;
+                if(accumulate(path.begin(), path.end(), 0) == target) {
+                    res.push_back(path);
+                    return;
+                }
+                for(int i = idx; i < candidates.size(); ++i) {
+                    path.push_back(candidates[i]);
+                    self(self, i);
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+
+
+### 40.组合总和 Ⅱ
+
+#### 题干
+
+给定一个候选人编号的集合 **candidates** 和一个目标数 **target** ，找出 **candidates** 中所有可以使数字**和为 target** 的组合。**candidates** 中的每个数字在每个组合中只能使用 一次 。
+
+注意：**解集不能包含重复的组合。** 
+
+**示例**
+
+```
+示例 1：
+输入: candidates = [10,1,2,7,6,1,5], target = 8,
+输出:
+[ [1,1,6], [1,2,5], [1,7], [2,6] ]
+```
+
+```
+示例 2：
+输入: candidates = [2,5,2,1,2], target = 5,
+输出:
+[ [1,2,2], [5] ]
+```
+
+#### 解法
+
+基本思路：**回溯、Lambda**
+
+这题有些绕，数组中有重复的数字，不同位置数字相同的元素是可以在一个组合内使用的，但是解集中不能有重复的组合。如示例1，有俩1，按照正常只往后遍历，可以有116，125，但也会出现215这种重复情况。因此需要去重。
+
+针对乱序数组，又要下标又要数值判断过于麻烦，可以先对原数组排序。那么在只往后遍历的原则下，组合必然也是有序的，那么如果存在相同数字，在该数字开头的组合已经列完的情况下，后面相同的都直接跳过： `candidates[i] == candidates[i - 1]` 。但如果只有这一个条件，会发现，116这样的情况会被舍去，因此还需要加上限定条件，表明为**同层使用**（组合的同一个位置）而非同枝（即递归的深度中相同），也就是 `i > idx`，说明是同一层的循环改变里跳过的。
+
+但是一提交还是超时的，那就需要继续剪枝：
+
+可以发现，当数组很大，但是和很小时，如果不在很早的地方结束递归，会出现非常多次无效递归，因此在循环中用 `target > 0` 中止掉。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int>> res;
+        vector<int> path;
+        sort(candidates.begin(), candidates.end());
+        auto backTracking = [
+            circle = [&](auto&& self, int idx) -> void {
+                if(0 == target) {
+                    res.push_back(path);
+                    return;
+                }
+                for(int i = idx; i < candidates.size() && target > 0; ++i) {
+                    if(i > idx && candidates[i] == candidates[i - 1])
+                        continue;
+                    path.push_back(candidates[i]);
+                    target -= candidates[i];
+                    self(self, i + 1);
+                    target += candidates[i];
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTracking();
+        return res;
+    }
+};
+```
+
+#### 
+
