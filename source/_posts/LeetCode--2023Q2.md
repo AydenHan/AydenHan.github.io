@@ -4777,5 +4777,122 @@ public:
 };
 ```
 
-#### 
+
+
+## 2023.6.21
+
+### 131.分割回文串
+
+#### 题干
+
+给你一个字符串 `s`，请你将 `s` 分割成一些子串，使每个子串都是 **回文串** 。返回 `s` 所有可能的分割方案。
+
+**回文串** 是正着读和反着读都一样的字符串。
+
+#### 解法
+
+基本思路：**分割、回溯、Lambda**
+
+分割问题和组合问题其实是一样的：对字符串aab，先分a出来，然后在ab中继续分；然后分ab出来，在a中继续分。。。相当于之前思路中的for循环对应第一层分割，即先分a、ab、aab，用idx控制，递归用于深层遍历。
+
+判断回文串用双指针法，如果不是回文串直接跳过当层遍历，实现剪枝。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> res;
+        vector<string> path;
+        auto isPalStr = [](string str, int l, int r) -> bool {
+            for(int i = l, j = r; i < j; ++i, --j)
+                if(str[i] != str[j]) 
+                    return false;
+            return true;
+        };
+        auto backTrack = [
+            circle = [&](auto&& self, int idx) -> void {
+                if(idx >= s.size()) {
+                    res.push_back(path);
+                    return;
+                }
+                for(int i = idx; i < s.size(); ++i) {
+                    if(isPalStr(s, idx, i)) 
+                        path.push_back(s.substr(idx, i - idx + 1));
+                    else continue;
+                    self(self, i + 1);
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+
+
+### 93.复原IP地址
+
+#### 题干
+
+有效 IP 地址 正好由四个整数（每个整数位于 0 到 255 之间组成，且不能含有前导 0），整数之间用 '.' 分隔。
+
+给定一个只包含数字的字符串 **s** ，用以表示一个 IP 地址，返回**所有可能**的**有效** IP 地址，这些地址可以通过**在 s 中插入 '.'** 来形成。你 **不能 重新排序或删除 s 中的任何数字**。你可以按 **任何** 顺序返回答案。
+
+#### 解法
+
+基本思路：**分割、回溯、Lambda**
+
+for循环用于控制层中遍历，即在字符串上遍历；维护一个计数器cnt，用于计算深度，作为终止条件（到第四层就应该结束了，此时 `cnt == 3`）。
+
+每次选取子串时，都需要判断有效性，若当前子串无效，那么同层遍历当前子串和递归后续子串就都没必要了，直接break，继续遍历上一个子串。
+
+判断有效性时，要对字符串首的0做出判断（长度不为1时）；以及当前三个子串就将字符串中的数字占满时，第四个子串为空，按照递归的传参来说，会出现 `l == r + 1`的情况，也需要排除避免越界。
+
+最开头排除长度在4-12之外的字符串，算作剪枝。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<string> restoreIpAddresses(string s) {
+        if(s.size() < 4 || s.size() > 12)   return {};
+        vector<string> res;
+        auto isValid = [](string str, int l, int r) -> bool {
+            if(l > r)   return false;
+            if(str[l] == '0' && l != r)
+                return false;
+            int num = stoi(str.substr(l, r - l + 1));
+            return num >= 0 && num < 256;
+        };
+        auto backTrack = [
+            circle = [&](auto&& self, int idx, int cnt) -> void {
+                if(cnt == 3) {
+                    if(isValid(s, idx, s.size() - 1))
+                        res.push_back(s);
+                    return;
+                }
+                for(int i = idx; i < s.size(); ++i) {
+                    if(isValid(s, idx, i)) {
+                        s.insert(s.begin() + i + 1, '.');
+                        ++cnt;
+                        self(self, i + 2, cnt);
+                        --cnt;
+                        s.erase(s.begin() + i + 1);
+                    }
+                    else break;
+                }
+            }
+        ]() { circle(circle, 0, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+
 
