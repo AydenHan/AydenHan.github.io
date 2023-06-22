@@ -4896,3 +4896,427 @@ public:
 
 
 
+## 2023.6.22
+
+### 78.子集
+
+#### 题干
+
+给你一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的子集（幂集）。
+
+解集 **不能** 包含重复的子集。你可以按 **任意顺序** 返回解集。
+
+#### 解法
+
+基本思路：**子集、回溯、Lambda**
+
+子集问题本质和组合分割是差不多的，都是for循环横向控制层中遍历，递归纵向控制深度遍历。
+
+区别就在于子集不再是递归到叶子节点终止了才要将结果加入数组，而是合适的都要加，也就是处理部分放在for循环和终止条件外执行。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> path;
+        auto backTrack = [
+            circle = [&](auto&& self, int idx) -> void {
+                res.push_back(path);
+                if(idx > nums.size())   return;
+                for(int i = idx; i < nums.size(); ++i) {
+                    path.push_back(nums[i]);
+                    self(self, i + 1);
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+#### 相关题目
+
+### 90.子集 Ⅱ
+
+#### 题干
+
+给你一个整数数组 `nums` ，其中可能包含**重复**元素 。返回该数组所有可能的子集（幂集）。
+
+解集 **不能** 包含重复的子集。你可以按 **任意顺序** 返回解集。
+
+#### 解法
+
+基本思路：**子集、回溯、Lambda**
+
+这题类似于之前的40.组合 Ⅱ，都需要对重复数字去重。因此先对数组排序，之后在for循环中加入判断即可。
+
+#### 代码
+
+```cpp
+sort(nums.begin(), nums.end());
+if(i > idx && nums[i] == nums[i - 1])	continue;
+```
+
+
+
+### 491.递增子序列
+
+#### 题干
+
+给你一个整数数组 **nums** ，找出并返回所有该数组中不同的**递增子序列**，递增子序列中 **至少有两个元素** 。你可以按 **任意顺序** 返回答案。
+
+数组中可能含有**重复**元素，如出现两个整数相等，也可以视作递增序列的一种特殊情况。
+
+#### 解法
+
+基本思路：**子集、回溯、Lambda**
+
+因为要找递增子序列，所以不能对原数组直接排序了，需要采用其他方式去重：
+
+可以在递归开始前先做预处理——找到 **nums[i]**上一次出现的位置，记为 **pre[i]**。
+
+那么在同层遍历中，只需要判断 **nums[i]** 是否在当前位置 **i** 和本层的起始位置 **idx** 之间出现过，即 `idx <= pre[i] && pre[i] < i`。
+
+#### 代码
+
+![491](LeetCode--2023Q2/491.png)
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> path;
+        int pre[15];
+        for(int i = 0; i < nums.size(); ++i) {
+            pre[i] = -1;
+            for(int j = i - 1; j >= 0; --j) {
+                if(nums[i] == nums[j]) {
+                    pre[i] = j;
+                    break;
+                }
+            }
+        }
+        auto isRepeat = [pre](int l, int r) -> bool {
+            return l <= pre[r] && pre[r] < r;
+        };
+        auto backTrack = [
+            circle = [&](auto&& self, int idx) -> void {
+                if(path.size() > 1)
+                    res.push_back(path);
+                for(int i = idx; i < nums.size(); ++i) {
+                    if(!path.empty() && nums[i] < path.back() || isRepeat(idx, i))
+                        continue;
+                    path.push_back(nums[i]);
+                    self(self, i + 1);
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+
+
+### 46.全排列
+
+#### 题干
+
+给定一个不含重复数字的数组 `nums` ，返回其 *所有可能的全排列* 。你可以 **按任意顺序** 返回答案。
+
+#### 解法
+
+基本思路：**排列、回溯、Lambda**
+
+排列会用到数组中所有元素，因此直到递归到最后一层才会得到返回结果——**由此可以确立终止条件**。
+
+在同层遍历时，数组中位置在当前元素之前的元素同样会被用到——**for循环从0开始**，而不是维护idx。
+
+在纵向递归时，上层已经加入结果的元素**需要被标记**，从而可以在当前层的for循环中被跳过。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> path;
+        vector<bool> used(nums.size(), false);
+        auto backTrack = [
+            circle = [&](auto&& self) -> void {
+                if(path.size() == nums.size()) {
+                    res.push_back(path);
+                    return;
+                }
+                for(int i = 0; i < nums.size(); ++i) {
+                    if(used[i]) continue;
+                    used[i] = true;
+                    path.push_back(nums[i]);
+                    self(self);
+                    path.pop_back();
+                    used[i] = false;
+                }
+            }
+        ]() { circle(circle); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+#### 相关题目
+
+### 47.全排列 Ⅱ
+
+#### 题干
+
+给定一个可包含重复数字的序列 `nums` ，***按任意顺序*** 返回所有不重复的全排列。
+
+#### 解法
+
+基本思路：**排列、回溯、Lambda**
+
+在包含重复数字的情况下，都需要**去重**。在46.全排列的基础上，先对数组排序以便于去重。
+
+然后增加判定条件，注意在判断相同元素之外，前提是**上一个元素是没被使用**的情况下。
+
+#### 代码
+
+```cpp
+sort(nums.begin(), nums.end());
+if(used[i] || i > 0 && !used[i - 1] && nums[i] == nums[i - 1]) continue;
+```
+
+
+
+### 332.重新安排行程
+
+#### 题干
+
+给你一份航线列表 `tickets` ，其中 `tickets[i] = [fromi, toi]` 表示飞机出发和降落的机场地点。请你对该行程进行重新规划排序。
+
+所有这些机票都属于一个从 `JFK`（肯尼迪国际机场）出发的先生，所以该行程必须从 `JFK` 开始。如果存在多种有效的行程，请你按字典排序返回最小的行程组合。
+
+- 例如，行程 `["JFK", "LGA"]` 与 `["JFK", "LGB"]` 相比就更小，排序更靠前。
+
+假定所有机票至少存在一种合理的行程。且所有的机票 必须都用一次 且 只能用一次。
+
+**示例**
+
+```
+// 示例1：
+输入：tickets = [["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]
+输出：["JFK","MUC","LHR","SFO","SJC"]
+```
+
+```
+// 示例2：
+输入：tickets = [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+输出：["JFK","ATL","JFK","SFO","ATL","SFO"]
+解释：另一种有效的行程是 ["JFK","SFO","ATL","JFK","ATL","SFO"] ，但是它字典排序更大更靠后。
+```
+
+#### 解法
+
+基本思路：**排列、回溯、Lambda**
+
+代码随想录中，使用了 `unordered_map` 来记录映射关系，其中包含 `map`自动实现排序。但实际上可以更节省空间——直接按照目的地大小对输入数组进行排序，之后的操作可以看作是一个**全排列**过程，并且只需要找到第一个结果就一定是最佳结果，直接return就行。
+
+首先将起始地 **“JKF”** 加入路径，之后遍历每张票，跳过已经使用过的或是出发地和路径末尾地点不符的，之后就是回溯流程了，路径直接添加目的地即可。直至找到第一个叶节点，就结束了。
+
+**终止条件：**因为每张票都需要使用，因此一共 **n** 条路径，必然连接了 **n + 1** 个城市，因此 `path.size() == tickets.size() + 1` 。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<string> findItinerary(vector<vector<string>>& tickets) {
+        sort(tickets.begin(), tickets.end(),
+            [](vector<string>& a, vector<string>& b) { return a[1] < b[1]; }  
+        );
+        vector<string> path;
+        vector<bool> used(tickets.size(), false);
+        path.push_back("JFK");
+        auto backTrack = [
+            circle = [&](auto&& self) -> bool {
+                if(path.size() == tickets.size() + 1) 
+                    return true;
+                for(int i = 0; i < tickets.size(); ++i) {
+                    if(used[i] || tickets[i][0] != path.back()) continue;
+                    used[i] = true;
+                    path.push_back(tickets[i][1]);
+                    if(self(self))  return true;
+                    path.pop_back();
+                    used[i] = false;
+                }
+                return false;
+            }
+        ]() { circle(circle); };
+        backTrack();
+        return path;
+    }
+};
+```
+
+
+
+### 51.N皇后
+
+#### 题干
+
+按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。**n 皇后问题** 研究的是如何将 `n` 个皇后放置在 `n×n` 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+给你一个整数 `n` ，返回所有不同的 **n 皇后问题** 的解决方案。每一种解法包含一个不同的 **n 皇后问题** 的棋子放置方案，该方案中 `'Q'` 和 `'.'` 分别代表了皇后和空位。
+
+**示例**
+
+```
+// 示例1：
+输入：n = 4
+输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+解释：如上图所示，4 皇后问题存在两个不同的解法。
+```
+
+```
+// 示例2：
+输入：n = 1
+输出：[["Q"]]
+```
+
+#### 解法
+
+基本思路：**排列、回溯、Lambda**
+
+依旧是排列的思想——for循环控制横向遍历，递归控制纵向递归。
+
+因为每到下一行，四个位置都需要判断可能性，因此是排列，for循环 0 - n 。递归需要一个额外参数 `row`记录当前所在行。那么**终止条件**显然是n行都遍历完—— `row == n`（row从0开始，便于下标取值）。
+
+每次都先进行有效判断（对正上方和左右45°上方判断有无q即可），有效才能进入下层递归。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> res;
+        vector<string> path(n, string(n, '.'));
+        auto isValid = [&path, n](int row, int col) -> bool {
+            for(int i = 0; i < row; ++i)
+                if(path[i][col] == 'Q') return false;
+            for(int i = row - 1, j = col - 1; i >= 0 && j >= 0; --i, --j)
+                if(path[i][j] == 'Q') return false;
+            for(int i = row - 1, j = col + 1; i >= 0 && j < n; --i, ++j)
+                if(path[i][j] == 'Q') return false;
+            return true;
+        };
+        auto backTrack = [
+            circle = [&](auto&& self, int row) -> void {
+                if(row == n) {
+                    res.push_back(path);
+                    return;
+                }
+                for(int i = 0; i < n; ++i) {
+                    if(isValid(row, i)) {
+                        path[row][i] = 'Q';
+                        self(self, row+1);
+                        path[row][i] = '.';
+                    }
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+
+
+### 37.解数独
+
+#### 题干
+
+编写一个程序，通过填充空格来解决数独问题。数独部分空格内已填入了数字，空白格用 `'.'` 表示。
+
+**示例**
+
+![img](LeetCode--2023Q2/250px-sudoku-by-l2g-20050714svg.png)
+
+```
+// 示例1：
+输入：board = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]]
+输出：[["5","3","4","6","7","8","9","1","2"],["6","7","2","1","9","5","3","4","8"],["1","9","8","3","4","2","5","6","7"],["8","5","9","7","6","1","4","2","3"],["4","2","6","8","5","3","7","9","1"],["7","1","3","9","2","4","8","5","6"],["9","6","1","5","3","7","2","8","4"],["2","8","7","4","1","9","6","3","5"],["3","4","5","2","8","6","1","7","9"]]
+```
+
+#### 解法
+
+基本思路：**二维递归、回溯、Lambda**
+
+这题是回溯合集中最抽象的一题，跟之前的全都不在一个模式。之前的问题都是在**一维**数组上进行二维操作，在横向选择的基础上向纵向推进。例如排列，可以看作是从一维数组中选取一个数，放在一个**相同长度的一维数组**的第一位，然后再从剩下数中选取一个放在新数组第二位......以此类推，最后填满表示产生一个结果，然后回溯去生成其他结果。
+
+本题实则为一种另类的二维操作：从 **[1, 9]** 的一维数组中选取一个数，放在一个**二维数组**的第一位，然后再九个数中选取一个放在二维数组第二位......以此类推，最后填满表示产生一个结果。
+
+但因为在遍历过程中是会对填入数字进行有效判断的，因此产生的结果必然是正确的，就不需要接着回溯，直接return即可（最外层循环外的 `return true`），因此递归函数需要有 **bool** 返回值，用于一层层向上中断递归过程（递归函数判断的 `return true`）。因此本题递归也不需要终止条件，这就是终止条件了。
+
+显然还存在一个问题，**当某个格子9个数字都不是有效数字时**，说明作为判断条件之一的前面某一格的数字填错了，需要回去改，那么直接 `return false` ，回溯修改之前的数字。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    void solveSudoku(vector<vector<char>>& board) {
+        auto isValid = [&](int row, int col, char num) -> bool {
+            for(char c : board[row])    
+                if(c == num)    
+                    return false;
+            for(int i = 0; i < 9; ++i)    
+                if(board[i][col] == num)    
+                    return false;
+            int idy = row / 3 * 3, idx = col / 3 * 3;
+            for(int i = idy; i < idy + 3; ++i)
+                for(int j = idx; j < idx + 3; ++j)
+                    if(board[i][j] == num)
+                        return false;
+            return true;
+        };
+        auto backTrack = [
+            circle = [&](auto&& self) -> bool {
+                for(int i = 0; i < 9; ++i) {
+                    for(int j = 0; j < 9; ++j) {
+                        if(board[i][j] != '.') continue;
+                        for(char k = '1'; k <= '9'; ++k) {
+                            if(isValid(i, j, k)) {
+                                board[i][j] = k;
+                                if(self(self)) return true;
+                                board[i][j] = '.';
+                            }
+                        }
+                        return false;	// 核心
+                    }
+                }
+                return true;
+            }
+        ]() { circle(circle); };
+        backTrack();
+    }
+};
+```
+
+
+
+
+
+
+
