@@ -5316,7 +5316,65 @@ public:
 
 
 
+## 2023.6.24
 
+### 455.分发饼干
+
+#### 解法
+
+基本思路：**贪心、双指针**
+
+贪心思路：小的饼干尽可能喂给最小胃口的孩子（局部），以达到喂最多小孩的目的（全局）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        sort(g.begin(), g.end());
+        sort(s.begin(), s.end());
+        int res = 0;
+        for(int i = 0; i < s.size(); ++i)
+            if(res < g.size() && g[res] <= s[i])
+                ++res;
+        return res;
+    }
+};
+```
+
+
+
+### 53.最大子数组和
+
+#### 题干
+
+给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。**子数组** 是数组中的一个连续部分。
+
+#### 解法
+
+基本思路：**贪心**
+
+贪心就贪在here这里。因为当此时的连续和为负数时，加上下一个数只会拉低总和，因此不如直接从下一个数开始重新累加，反而更大，这就是局部最优。
+
+但这里要注意每一步都需要保存当前的连续和（在重置之前），因为存在最大和为负数的情况。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int res = INT_MIN, cnt = 0;
+        for(int i = 0; i < nums.size(); ++i) {
+            cnt += nums[i];
+            if(cnt > res)   res = cnt;
+            if(cnt < 0)     cnt = 0;	// here
+        }
+        return res;
+    }
+};
+```
 
 
 
