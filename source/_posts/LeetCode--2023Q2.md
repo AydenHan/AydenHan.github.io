@@ -13,24 +13,6 @@ tags:
 
 ### 831.隐藏个人信息
 
-#### 题干
-
-太长。
-
-**示例**
-
-```
-示例 1：
-输入：s = "AB@qq.com"
-输出："a*****b@qq.com"
-```
-
-```
-示例 2：
-输入：s = "1(234)567-890"
-输出："***-***-7890"
-```
-
 #### 解法
 
 基本思路：**模拟？**
@@ -5372,6 +5354,275 @@ public:
             if(cnt < 0)     cnt = 0;	// here
         }
         return res;
+    }
+};
+```
+
+
+
+## 2023.6.25
+
+### 122.买卖股票的最佳时机
+
+#### 解法
+
+基本思路：**贪心、数学**
+
+首先需要找到一个规律：如果第一天买，第三天卖，收益为 **prices[2] - prices[0] = （prices[2] - prices[1]）+（prices[1] - prices[0]）**。也就是说，无论哪天买卖，**一次买卖的收益是持有期间的每日收益的总和**。
+
+贪心思路：负数会降低收益，因此只选每日收益为正的时间段持有，就是最高收益。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int res = 0;
+        for(int i = 0; i < prices.size() - 1; ++i) 
+            if(prices[i+1] - prices[i] > 0)
+                res += prices[i+1] - prices[i];
+        return res;
+    }
+};
+```
+
+
+
+### 55.跳跃游戏
+
+#### 解法
+
+基本思路：**贪心**
+
+贪心思路：将问题转化为判断移动范围能否覆盖至终点，循环每移动一个单位，就尝试更新最大的覆盖范围。
+
+不用考虑如何到那个覆盖最大范围的点，只要知道最大范围是哪儿。在这个范围内就可以继续向后遍历。不用担心数组越界，当覆盖范围超过数组长度时，直接return。若因为0卡在原地不动，到 **maxRange** 直接就结束循环了。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int maxRange = 0;
+        for(int i = 0; i <= maxRange; ++i) {
+            maxRange = max(maxRange, nums[i] + i);
+            if(maxRange >= nums.size() - 1)  return true;
+        }
+        return false;
+    }
+};
+```
+
+
+
+### 45.跳跃游戏 Ⅱ
+
+#### 解法
+
+基本思路：**贪心**
+
+贪心思路：同55，依旧是更新最大的覆盖范围。
+
+区别在于要统计最小步数，也就是每一步要走的尽可能大——>**更新覆盖范围的最小次数**。也就是在每一个覆盖范围内走的尽可能多（尽量走到范围边缘再更新）。
+
+for循环是从头到尾的，max函数用于统计下一步的最优情况，当遍历到达本次边界时，再增加步数（可能不是在这个下标处跳的，但是没有区别不需要关心）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int res = 0, cur = 0, next = 0;
+        for(int i = 0; i < nums.size() - 1; ++i) {
+            next = max(next, nums[i] + i);
+            if(i == cur) {
+                cur = next;
+                ++res;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 1005.K 次取反后最大化的数组和
+
+#### 解法
+
+基本思路：**贪心**
+
+贪心思路：存在两种情况的贪心。
+
+1. 若是 **k <= 负数的数量**，那么每次取当前最大的负数变正；
+2. 若k大于负数数量，则每次取最小的非负数变负：这里存在优化，当变负了后，若k还大于0，此时应按照1的贪心来，将负数变正。那么可以得到结论——当剩余k值为偶数时，可以直接忽略，为奇数则将最小非负数变负。
+
+我的代码相比代码随想录做了进一步优化：**将求和和修改同步进行。那么若k最后剩余为奇数，只需要和减去最小非负数的两倍即可。**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int largestSumAfterKNegations(vector<int>& nums, int k) {
+        int res = 0;
+        sort(nums.begin(), nums.end(), [](int a, int b) { return abs(a) > abs(b); });
+        for(int& n : nums) {
+            if(n < 0 && k-- > 0)
+                n *= -1;
+            res += n;
+        }
+        if(k % 2)   res -= nums[nums.size() - 1] * 2;
+        return res;
+    }
+};
+```
+
+
+
+### 134.加油站
+
+#### 解法
+
+基本思路：**贪心**
+
+首先明确：只有总油量大于等于总消耗，才能跑完一圈；当前油量小于下一路程消耗油量时，跑不过去。
+
+抽象为数学计算就是：设第 **i**站到 **i+1**站剩余油量 **gas[i] - cost[i]** ，只有所有的剩余油量和大于等于0才能跑完。从第0站作为出发点开始累加剩余油量的和，一旦到第 **i+1**站时和小于0了，说明从**之前的任意站出发都是到不了这一站**的（可证明）。那么就只能以第 **i+1**站重新作为出发点，重新累加和。
+
+**局部最优：**每走一段，累加和一定大于等于0。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        int res = 0, sum = 0, total = 0;
+        for(int i = 0, n = gas.size(); i < n; ++i) {
+            sum += gas[i] - cost[i];
+            total += gas[i] - cost[i];
+            if(sum < 0) {
+                res = i + 1;
+                sum = 0;
+            }
+        }
+        return total < 0 ? -1 : res;
+    }
+};
+```
+
+
+
+### 135.分发糖果
+
+#### 解法
+
+基本思路：**贪心**
+
+先确定一边（假设左边）
+
+**局部最优：**只要比左边的分数高，糖果数就为左边的+1。
+
+再确定另一边（此时循环的方向必须反过来，因为数组中分数存在递增和递减两种情况，假设两遍都是左到右的循环，第二次当碰到递减段时，段中的前几个值都是不对的，因为都比右面的大，都会+1，而左边的已经遍历过了不能继续加了。**遍历方向仅能解决递增段**，要不出错就需要双向遍历。）
+
+**局部最优：**此时糖果数已经比左边大了，取 **糖果数** 和 **右边糖果数+1 **中最大的，就一定比两边都大。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int candy(vector<int>& ratings) {
+        vector<int> candy(ratings.size(), 1);
+        for(int i = 1; i < ratings.size(); ++i)
+            if(ratings[i] > ratings[i - 1])
+                candy[i] += candy[i - 1]; 
+        for(int i = ratings.size() - 2; i >= 0; --i)
+            if(ratings[i] > ratings[i + 1])
+                candy[i] = max(candy[i], candy[i + 1] + 1); 
+        return accumulate(candy.begin(), candy.end(), 0);       
+    }
+};
+```
+
+
+
+### 860.柠檬水找零
+
+#### 解法
+
+基本思路：**贪心、模拟**
+
+基本就是模拟判断，用到贪心的地方大概是20找零？
+
+**局部最优：**尽量用大面额的10去找，因为5还需要用于给10找零。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool lemonadeChange(vector<int>& bills) {
+        int five = 0, ten = 0;
+        for(int i = 0; i < bills.size(); ++i) {
+            if(bills[i] == 5)   ++five;
+            else if(bills[i] == 10) {
+                if(five <= 0) return false;
+                --five;
+                ++ten;
+            }
+            else {
+                if(ten > 0 && five > 0) {
+                    --five;
+                    --ten;
+                }
+                else if(five > 2) five -= 3;
+                else    return false;
+            }
+        }
+        return true;
+    }
+};
+```
+
+
+
+### 406.根据身高重建队列
+
+#### 解法
+
+基本思路：**贪心、list**
+
+当存在两个维度需要处理时，先确定一个基本维度再处理另一个。这里显然是按照身高排序更合适，k排序结束依旧是不符合k条件的序列。那么首先按照**身高从大到小排序，相等的k小的在前面**。
+
+**局部最优：**优先按身高更高的人的k来插入，**后续的插入不会影响之前已完成的**，因为都比已完成的更矮。
+
+#### 代码
+
+这里先用 **list**存而非 **vector**的原因在于 **vector**的插入操作是 O(n) 时间，而 **list**底层为链表，插入为 O(1) 。并且 **vector**在插入时，通过重新申请一个二倍空间大小的数组并将原数组**拷贝**过去实现扩容，这样会很慢。
+
+注意 **list**的迭代器是**双向迭代器**，而不是随机访问迭代器，只支持指针逐一迭代寻址。
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+        sort(people.begin(), people.end(), [](vector<int>& a, vector<int>& b) {
+            return a[0] > b[0] || (a[0] == b[0] && a[1] < b[1]);
+        });
+        list<vector<int>> res;
+        for(int i = 0; i < people.size(); ++i) {
+            int pos = people[i][1];
+            auto iter = res.begin();
+            while(pos--)    ++iter;
+            res.insert(iter, people[i]);
+        }
+        return vector<vector<int>>(res.begin(), res.end());
     }
 };
 ```

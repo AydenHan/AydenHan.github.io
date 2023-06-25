@@ -132,3 +132,151 @@ int main() {
 注意在递归时，需要**显式给出匿名函数的返回值**（即 **f_impl** 会返回的值）
 
 编译器并不需要知道factorial、f_impl的类型，故使用auto不会出现无法确定factorial、f_impl的返回类型这种trick。并且将 **f_impl** 置于 **Capture** 中，仅在初始化 **factorial** 时初始化一次  **f_impl** ，而不用多次初始化。
+
+
+
+# STL
+
+## STL容器大纲
+
+### 底层实现
+
+|        容器        |   底层数据结构    |                        时间复杂度                         | 有无序 | 可不可重复 | 其他                                                         |
+| :----------------: | :---------------: | :-------------------------------------------------------: | ------ | ---------- | ------------------------------------------------------------ |
+|       array        |       数组        |                       随机读改 O(1)                       | 无序   | 可重复     | 支持随机访问                                                 |
+|       vector       |       数组        | 随机读改、尾部插入、尾部删除 O(1) 头部插入、头部删除 O(n) | 无序   | 可重复     | 支持随机访问                                                 |
+|       deque        |     双端队列      |                  头尾插入、头尾删除 O(1)                  | 无序   | 可重复     | 一个中央控制器 + 多个缓冲区，支持首尾快速增删，支持随机访问  |
+|    forward_list    |     单向链表      |                      插入、删除 O(1)                      | 无序   | 可重复     | 不支持随机访问                                               |
+|        list        |     双向链表      |                      插入、删除 O(1)                      | 无序   | 可重复     | 不支持随机访问                                               |
+|       stack        |   deque / list    |                  顶部插入、顶部删除 O(1)                  | 无序   | 可重复     | deque 或 list 封闭头端开口，不用 vector 的原因应该是容量大小有限制，扩容耗时 |
+|       queue        |   deque / list    |                  尾部插入、头部删除 O(1)                  | 无序   | 可重复     | deque 或 list 封闭头端开口，不用 vector 的原因应该是容量大小有限制，扩容耗时 |
+|   priority_queue   | vector + max-heap |                    插入、删除 O(log2n)                    | 有序   | 可重复     | vector容器+heap处理规则                                      |
+|        set         |      红黑树       |                 插入、删除、查找 O(log2n)                 | 有序   | 不可重复   |                                                              |
+|      multiset      |      红黑树       |                 插入、删除、查找 O(log2n)                 | 有序   | 可重复     |                                                              |
+|        map         |      红黑树       |                 插入、删除、查找 O(log2n)                 | 有序   | 不可重复   |                                                              |
+|      multimap      |      红黑树       |                 插入、删除、查找 O(log2n)                 | 有序   | 可重复     |                                                              |
+|   unordered_set    |      哈希表       |              插入、删除、查找 O(1) 最差 O(n)              | 无序   | 不可重复   |                                                              |
+| unordered_multiset |      哈希表       |              插入、删除、查找 O(1) 最差 O(n)              | 无序   | 可重复     |                                                              |
+|   unordered_map    |      哈希表       |              插入、删除、查找 O(1) 最差 O(n)              | 无序   | 不可重复   |                                                              |
+| unordered_multimap |      哈希表       |              插入、删除、查找 O(1) 最差 O(n)              | 无序   | 可重复     |                                                              |
+
+
+
+### 迭代器
+
+- **random_access_iterator**（随机访问迭代器，可通过偏移量直接访问(如 **it + 5**) )
+
+1. **array** 由于数组是连续空间，可以根据头指针偏移量来直接寻址
+2. **vector** 动态数组容器由于是连续空间，类似数组，所以也可以根据头指针偏移量来直接寻址
+3. **deque** 双向队列的内部实现其实是通过多个连续空间拼接而成的，所以也可以直接寻址
+
+
+
+- **bidirectional_iterator**（双向迭代器，可以通过 **++**、 **--** 操作访问前后元素 ）
+
+1. **list** 列表的内部实现是双向链表，不是连续空间，因此只能使用指针逐一迭代间接寻址
+2. 底层实现为**红黑树**的，集合 **set / multiset** 和表 **map / multimap**
+
+红黑树结构如下：
+
+```cpp
+struct __rb_tree_node_base {
+	typedef __rb_tree_color_type color_type;
+	typedef __rb_tree_node_base* base_ptr;
+	color_type color;
+	base_ptr parent;
+	base_ptr left;
+	base_ptr right;
+}
+```
+
+
+
+- **forward_iterator**（单向迭代器，可以通过**++**访问下一元素 ）
+
+1. 底层实现为**哈希表**的，无序集合 **unordered_set / unordered_multiset** 和无序表 **unordered_map / unordered_multimap**
+2. **forward_list** 单向列表的内部实现为单向链表，只支持单向迭代
+
+哈希表结构如下：
+
+```cpp
+template <class Value>
+struct __hashtable_node {
+	__hashtable_node* next;
+	Value val;
+}
+```
+
+
+
+- **input_iterator**（输入迭代器）
+- **output_iterator**（输出迭代器）
+
+以上两种应用较少，常用于指向**流**，来读取流中的数据或向流中写入数据（若ostream_iterator（属于**output_iterator**）指向cout，那么即可向cout这个ostream写值，实现输出的效果）
+
+
+
+**效率： random_access_iterator > bidirectional_iterator > forward_iterator**
+
+**继承关系：input_iterator** → **forward_iterator** → **bidirectional_iterator** → **random_access_iterator**
+
+但**output_iterator**和上述没有继承关系
+
+
+
+# C++编程习惯
+
+## 提高速度
+
+### 运算
+
+**减少除法运算**
+
+无论是整数还是浮点数的运算，除法都会比较耗时，所以最后将除法运算等效成乘法运算。例如：a/b>20可改为a>b*20，可以简化程序的运行时间。
+
+**多用++、--、+=、-=**
+
+通常使用自加、自减指令和复合赋值表达式(如a-=1及a+=1等)能生成高质量的程序代码，编译器通常都能够生成inc和dec之类的指令，而使用a=a+1或a=a-1之类的指令，有很多C编译器都会生成二到三个字节的指令。
+
+
+
+### 变量&参数
+
+**减少值传递，多用引用来传递参数**
+
+```cpp
+bool Compare（string s1, string s2)
+bool Compare(string *s1, string *s2)
+bool Compare(string &s1, string &s2)
+bool Compare(const string &s1, const string &s2)
+```
+
+其中若使用第一个函数（值传递），则在参数传递和函数返回时，需要调用string的构造函数和析构函数两次（即共多调用了四个函数），而其他的三个函数（指针传递和引用传递）则不需要调用这四个函数。因为指针和引用都不会创建新的对象。如果一个构造一个对象和析构一个对象的开销是庞大的，这就是会效率造成一定的影响。
+
+然而在很多人的眼中，指针是一个恶梦，使用指针就意味着错误，那么就使用引用吧！它与使用普通值传递一样方便直观，同时具有指针传递的高效和能力。因为引用是一个变量的别名，对其操作等同于对实际对象操作，所以当你确定在你的函数是不会或不需要变量参数的值时，就大胆地在声明的前面加上一个const吧，就如最后的一个函数声明一样。同时加上一个const还有一个好处，就是可以对常量进行引用，若不加上const修饰符，引用是不能引用常量的。
+
+**多用局部变量，少用静态变量**
+
+使用局部变量的效率比使用静态变量要高。
+
+局部变量是存在于堆栈中的，对其空间的分配仅仅是修改一次esp寄存器的内容即可（即使定义一组局部变量也是修改一次）。而局部变量存在于堆栈中最大的好处是，函数能重复使用内存，当一个函数调用完毕时，退出程序堆栈，内存空间被回收，当新的函数被调用时，局部变量又可以重新使用相同的地址。当一块数据被反复读写，其数据会留在CPU的一级缓存（Cache）中，访问速度非常快。而静态变量却不存在于堆栈中。
+
+**多用直接初始化**
+
+```cpp
+ClassTest ct1;
+ClassTest ct2(ct1);  //直接初始化
+ClassTest ct3 = ct1;  //复制初始化
+```
+
+当用于类类型对象时，初始化的复制形式和直接形式有所不同：**直接初始化**直接调用与实参匹配的构造函数，**复制初始化**总是调用复制构造函数。复制初始化首先使用指定构造函数创建一个临时对象，然后用复制构造函数将那个临时对象复制到正在创建的对象”。
+
+通常直接初始化和复制初始化仅在低级别优化上存在差异，然而，对于不支持复制的类型，或者使用非explicit构造函数的时候，它们有本质区别。
+
+```cpp
+ifstream file1("filename")://ok:direct initialization
+ifstream file2 = "filename";//error:copy constructor is private
+```
+
+
+
