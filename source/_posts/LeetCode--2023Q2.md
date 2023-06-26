@@ -2591,11 +2591,9 @@ public:
 class MyQueue {
 public:
     MyQueue() {}
-    
     void push(int x) {
         In.push(x);
     }
-    
     int pop() {
         if(Out.empty()){
             while(!In.empty()){
@@ -2607,7 +2605,6 @@ public:
         Out.pop();
         return res;
     }
-    
     int peek() {
         if(Out.empty()){
             while(!In.empty()){
@@ -2617,7 +2614,6 @@ public:
         }
         return Out.top();
     }
-    
     bool empty() {
         return In.empty() && Out.empty();
     }
@@ -2625,14 +2621,6 @@ private:
     stack<int> In;
     stack<int> Out;
 };
-/**
- * Your MyQueue object will be instantiated and called as such:
- * MyQueue* obj = new MyQueue();
- * obj->push(x);
- * int param_2 = obj->pop();
- * int param_3 = obj->peek();
- * bool param_4 = obj->empty();
- */
 ```
 
 
@@ -2677,14 +2665,6 @@ public:
 private:
     queue<int> Q;
 };
-/**
- * Your MyStack object will be instantiated and called as such:
- * MyStack* obj = new MyStack();
- * obj->push(x);
- * int param_2 = obj->pop();
- * int param_3 = obj->top();
- * bool param_4 = obj->empty();
- */
 ```
 
 
@@ -2707,8 +2687,10 @@ public:
         for(char c : s){
             if(st.empty())	st.push(c);
             else{
-                if(c - st.top() == 1 || c - st.top() == 2)	st.pop();
-                else	st.push(c);
+                if(c - st.top() == 1 || c - st.top() == 2)
+                    st.pop();
+                else
+                    st.push(c);
             }
         }
         return st.empty();
@@ -5628,4 +5610,212 @@ public:
 ```
 
 
+
+## 2023.6.26
+
+### 452.用最少数量的箭引爆气球
+
+#### 解法
+
+基本思路：**贪心**
+
+其实就是求有交集的范围的最小组合数。
+
+**局部最优：**让尽可能多的范围处于同一组合中。即**在按左边界升序排序的情况下，维护范围的最小右边界。**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findMinArrowShots(vector<vector<int>>& points) {
+        sort(points.begin(), points.end(), [](vector<int>& a, vector<int>& b){
+            return a[0] < b[0] || a[0] == b[0] && a[1] < b[1];
+        });
+        int res = 1;
+        for(int i = 1; i < points.size(); ++i) {
+            if(points[i][0] > points[i - 1][1])
+                ++res;
+            else 
+                points[i][1] = min(points[i][1], points[i - 1][1]);
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 435.无重叠区间
+
+#### 解法
+
+基本思路：**贪心**
+
+同上452题的思路。在按左边界升序排序的情况下，只需维护右边界为较小值即可。
+
+**局部最优：**每次都去掉较大的区间，尽可能保留小范围的区间。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end(), [](vector<int>& a, vector<int>& b){
+            return a[0] < b[0] || a[0] == b[0] && a[1] < b[1];
+        });
+        int res = 0;
+        for(int i = 1; i < intervals.size(); ++i) {
+            if(intervals[i][0] < intervals[i - 1][1]) {
+                ++res;
+                intervals[i][1] = min(intervals[i][1], intervals[i - 1][1]);
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 763.划分字母区间
+
+#### 解法
+
+基本思路：**模拟？**
+
+先统计每个字母最后出现的位置。然后从第一个字母开始，在遍历到最后出现位置的过程中不断更新区间内所有字母最后出现位置中的最大值（即**最大右边界**），直至达到右边界时，说明这个区间内的字母没有在后面出现了，可以划分出来了。记录分割的位置，后面以此类推。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> partitionLabels(string s) {
+        int hash[26] = {0};
+        for(int i = 0; i < s.length(); ++i)
+            hash[s[i] - 'a'] = i;
+        vector<int> res;
+        int right = 0, left = 0;
+        for(int i = 0; i < s.length(); ++i) {
+            right = max(right, hash[s[i] - 'a']);
+            if(i == right) {
+                res.push_back(i + 1 - left);
+                left = i + 1;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 56.合并区间
+
+#### 解法
+
+基本思路：**贪心**
+
+和452、435一样的思路，左边界始终更新为最小的（最开始的），右边界取每次相邻区间右边界的最大值。一旦出现不重叠的区间，就将上一个区间加入结果集，最后将最后一个也加入即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){
+            return a[0] < b[0] || a[0] == b[0] && a[1] < b[1];
+        });
+        vector<vector<int>> res;
+        for(int i = 1; i < intervals.size(); ++i) {
+            if(intervals[i][0] <= intervals[i - 1][1]) {
+                intervals[i][0] = intervals[i - 1][0];
+                intervals[i][1] = max(intervals[i][1], intervals[i - 1][1]);
+            }
+            else
+                res.push_back(intervals[i - 1]);
+        }
+        res.push_back(intervals[intervals.size() - 1]);
+        return res;
+    }
+};
+```
+
+
+
+### 738.单调递增的数字
+
+#### 解法
+
+基本思路：**贪心**
+
+**局部最优：**当某一位不符合要求时，将**自身变为9，高一位减一**是最优解。
+
+主要是选择遍历的方向，若是从高位往低位遍历，例如332，第二个3 > 2，结果为329，但不符合要求。后面的比较会影响到之前已经确认了的顺序。而从低位开始遍历，不符合递增时会直接设为9，向高位遍历时不会影响到已经确立的低位（都是9）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int monotoneIncreasingDigits(int n) {
+        string str = to_string(n);
+        int idx = str.length();
+        for(int i = str.length() - 1; i > 0; --i) {
+            if(str[i] < str[i - 1]) {
+                idx = i;
+                --str[i - 1];
+            }
+        }
+        for(; idx < str.length(); ++idx)
+            str[idx] = '9';
+        return stoi(str);
+    }
+};
+```
+
+
+
+### 968.监控二叉树
+
+#### 解法
+
+基本思路：**二叉树、状态递归**
+
+二叉树结构为指数增长，因此摄像头不放在叶节点上，就是最少的放法。因此确立了**后序遍历**的顺序。
+
+那如何确定当前节点放不放呢？需要依靠子节点返回的状态判断。因此需要先确立节点所有的状态：
+
+- 未被摄像头覆盖，0（说明子节点属于被覆盖状态2）
+- 有摄像头，1（说明子节点属于未被覆盖状态0）
+- 已被覆盖，2（说明子节点有摄像头，**或是空节点**（因为叶节点不能放摄像头，所以状态必须为0，因此两个空子节点都设为2，即可完成递归逻辑））
+
+之后便是先递归左右子节点，然后根据子节点状态返回当前节点状态：有一个0就返回1，并计数；有一个1就返回2；全是2就返回0。最后结束递归后，根节点的状态是需要单独处理的（如果是状态0，就+1）
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int res = 0;
+    int traversal(TreeNode* cur) {
+        if(cur == nullptr)  return 2;
+        int left = traversal(cur->left);
+        int right = traversal(cur->right);
+        if(left == 0 || right == 0) {
+            ++res;
+            return 1;
+        }
+        else if(left == 1 || right == 1)
+            return 2;
+        return 0;
+    }
+    int minCameraCover(TreeNode* root) {
+        return traversal(root) == 0 ? res + 1 : res;
+    }
+};
+```
 
