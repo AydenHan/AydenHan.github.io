@@ -5819,3 +5819,126 @@ public:
 };
 ```
 
+
+
+## 2023.6.27
+
+### 509.斐波那契数
+
+#### 解法
+
+基本思路：**动态规划**
+
+状态转移方程：**F(n) = F(n - 1) - F(n - 2)**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int fib(int n) {
+        if(n < 2)   return n;
+        int one = 0, two = 1, cur;
+        for(int i = 2; i <= n; ++i) {
+            cur = one + two;
+            one = two;
+            two = cur;
+        }
+        return cur;
+    }
+};
+```
+
+ 
+
+### 70.爬楼梯
+
+#### 解法
+
+基本思路：**动态规划**
+
+第一道真正的动态规划题，上题状态转移方程算直接给出了。按照五部曲往下走：
+
+**1.确定dp数组及含义**——dp[i]： 爬到第i层楼梯，有dp[i]种方法
+
+**2.确定递推公式**
+
+从dp[i]的定义可以看出，dp[i] 可以有两个方向推出来。
+
+首先是dp[i - 1]，上i-1层楼梯，有dp[i - 1]种方法，那么再一步跳一个台阶不就是dp[i]了么。
+
+还有就是dp[i - 2]，上i-2层楼梯，有dp[i - 2]种方法，那么再一步跳两个台阶不就是dp[i]了么。
+
+所以**dp[i] = dp[i - 1] + dp[i - 2]** 。
+
+**3.dp数组初始化**
+
+因为n取值>=1，那么显然应该从1开始，即**dp[1] = 1，dp[2] = 2**，那么循环从3开始递推。
+
+**4.确定遍历顺序**——从前向后，求dp[n]。
+
+**5.举例推导**
+
+最终发现写法和509基本是完全一致的。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int climbStairs(int n) {
+        if(n <= 2)   return n;
+        int one = 1, two = 2, cur;
+        for(int i = 3; i <= n; ++i) {
+            cur = one + two;
+            one = two;
+            two = cur;
+        }
+        return cur;
+    }
+};
+```
+
+ 
+
+### 746.使用最小花费爬楼梯
+
+#### 解法
+
+基本思路：**动态规划**
+
+**1.确定dp数组及含义**——dp[i]： 爬到第i层楼梯的最低消费
+
+**2.确定递推公式**
+
+从dp[i]的定义可以看出，dp[i] 可以有两个方向推出来。
+
+首先是dp[i - 1]，在i-1层，花费cost[i - 1]到达 i。其次是dp[i - 2]，在i-2层，花费cost[i - 2]到达 i。
+
+选最小值就是：**dp[i] = min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2])** 。
+
+**3.dp数组初始化**
+
+初始可以在0或1层，即**dp[0] = 0，dp[1] = 0**，那么循环从2开始递推。
+
+**4.确定遍历顺序**——从前向后，求dp[n]。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        int one = 0, two = 0, cur;
+        for(int i = 2; i <= cost.size(); ++i) {
+            cur = min(one + cost[i - 2], two + cost[i - 1]);
+            one = two;
+            two = cur;
+        }
+        return cur;
+    }
+};
+```
+
+ 
+
