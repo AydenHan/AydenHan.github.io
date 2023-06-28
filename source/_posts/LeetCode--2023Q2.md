@@ -5942,3 +5942,174 @@ public:
 
  
 
+## 2023.6.28
+
+### 62.不同路径
+
+#### 解法
+
+基本思路：**动态规划**
+
+**1.确定dp数组及含义**——dp[i] [j]： 走到（i，j）有 dp[i] [j] 条路径。
+
+**2.确定递推公式**——**dp[i] [j] = dp[i - 1] [j] + dp[i] [j - 1]**
+
+**3.dp数组初始化**（**重点**）——在这个二维表格中，**第一行和第一列都需要初始化为1**。
+
+**4.确定遍历顺序**——顺序遍历，求dp[m - 1] [n - 1]。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int uniquePaths(int m, int n) {
+        vector<vector<int> > dp(m, vector<int>(n, 0));
+        for(int i = 0; i < m; ++i)	dp[i][0] = 1;
+        for(int i = 0; i < n; ++i)	dp[0][i] = 1;
+        for(int i = 1; i < m; ++i)
+            for(int j = 1; j < n; ++j)
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+        return dp[m - 1][n - 1];
+    }
+};
+```
+
+ 
+
+### 63.不同路径 Ⅱ
+
+#### 解法
+
+基本思路：**动态规划**
+
+**版本1：**重点依旧在于初始化上，在初始化第一行、列时，一旦遇到障碍物，后面都是0，直接停止循环。
+
+**版本2：**优化空间——一维数组
+
+可以发现递推公式 **dp[i] [j] = dp[i - 1] [j] + dp[i] [j - 1]**，其中 **dp[i - 1] [j]**保存的是上一行同一列的状态，即可以理解为先 **dp[i] [j] = dp[i - 1] [j]**，再 **dp[i] [j] = dp[i] [j] + dp[i] [j - 1]**.可以发现 **i** 的存在不必要了。dp数组可以简化为1维，递推公式 **dp[j] = dp[j] + dp[j - 1]**。在按序遍历的情况下，遍历到当前行 的j时，dp[j] 实际为上一行的路径数，只需加上 dp[j - 1]，效果就和版本1完全一致了。
+
+#### 代码
+
+**版本1：**时间复杂度：O(n × m)，空间复杂度：O(n × m)
+
+```cpp
+class Solution {
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        int m = obstacleGrid.size(), n = obstacleGrid[0].size();
+        if (obstacleGrid[0][0] == 1 || obstacleGrid[m - 1][n - 1] == 1)
+            return 0;
+        vector<vector<int> > dp(m, vector<int>(n, 0));
+        for(int i = 0; i < m; ++i) {
+            if(obstacleGrid[i][0] == 1) break;
+            dp[i][0] = 1;
+        }
+        for(int i = 0; i < n; ++i) {
+            if(obstacleGrid[0][i] == 1) break;
+            dp[0][i] = 1;
+        }
+        for(int i = 1; i < m; ++i)
+            for(int j = 1; j < n; ++j)
+                if(obstacleGrid[i][j] == 0)
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+        return dp[m - 1][n - 1];
+    }
+};
+```
+
+**版本2：**时间复杂度：O(n × m)，空间复杂度：O(m)
+
+```cpp
+class Solution {
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        int m = obstacleGrid.size(), n = obstacleGrid[0].size();
+        vector<int> dp(n, 0);
+        for(int i = 0; i < n && obstacleGrid[0][i] == 0; ++i)
+            dp[i] = 1;
+        for(int i = 1; i < m; ++i) {
+            for(int j = 0; j < n; ++j) {
+                if(obstacleGrid[i][j] == 1)
+                    dp[j] = 0;
+                else if(j != 0)
+                    dp[j] = dp[j] + dp[j - 1];
+            }
+        }
+        return dp[n - 1];
+    }
+};
+```
+
+ 
+
+### 343.整数拆分
+
+#### 解法
+
+基本思路：**动态规划**
+
+这题重点我认为首先是确定dp数组含义，有什么是可以由更小的相同类型的东西递推得到的？dp的值肯定表示为最大乘积，那么下标 i 表示的是什么呢？只能是 正整数 i 拆分后的最大乘积，也就是求 dp[n] 。
+
+那么递推公式就容易解决了：**dp[i] = dp[i - num] * num**，因为拆出一个num后剩余的也是可以拆分的。但是dp表示的仅是拆分后的最大乘积，不一定比 i 本身大（例：2拆分后为1，小于本身），因此公式应修改为：**dp[i] = max( dp[i - num] * num, (i - num) * num )**。
+
+num怎么取值呢？只能在 **[1, i / 2]** 范围内遍历取值。那么又出现了问题：dp[i] 每次都会被赋值一遍，要取其中的最大值才行，因此公式还应修改：**dp[i] = max(dp[i], max( dp[i - num] * num, (i - num) * num ))**。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int integerBreak(int n) {
+        vector<int> dp(n + 1);
+        dp[2] = 1;
+        for(int i = 3; i <= n; ++i)
+            for(int j = 1; j <= i / 2; ++j)
+                dp[i] = max(dp[i], max(j * (i - j), j * dp[i - j]));
+        return dp[n];
+    }
+};
+```
+
+ 
+
+### 96.不同的二叉搜索树
+
+#### 解法
+
+基本思路：**动态规划**
+
+这题dp数组含义很好确定，就是 i 个不同节点组成的BST数量。难在递推公式上。
+
+<img src="LeetCode--2023Q2/20210107093226241.png" alt="96.不同的二叉搜索树2" style="zoom: 50%;" />
+
+由此，推至n得递推公式：遍历[1,  j]计算**dp[i] += dp[j - 1] * dp[i - j]**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int numTrees(int n) {
+        vector<int> dp(n + 1);
+        dp[0] = 1;
+        for(int i = 1; i <= n; ++i)
+            for(int j = 1; j <= i; ++j)
+                dp[i] += dp[j - 1] * dp[i - j];
+        return dp[n];
+    }
+};
+```
+
+####  相关概念
+
+**卡特兰数**
+
+这种递推公式实际为一种数学表达式，名为[卡特兰数]([卡特兰数_百度百科 (baidu.com)](https://baike.baidu.com/item/卡特兰数))。常用于解决以下问题：
+
+- 凸多边形三角划分：输入凸多边形的边数n，求不同划分的方案数f(n)。此处f(2) = f(3) = 1。
+- 给定n个节点组成不同的二叉搜索树
+- n对括号正确匹配数目
+
+
+
