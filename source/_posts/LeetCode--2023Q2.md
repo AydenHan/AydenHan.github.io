@@ -6113,3 +6113,133 @@ public:
 
 
 
+## 2023.6.29
+
+### 416.分割等和子集
+
+#### 解法
+
+基本思路：**动态规划、01背包**
+
+- 背包的体积为sum / 2
+- 背包要放入的商品（集合里的元素）重量为 元素的数值，价值也为元素的数值
+- 背包如果正好装满（dp[target] == target），说明找到了总和为 sum / 2 的子集。
+
+代码随想录的代码还可以优化一下空间，dp初始化大小由target决定
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        if(sum % 2) return false;
+        int target = sum / 2;
+        vector<int> dp(target + 1, 0);
+        for(int i = 0; i < nums.size(); ++i)
+            for(int j = target; j >= nums[i]; --j)
+                dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);
+        return dp[target] == target;
+    }
+};
+```
+
+ 
+
+### 1049.最后一块石头的重量 Ⅱ
+
+#### 解法
+
+基本思路：**动态规划、01背包**
+
+和上题416的思路是一致的，返回最小重量就是尽可能均分为两堆重量相差最小的石头，即**背包的体积为总重量的一半**。商品的重量和价值均为 **stones[i]**。
+
+最后得到的 **dp[sum / 2]** 就是能凑到的最接近的重量了，另一堆就是 **sum - dp[sum / 2]**，且因为 sum / 2 向下取整，前者必然小于等于后者，因此最终结果为**后者 - 前者**。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int lastStoneWeightII(vector<int>& stones) {
+        int sum = accumulate(stones.begin(), stones.end(), 0);
+        int target = sum / 2;
+        vector<int> dp(target + 1, 0);
+        for(int& n : stones)
+            for(int i = target; i >= n; --i)
+                dp[i] = max(dp[i], dp[i - n] + n);
+        return sum - dp[target] * 2;
+    }
+};
+```
+
+ 
+
+### 494.目标和
+
+#### 解法
+
+基本思路：**动态规划、01背包**
+
+模板都是差不多的，难点在于将具体问题转化为抽象的01背包模板上去。
+
+假设加法部分总和为 x，那么减法部分总和为 sum - x，我们求的是：**x - （sum - x）== target**，于是我们可以得到加法部分的总和 **x = （sum + target）/ 2**。这就是背包的容量了，是可以直接算出来的。
+
+那么 dp[i] 就表示**装满容量为 i 的背包，有几种方法**。
+
+**TODO**：(target + sum) / 2 向下取整会产生影响，why？
+
+在组合问题中，递推公式通常不使用max等，而是用+=。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int target) {
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        if(abs(target) > sum || (target + sum) % 2)   return 0;
+        int size = (target + sum) / 2;
+        vector<int> dp(size + 1, 0);
+        dp[0] = 1;
+        for(int& n : nums)
+            for(int i = size; i >= n; --i)
+                dp[i] += dp[i - n];
+        return dp[size];
+    }
+};
+```
+
+ 
+
+### 474.一和零
+
+#### 解法
+
+基本思路：**动态规划、01背包**
+
+这题和之前的01最大区别在于，背包的容量是二维的 m x n。也就是说之前模板中的内层循环变为了两层。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<vector<int> > dp(m + 1, vector<int>(n + 1, 0));
+        for(string& s : strs) {
+            int one = 0, zero = 0;
+            for(char c : s)
+                c == '0' ? ++zero : ++one;
+            for(int i = m; i >= zero; --i)
+                for(int j = n; j >= one; --j)
+                    dp[i][j] = max(dp[i][j], dp[i - zero][j - one] + 1);           
+        }
+        return dp[m][n];
+    }
+};
+```
+
+ 
+

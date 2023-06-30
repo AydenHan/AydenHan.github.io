@@ -51,7 +51,7 @@ tags:
 
 打开链接图片很糊而且像素低。那么问题来了，哪里有高清的呢！答案就在视频界面里。
 
-![img](http://www.hanhan0223.cn/wp-content/uploads/2020/04/html2-1024x415.png)
+![img](获取bilibili视频文件和封面/html2-1024x415.png)
 
 不在body中！因为视频界面并没有显示封面图片！而是在head中！找到属性（itemprop）为image的，发现content中的链接，后缀为jpg格式，这就找对了，打开发现确实是高清图
 
