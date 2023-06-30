@@ -6243,3 +6243,150 @@ public:
 
  
 
+## 2023.6.30
+
+### 518.零钱兑换 Ⅱ
+
+#### 解法
+
+基本思路：**动态规划、完全背包**
+
+在01背包中，内层遍历背包容量顺序为倒序，是为了保证每个物品仅被使用一次。在完全背包中，每个物品都可无限使用，因此需要按**正序**遍历。求组合数则是按 += 方式计算。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        vector<int> dp(amount + 1, 0);
+        dp[0] = 1;
+        for(int& n : coins)
+            for(int i = n; i <= amount; ++i)
+                dp[i] += dp[i - n];
+        return dp[amount];
+    }
+};
+```
+
+ 
+
+### 377.组合总和 Ⅳ
+
+#### 解法
+
+基本思路：**动态规划、完全背包**
+
+不同于上题518，这里求的是**排列**。排列可能是一个组合的不同排列方式，因此需要将物品遍历置于内层，若是置于外层，比如本题中：计算dp[4]的时候，结果集只有 {1,3} 这样的集合，不会有{3,1}这样的集合，因为nums遍历放在外层，3只能出现在1后面。
+
+**背包容量放在外循环，将物品放在内循环，内循环从前到后遍历**。注意加上 if 判断越界。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+        vector<int> dp(target + 1, 0);
+        dp[0] = 1;
+        for(int i = 0; i <= target; ++i)
+            for(int n : nums)
+                if(i - n >= 0 && dp[i] < INT_MAX - dp[i - n])
+                    dp[i] += dp[i - n];
+        return dp[target];
+    }
+};
+```
+
+ 
+
+### 322.零钱兑换
+
+#### 解法
+
+基本思路：**动态规划、完全背包**
+
+这题求的是最小值，因此不强调排列或是组合，即正常正序遍历，采用min函数即可。
+
+注意初始化不为0，而是INT_MAX，因为要保留较小的值。dp[0] 需要初始化为0用于累加计算。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount + 1, INT_MAX);
+        dp[0] = 0;
+        for(int& n : coins)
+            for(int i = n; i <= amount; ++i)
+                if(dp[i - n] != INT_MAX)
+                    dp[i] = min(dp[i], dp[i - n] + 1);
+        return dp[amount] == INT_MAX ? -1 : dp[amount];
+    }
+};
+```
+
+ 
+
+### 279.完全平方数
+
+#### 解法
+
+基本思路：**动态规划、完全背包**
+
+这题思路喝上题322完全一致，更简单些。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int numSquares(int n) {
+        vector<int> dp(n + 1, INT_MAX);
+        dp[0] = 0;
+        for(int i = 1; i * i <= n; ++i)
+            for(int j = i * i; j <= n; ++j)
+                dp[j] = min(dp[j], dp[j - i * i] + 1);
+        return dp[n];
+    }
+};
+```
+
+ 
+
+### 139.单词拆分
+
+#### 解法
+
+基本思路：**动态规划、完全背包**
+
+这题有些抽象。。需要些想象力。
+
+dp含义：**dp[i] : 字符串长度为 i 时，dp[i]为true，表示可以拆分为一个或多个在字典中出现的单词**。
+
+递推公式：如果确定dp[j] 是true，且 **[j, i]** 这个区间的子串出现在字典里，那么dp[i]一定是true。（j < i ）。所以递推公式是 **if( [j, i] 这个区间的子串出现在数组中 && dp[j])  dp[i] = true**。
+
+初始化：dp[0] 作为递推根基，需初始化为 true，否则后面都是false。
+
+遍历顺序：本题实则求的是排列中的一种，因为多个单词拼成字符串，那么就会要求**单词的前后顺序**。所以**先遍历背包（字符串长度），再遍历物品（数组）**。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int size = s.length();
+        vector<bool> dp(size + 1, false);
+        dp[0] = true;
+        for(int i = 1; i <= size; ++i)
+            for(int j = 0; j < i; ++j)
+                if(find(wordDict.begin(), wordDict.end(), s.substr(j, i-j)) != wordDict.end() && dp[j])
+                    dp[i] = true;
+        return dp[size];
+    }
+};
+```
+
+ 
