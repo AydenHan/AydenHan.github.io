@@ -1176,9 +1176,54 @@ for(int j = 0; j <= bagWeight; j++) { // 遍历背包容量
 
 #### 多重背包
 
+实际是一个**01背包**问题：每件物品最多有Mi件可用，把Mi件摊开，其实就是一个01背包问题了。
+
+```cpp
+void multi_pack() {
+    vector<int> weight = {1, 3, 4};
+    vector<int> value = {15, 20, 30};
+    vector<int> nums = {2, 3, 2};
+    int bagWeight = 10;
+    for (int i = 0; i < nums.size(); i++) {
+        while (nums[i] > 1) { // nums[i]保留到1，把其他物品都展开
+            weight.push_back(weight[i]);
+            value.push_back(value[i]);
+            nums[i]--;
+        }
+    }
+    vector<int> dp(bagWeight + 1, 0);
+    for(int i = 0; i < weight.size(); i++) // 遍历物品
+        for(int j = bagWeight; j >= weight[i]; j--) // 遍历背包容量
+            dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);
+}
+```
+
+或是在遍历01背包时，将每个物品种类都再遍历一遍：
+
+```cpp
+void test_multi_pack() {
+    vector<int> weight = {1, 3, 4};
+    vector<int> value = {15, 20, 30};
+    vector<int> nums = {2, 3, 2};
+    int bagWeight = 10;
+    
+    vector<int> dp(bagWeight + 1, 0);
+    for(int i = 0; i < weight.size(); i++) // 遍历物品
+        for(int j = bagWeight; j >= weight[i]; j--) // 遍历背包容量
+            // 以上为01背包，然后加一个遍历个数
+            for (int k = 1; k <= nums[i] && (j - k * weight[i]) >= 0; k++) // 遍历个数
+                dp[j] = max(dp[j], dp[j - k * weight[i]] + k * value[i]);
+}
+```
 
 
 
+#### 总结
+
+![img](%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95%E7%9A%84CPP%E5%AE%9E%E7%8E%B0/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%981.jpeg)
 
 
 
+### 树形DP
+
+TODO
