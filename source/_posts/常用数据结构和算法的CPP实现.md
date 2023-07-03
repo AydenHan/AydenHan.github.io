@@ -942,6 +942,69 @@ public:
 
 # 算法
 
+## 查找
+
+### 二分查找 - O(log(n))
+
+#### 时间复杂度计算
+
+假使总共有 **n **个元素，那么二分后每次查找的区间大小就是n，n/2，n/4，…，n/2^k（接下来操作元素的剩余个数），其中k就是循环的次数。**最坏的情况**是K次二分之后，每个区间的大小为1，找到想要的元素，于是：
+
+令n/2^k=1，可得k=log2n，得到时间复杂度 **O(log(n))**。
+
+
+
+#### 递归实现
+
+```cpp
+int binarySearch(vector<int>& vec, int low, int high, int key) {
+    if(low > high) return -1;
+    int mid = (low + high) / 2;
+    if(vec[mid] == key)	return mid;
+    else if(vec[mid] < key)	binarySearch(vec, mid + 1, high, key);
+    else	binarySearch(vec, low, mid - 1, key);
+}
+
+int main() {
+    vector<int> vec = xxx;
+    int key = yyy;
+    // method 1
+    res = binarySearch(vec, 0, vec.size() - 1, key);
+    
+    //method 2
+    auto binarySearch = [&,
+        circle = [&](auto&& self, int low, int high) -> int {
+            if(low > high) return -1;
+            int mid = (low + high) / 2;
+            if(vec[mid] == key)	return mid;
+            else if(vec[mid] < key)	self(self, mid + 1, high);
+            else	self(self, low, mid - 1);
+        }
+    ]() { return circle(circle, 0, vec.size() - 1); };
+    res = binarySearch();
+}
+```
+
+
+
+#### 迭代实现
+
+```cpp
+int binarySearch(vector<int>& vec, int key) {
+    if(vec.size() == 0)	return -1;
+    int low = 0, high = vec.size() - 1;
+    while(low <= high) {
+        int mid = (low + high) / 2;
+        if(vec[mid] == key)	return mid;
+        else if(vec[mid] < key)	low = mid + 1;
+        else	high = mid - 1;
+    }
+    return -1;
+}
+```
+
+
+
 ## 排序
 
 ### 堆排序 - O(n*log(n))
@@ -1221,6 +1284,14 @@ void test_multi_pack() {
 #### 总结
 
 ![img](%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95%E7%9A%84CPP%E5%AE%9E%E7%8E%B0/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%981.jpeg)
+
+### 股票问题
+
+<img src="常用数据结构和算法的CPP实现/股票问题总结.jpg" alt="股票问题总结" style="zoom: 67%;" />
+
+可以发现，只有在限制最多买卖次数时，需要设立多状态：即**第 i 天买卖 0 ~ k - 1次各自的状态**。
+
+其余均是双状态：**持有、不持有**。
 
 
 
