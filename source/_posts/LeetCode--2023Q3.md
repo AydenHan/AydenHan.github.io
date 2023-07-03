@@ -177,3 +177,113 @@ public:
 
 
 
+## 2023.7.2
+
+### 121.买卖股票的最佳时机
+
+#### 题干
+
+给定一个数组 `prices` ，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。你只能选择 **某一天** 买入这只股票，并选择在 **未来的某一个不同的日子** 卖出该股票。返回你可以从这笔交易中获取的**最大利润**。如果你不能获取任何利润，返回 `0` 。
+
+#### 解法
+
+基本思路：**动态规划**
+
+因为只会买入和卖出一次，那么状态就比较好判断。dp：第 i 天持有（dp[i] [0]）或不持有（dp[i] [1]）股票时所得最大现金。可以用常量节省空间。
+
+**递推公式：**
+
+- **dp[i] [0] = max(dp[i-1] [0],  - prices[i])** 
+- **dp[i] [1] = max(dp[i-1] [1], dp[i-1] [0] + prices[i])** 
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int have = -prices[0], no = 0;
+        for(int i = 1; i < prices.size(); ++i) {
+            no = max(no, prices[i] + have);
+            have = max(have, -prices[i]);
+        }
+        return no;
+    }
+};
+```
+
+#### 相关题目
+
+### 122.买卖股票的最佳时机 Ⅱ
+
+#### 题干
+
+给你一个整数数组 `prices` ，其中 `prices[i]` 表示某支股票第 `i` 天的价格。在每一天，你可以决定是否购买和/或出售股票。你在任何时候 **最多** 只能持有 **一股** 股票。你也可以先购买，然后在 **同一天** 出售。返回 **最大** 利润 。
+
+#### 解法
+
+基本思路：**动态规划**
+
+因为会多次买入卖出，相对于上题121，买入的判断应为上一天就买入和上一天为买入-当天价格作比较。
+
+**递推公式：**
+
+- **dp[i] [0] = max(dp[i-1] [0], dp[i-1] [1] - prices[i])** 
+- **dp[i] [1] = max(dp[i-1] [1], dp[i-1] [0] + prices[i])** 
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int have = -prices[0], no = 0;
+        for(int i = 1; i < prices.size(); ++i) {
+            int temp = have;
+            have = max(have, no - prices[i]);
+            no = max(no, prices[i] + temp);
+        }
+        return no;
+    }
+};
+```
+
+### 123.买卖股票的最佳时机 Ⅲ
+
+#### 题干
+
+给定一个数组，它的第 `i` 个元素是一支给定的股票在第 `i` 天的价格。计算你所能获取的最大利润。你最多可以完成 **两笔** 交易。**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+
+#### 解法
+
+基本思路：**动态规划**
+
+因为只买入两次，每一天的状态就不是两种而是四种：第一次持有、不持有和第二次的持有、不持有。
+
+**递推公式：**要搞清楚每个状态和前一天的哪个状态相关。
+
+- **dp[i] [0] = max(dp[i-1] [0], -prices[i])** 
+- **dp[i] [1] = max(dp[i-1] [1], dp[i-1] [0] + prices[i])** 
+- **dp[i] [2] = max(dp[i-1] [2], dp[i-1] [1] - prices[i])** 
+- **dp[i] [3] = max(dp[i-1] [3], dp[i-1] [2] + prices[i])** 
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int have1 = -prices[0], have2 = -prices[0];
+        int no1 = 0, no2 = 0;
+        for(int i = 1; i < prices.size(); ++i) {
+            int temp = have1;
+            have1 = max(have1, -prices[i]);
+            no2 = max(no2, have2 + prices[i]);
+            have2 = max(have2, no1 - prices[i]);
+            no1 = max(no1, temp + prices[i]);
+        }
+        return no2;
+    }
+};
+```
+
