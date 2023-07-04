@@ -448,7 +448,195 @@ public:
 
 
 
+## 2023.7.3
 
+### 674.最长连续递增序列
+
+#### 解法
+
+基本思路：**动态规划**
+
+相比于上题300，这题要求连续子序列就简单多了，只需在遇到递减时将状态重置为1即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findLengthOfLCIS(vector<int>& nums) {
+        int res = 1, dp = 1;
+        for(int i = 1; i < nums.size(); ++i) {
+            if(nums[i] > nums[i - 1])   ++dp;
+            else    dp = 1;
+            res = max(res, dp);
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 718.最长重复子数组
+
+#### 题干
+
+给两个整数数组 `nums1` 和 `nums2` ，返回 *两个数组中 **公共的** 、长度最长的子数组的长度* 。
+
+#### 解法
+
+基本思路：**动态规划**
+
+记住动态规划的本质就是**填表**，全遍历。这里 **dp[i]** 表示 **nums1 [0, i - 1] 和 nums2 [0, j - 1]范围内的最长公共子数组**，是为了方便遍历，类似于一个向左边和上边的**padding**操作。若是表示 [0, i] ，会发现遍历时dp第一行第一列中若出现相同数字，要初始化为1。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int findLength(vector<int>& nums1, vector<int>& nums2) {
+        vector<vector<int> > dp(nums1.size() + 1, vector<int>(nums2.size() + 1, 0));
+        int res = 0;
+        for(int i = 1; i <= nums1.size(); ++i) {
+            for(int j = 1; j <= nums2.size(); ++j) {
+                if(nums1[i - 1] == nums2[j - 1])
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                res = max(res, dp[i][j]);
+            }
+        }        
+        return res;
+    }
+};
+```
+
+#### 空间优化
+
+```cpp
+class Solution {
+public:
+    int findLength(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> dp(nums2.size() + 1, 0);
+        int res = 0;
+        for(int i = 1; i <= nums1.size(); ++i) {
+            for(int j = nums2.size(); j > 0; --j) {
+                if(nums1[i - 1] == nums2[j - 1])
+                    dp[j] = dp[j - 1] + 1;
+                else
+                    dp[j] = 0;
+                res = max(res, dp[j]);
+            }
+        }        
+        return res;
+    }
+};
+```
+
+
+
+### 1143.最长公共子序列（LCS）
+
+#### 题干
+
+给定字符串 `text1` 和 `text2`，返回两个字符串的最长 **公共子序列** 的长度。如果不存在 **公共子序列** ，返回 `0` 。
+
+一个字符串的 **子序列** 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+
+#### 解法
+
+基本思路：**动态规划**
+
+这题主要难点在推导出**递推公式**。有两种情况：
+
+1.**text1[i - 1] == text2[j - 1]** : 此时有 **dp[i] [j] = dp[i - 1] [j - 1] + 1**，很好理解：代表必然使用 **text1[i - 1] **和**text2[j - 1] **时LCS的长度。
+
+2.**text1[i - 1] != text2[j - 1] : **此时 **dp[i] [j] = max(dp[i - 1] [j], dp[i] [j - 1])**，因为不相等，因此必然不会同时用到这两个字符，但存在用到其中一个字符的情况，依次取两者中的最大值。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2) {
+        vector<vector<int> > dp(text1.size() + 1, vector<int>(text2.size() + 1, 0));
+        for(int i = 1; i <= text1.size(); ++i) {
+            for(int j = 1; j <= text2.size(); ++j) {
+                if(text1[i - 1] == text2[j - 1])
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }        
+        return dp[text1.size()] [text2.size()];
+    }
+};
+```
+
+#### 空间优化
+
+一定要注意**遍历顺序！！**
+
+在上一题718中，dp[i] [j] 只与 左上角 dp[i-1] [j-1] 有关，体现在一维数组中就是只与它前一个值有关，因此可以反序遍历，解决覆盖问题。
+
+但本题中，dp[i] [j] 同时与 dp[i-1] [j-1] 、dp[i] [j-1] 、dp[i-1] [j] 有关，尤其是 **dp[i] [j-1]** ，若反序遍历，则**dp[i] [j-1] 的状态是无法更新到 dp[i] [j] 的**。因此必须正序遍历，用常量存储前一个值修改前的内容来避免覆盖问题。
+
+```cpp
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2) {
+        vector<int> dp(text2.size() + 1, 0);
+        for(int i = 1; i <= text1.size(); ++i) {
+            int pre = 0;
+            for(int j = 1; j <= text2.size(); ++j) {
+                int temp = dp[j];
+                if(text1[i - 1] == text2[j - 1])
+                    dp[j] = pre + 1;
+                else
+                    dp[j] = max(dp[j], dp[j - 1]);
+                pre = temp;
+            }
+        }        
+        return dp[text2.size()];
+    }
+};
+```
+
+#### 相关题目
+
+### 1035.不相交的线
+
+按照题意理解一下，要在线不相交的情况下数量最多，那么线尽可能靠近垂直，并且不同线之间的相对顺序是固定的，也就是说本质就是**求最长公共子序列**。那么代码就和上题1143一模一样了。
+
+
+
+### 53.最大子数组和
+
+#### 题干
+
+给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。**子数组** 是数组中的一个连续部分。
+
+#### 解法
+
+基本思路：**动态规划**
+
+以前用贪心解过，只保留和为正数的子数组，取最大。
+
+动态规划其实也是类似的思路：有两种状态，1是**之前和为非负数，那么直接加上当前值**；2是**之前和是负数，那么从当前数重新开始计算和**。过程中记录最大和即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int pre = 0, res = INT_MIN;
+        for(int i = 0; i < nums.size(); ++i) {
+            pre = max(nums[i], pre + nums[i]);
+            res = max(res, pre);
+        }
+        return res;
+    }
+};
+```
 
 
 
