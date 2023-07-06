@@ -566,7 +566,7 @@ public:
                     dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
             }
         }        
-        return dp[text1.size()] [text2.size()];
+        return dp[text1.size()][text2.size()];
     }
 };
 ```
@@ -636,6 +636,142 @@ public:
         return res;
     }
 };
+```
+
+
+
+### 392.判断子序列
+
+#### 题干
+
+给定字符串 **s** 和 **t** ，判断 **s** 是否为 **t** 的子序列。
+
+#### 解法
+
+基本思路：**动态规划**
+
+类似1143题的思路，将待确认子串作为外循环，在母串中：每找到一对匹配的字符，就取左上角（i-1，j-1）+1；没找到就延续前一格（i，j-1）记录的值（因为没找到新的匹配，所以长度暂时不变）。
+
+最终目的实际依旧是求**最长公共子序列**，之后判断公共子序列长度是否和待确认子串相同即可。
+
+TODO：为什么无法压缩成一维数组。。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool isSubsequence(string s, string t) {
+        vector<vector<int> > dp(s.size() + 1, vector<int>(t.size() + 1, 0));
+        for(int i = 1; i <= s.size(); ++i) {
+            for(int j = 1; j <= t.size(); ++j) {
+                if(s[i - 1] == t[j - 1])	dp[i][j] = dp[i - 1][j - 1] + 1;
+                else	dp[i][j] = dp[i][j - 1];
+            }
+        }        
+        return dp[s.size()][t.size()] == s.size();
+    }
+};
+```
+
+
+
+## 2023.7.4
+
+### 115.不同的子序列
+
+#### 题干
+
+给你两个字符串 `s` 和 `t` ，统计并返回在 `s` 的 **子序列** 中 `t` 出现的个数。答案符合 32 位带符号整数范围。
+
+#### 解法
+
+基本思路：**动态规划**
+
+对于两个**字符串匹配**，一个非常**通用的状态**定义如下：
+
+定义 **dp[i] [j]** 为考虑 s 中 **[0，i]** 个字符，t 中 **[0，j]** 个字符的**匹配个数**。那么显然对于某个 dp[i] [j] 而言，从「最后一步」的匹配进行分析，包含两类决策：
+
+-  **s[i]** 不参与匹配，需要让 s 中 **[0，i-1]** 个字符去匹配 t 中的  **[0，j]** 字符。此时匹配值为 **dp[i-1] [j]**
+-  **s[i]** 参与匹配，这时只需让 s 中 **[0，i-1]** 个字符去匹配 t 中的  **[0，j-1]** 字符即可，同时满足 `s[i] = t[j]`。此时匹配值为 **dp[i-1] [j-1]**
+
+显然，当出现 `s[i] = t[j]`时，dp值为以上两者之和，若不相等，则仅满足 s[i] 不参与匹配的情况。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int numDistinct(string s, string t) {
+        vector<uint64_t> dp(t.size() + 1, 0);
+        dp[0] = 1;
+        for(char c : s) {
+            uint64_t pre = 1;
+            for(int j = 1; j <= t.size(); ++j) {
+                uint64_t temp = dp[j];
+                if(c == t[j - 1])   dp[j] += pre;
+                pre = temp;
+            }
+        }        
+        return dp[t.size()];
+    }
+};
+```
+
+
+
+### 583.两个字符串的删除操作
+
+#### 题干
+
+给定两个单词 `word1` 和 `word2` ，返回使得 `word1` 和 `word2` **相同**所需的**最小步数**。**每步** 可以删除任意一个字符串中的一个字符。
+
+#### 解法1
+
+基本思路：**动态规划**
+
+对于两个**字符串匹配**，一个非常**通用的状态**定义如下：
+
+ **dp[i] [j]** 为使 s 中 **[0，i]** ，t 中 **[0，j]** 个字符相同所需的**最少操作步数**。那么对于 dp[i] [j] ，包含两类决策：
+
+- `s[i] = t[j]`，此时不需要新增操作 **dp[i] [j] = dp[i-1] [j-1]**
+- `s[i] ≠ t[j]`，此时有两种情况：删除 s[i - 1] 或删除 t[j - 1] 。于是可得 **dp[i] [j] = min(dp[i-1] [j] + 1, dp[i] [j - 1] + 1)** 。实际还有第三种情况即同时删除 s[i - 1] 和 t[j - 1] ，但是该情况（ **dp[i] [j] = dp[i-1] [j-1] + 2**）和删除 s[i-1]是一样的（TODO：why？）
+
+这里需要注意的是dp数组的初始化：**dp[0] [j] = j ，dp[i] [0] = i** 。当 t 为空时，s显然需要删除全部的字符才能相同，因此必然有 **dp[i] [0] = i** 。反之同理。
+
+下面代码为压缩空间后的一维数组解法，要注意**外循环中 dp[0] = i 相当于对二维数组中第一列的初始化，而pre保存的是左上角的值（i-1，j-1），因此初始化时应为上一层的 dp[0]，那也就是 i - 1。**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        vector<int> dp(word2.size() + 1);
+        for(int i = 0; i < dp.size(); ++i)  dp[i] = i;
+        for(int i = 1; i <= word1.size(); ++i) {
+            int pre = i - 1;
+            dp[0] = i;
+            for(int j = 1; j <= word2.size(); ++j) {
+                int temp = dp[j];
+                if(word1[i - 1] == word2[j - 1])   
+                    dp[j] = pre;
+                else
+                    dp[j] = min(dp[j] + 1, dp[j - 1] + 1);
+                pre = temp;
+            }
+        }        
+        return dp[word2.size()];
+    }
+};
+```
+
+#### 解法2
+
+将问题转化为[LCS问题](#1143.最长公共子序列（LCS）)，最少删除多少次后两个字符串相等，相当于求公共子串与俩字符串的长度差值的和。
+
+```cpp
+return word1.size() + word2.size() - dp[word2.size()] * 2;
 ```
 
 
