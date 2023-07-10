@@ -1005,6 +1005,34 @@ int binarySearch(vector<int>& vec, int key) {
 
 
 
+### 单调栈 - O(n)
+
+通常是在一维数组中，要寻找任一个元素的右边或者左边**第一个比自己大或者小**的元素的**位置**。
+
+**单调栈的本质是空间换时间**，因为在遍历的过程中需要用一个栈来记录右边第一个比当前元素高的元素，优点是整个数组只需要遍历一次。
+
+- 单调栈只需要存放元素的**下标**。
+- 单调栈需要明确在遍历时，`vec[i]` 与 `vec[st.top()]` 之间的三种大小关系的处理方式
+
+#### Code
+
+```cpp
+vector<int> dailyTemperatures(vector<int>& vec) {
+    vector<int> res(vec.size());
+    stack<int> st;
+    for(int i = 0; i < vec.size(); ++i) {
+        while(!st.empty() && vec[i] > vec[st.top()]) {
+            res[st.top()] = i;
+            st.pop();
+        }
+        st.push(i);
+    }
+    return res;
+}
+```
+
+
+
 ## 排序
 
 ### 堆排序 - O(n*log(n))

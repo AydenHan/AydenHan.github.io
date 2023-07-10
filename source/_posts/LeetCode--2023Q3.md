@@ -960,3 +960,266 @@ public:
 
 
 
+## 2023.7.10
+
+### 739.每日温度
+
+#### 题干
+
+给定一个整数数组 `temperatures` ，表示每天的温度，返回一个数组 `answer` ，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
+
+#### 解法
+
+基本思路：**单调栈**
+
+因为是找右边第一个比自己大的元素，因此应手动维护栈为递减（栈底——>栈顶）。即每当遍历到一个元素时，将栈中比这个元素小的元素全部出栈，并记录结果即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temperatures) {
+        vector<int> res(temperatures.size());
+        stack<int> st;
+        for(int i = 0; i < temperatures.size(); ++i) {
+            while(!st.empty() && temperatures[i] > temperatures[st.top()]) {
+                res[st.top()] = i - st.top();
+                st.pop();
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 496.下一个更大元素
+
+#### 题干
+
+`nums1` 中 x 的 **下一个更大元素** 是指 `x` 在 `nums2` 中对应位置 **右侧** 的 **第一个** 比 `x` 大的元素，若不存在返回**-1**。
+
+给你两个 **没有重复元素** 的数组 `nums1` 和 `nums2` ，下标从 **0** 开始计数，其中`nums1` 是 `nums2` 的子集。
+
+返回一个长度为 `nums1.length` 的数组 `ans` 作为答案，满足 `ans[i]` 是如上所述的 **下一个更大元素** 。
+
+#### 解法
+
+基本思路：**单调栈**
+
+思路同上，相当于找到 `nums2`中每个元素的下一个更大元素的值，记录为键值对，之后遍历 `nums1`，取出这些元素对应的值，加入vector中。本质是一种空间换时间的解法。
+
+第二种是正常解法。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> res;
+        unordered_map<int, int> hash;
+        stack<int> st;
+        for(int i = nums2.size() - 1; i >= 0; --i) {
+            while(!st.empty() && nums2[i] > st.top())   st.pop();
+            hash[nums2[i]] = st.empty() ? -1 : st.top();
+            st.push(nums2[i]);
+        }
+        for(int& n : nums1) res.emplace_back(hash[n]);
+        return res;
+    }
+};
+```
+
+```cpp
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> res(nums1.size(), -1);
+        for(int i = 0; i < nums1.size(); ++i) {
+            vector<int>::iterator iter = find(nums2.begin(), nums2.end(), nums1[i]);
+            while(iter != nums2.end() && nums1[i] >= *iter)    ++iter;
+            if(iter != nums2.end()) res[i] = *iter;
+        }
+        return res;
+    }
+};
+```
+
+#### 相关题目
+
+### 503.下一个更大元素 Ⅱ
+
+#### 题干
+
+给定一个循环数组 `nums` （ `nums[nums.length - 1]` 的下一个元素是 `nums[0]` ），返回 *`nums` 中每个元素的 **下一个更大元素*** 。如果不存在，则输出 `-1` 。
+
+#### 解法
+
+基本思路：**单调栈**
+
+思路还是一样的，区别就是最后一个元素不是直接返回-1，而是需要再遍历一遍数组。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> res(n, -1);
+        stack<int> st;
+        for(int i = 0; i < n * 2; ++i) {
+            while(!st.empty() && nums[i % n] > nums[st.top()]) {
+                res[st.top()] = nums[i % n];
+                st.pop();
+            }
+            st.push(i % n);
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 42.接雨水
+
+#### 题干
+
+给定 `n` 个非负整数表示每个宽度为 `1` 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+![img](LeetCode--2023Q3/rainwatertrap.png)
+
+```
+输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+输出：6
+```
+
+#### 解法
+
+基本思路：**单调栈**
+
+凹槽才能接雨水，因此当遍历到的元素比栈顶元素更大时说明找到了一个凹槽，因此应维护单调栈为**递减**。
+
+第二步需要思考的是应该按行计算容量还是按列？如图中第二个凹槽，实际为两行三列，而单调递减栈在碰到更大的元素时就会处理，不确定是否是右侧最高的，因此按列计算无法找到列高，需**按行计算**。
+
+按行计算需要得到两个数据：**行高**和**列宽**。
+
+- 行高：以栈顶元素为底，取其左右两边（栈顶下一个元素和当前遍历元素）的较小值为顶，计算插值，得到**未计算部分中最底下一层**的行高。
+- 列宽：左右两边的下标差值 - 1。
+
+因为维护的是单调递减栈，说明凹槽左侧有多个不同高度的柱子，当前遍历高度要依次与栈中元素比较，每出栈一个小元素 x，就代表计算了这块凹槽中的一层（高度为**栈顶元素高度 - x**）；直到遍历的元素加入栈后，说明**该元素左侧以该元素为最高高度的部分容量**已经计算完成了。此时就形成了这个大元素遍历之前的情况：栈中只有递减排列的元素。重复这一过程直至遍历结束，就能找到所有的凹槽。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int res = 0;
+        stack<int> st;
+        st.push(0);
+        for(int i = 1; i < height.size(); ++i) {
+            while(!st.empty() && height[i] > height[st.top()]) {
+                int mid = st.top();
+                st.pop();
+                if(!st.empty()) {
+                    int h = min(height[i], height[st.top()]) - height[mid];
+                    int w = i - st.top() - 1;
+                    res += h * w;
+                }
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
+```
+
+#### 相关题目
+
+### 84.柱状图中最大的矩形
+
+#### 题干
+
+给定 *n* 个非负整数，表示柱状图中柱子的高度。每个柱子彼此相邻，且宽度为 1 。求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+<img src="LeetCode--2023Q3/histogram.jpg" alt="img" style="zoom: 80%;" />
+
+```
+输入：heights = [2,1,5,6,2,3]
+输出：10
+```
+
+#### 解法1
+
+基本思路：**单调栈**
+
+这题的思路和上题 [42.接雨水](#42.接雨水)相似，区别在于找的是两边第一个小于该元素的位置，因此维护为**递增**栈。
+
+需要注意边界问题，对于左右两侧的柱子，其外层均应设置为**高度为0**的柱子，才能保证计算面积时没有遗漏。
+
+找到小于元素的值，是为了找到面积计算的左右边界，因此应取每次的**栈顶元素值为面积的高**，宽度为当前元素与栈顶元素位置的差值。遍历是为了找到右边界，而左边界就是栈底元素。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        int res = 0;
+        heights.emplace(heights.begin(), 0);
+        heights.emplace_back(0);
+        stack<int> st;
+        st.push(0);
+        for(int i = 1; i < heights.size(); ++i) {
+            while(heights[i] < heights[st.top()]) {
+                int h = heights[st.top()];
+                st.pop();
+                int w = i - st.top() - 1;
+                res = max(res, h * w);
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
+```
+
+#### 解法2
+
+基本思路：**双指针**
+
+这题和上题都可以用双指针的思路解决，相对于单调栈，需要用两个数组分别存储左右边界的信息，因此属于是空间换时间。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        vector<int> l(n, -1);
+        vector<int> r(n, n);
+        for(int i = 1; i < n; ++i) {
+            int idx = i - 1;
+            while(idx >= 0 && heights[idx] >= heights[i])   idx = l[idx];
+            l[i] = idx;
+        }
+        for(int i = n - 2; i >= 0; --i) {
+            int idx = i + 1;
+            while(idx < n && heights[idx] >= heights[i])   idx = r[idx];
+            r[i] = idx;
+        }
+        int res = 0;
+        for(int i = 0; i < n; ++i) 
+            res = max(res, heights[i] * (r[i] - l[i] - 1));
+        return res;
+    }
+};
+```
+
