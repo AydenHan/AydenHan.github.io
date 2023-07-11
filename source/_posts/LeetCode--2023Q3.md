@@ -1223,3 +1223,203 @@ public:
 };
 ```
 
+
+
+## 2023.7.11
+
+### 1911.最大子序列交替和
+
+#### 题干
+
+一个下标从 **0** 开始的数组的 **交替和** 定义为 **偶数** 下标处元素之 **和** 减去 **奇数** 下标处元素之 **和** 。
+
+- 比方说，数组 `[4,2,5,3]` 的交替和为 `(4 + 5) - (2 + 3) = 4` 。
+
+给你一个数组 `nums` ，请你返回 `nums` 中**任意子序列**的 **最大交替和** （子序列的下标 **重新** 从 0 开始编号）。
+
+#### 解法
+
+基本思路：**动态规划**
+
+这种求最大的题很容易想到动态规划。类似于 [122.买卖股票的最佳时机 Ⅱ](#122.买卖股票的最佳时机 Ⅱ) 那么分析递推情况：
+
+在构造子序列时，每个元素 `nums[i]`都面临两个选择：
+
+1. 不选择这个元素构造子序列，那么最大交替和和前一状态是**相同**的。
+2. 选择这个元素。 此时又有两种情况：
+
+- 这个元素**作为偶数下标**加入子序列，即此时子序列的长度为奇数。
+- 这个元素**作为奇数下标**加入子序列，即此时子序列的长度为偶数。
+
+可以发现，当一个元素作为**偶数下标**加入子序列后长度变为**奇数**，说明加入前长度为偶数，并在这一状态下**加上**该元素。反之，则是从长度为奇数的上一状态减去该元素。两者的状态是相关的。
+
+因此需要设定两个dp数组：even表示长度为偶数的子序列的最大交替和，odd表示长度为奇数的。递推公式：
+
+- even[i] = max(even[i-1], odd[i-1] **-** nums[i])
+- odd[i] = max(odd[i-1], even[i-1] **+** nums[i])
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    long long maxAlternatingSum(vector<int>& nums) {
+        long long even = 0, odd = 0;
+        for(int& n : nums) {
+            long long tmp = odd;
+            odd = max(odd, even + n);
+            even = max(even, tmp - n);
+        }
+        return odd;
+    }
+};
+```
+
+#### 解法2
+
+基本思路：**贪心**
+
+求最大交替和，偶数下标 + ，奇数下标 - 。那么很明显最大交替和的子序列长度一定为奇数。那我们先排除原数组中的第一个元素，在后续元素中挑选组成子序列的成员，那么就是 -、+、-、+的顺序。
+
+当两个数是递增状态时，添加这两个数是有益于增加交替和的，为**局部最优**；当两个数为递减时，和小于0，需要舍去。由此局部可以推至全局最优，贪心贪的是两个数的和都为正数。
+
+那对于数组中第一个元素如何处理？可以在数组最开始假定有一个0，不会影响和的结果，这样即可从头遍历数组，**每次取两个元素间大于0的差值**计算累加和，求得最终结果。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    long long maxAlternatingSum(vector<int>& nums) {
+        int pre = 0;
+        long long res = 0;
+        for(int& n : nums) {
+            res += max(n - pre, 0);
+            pre = n;
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 1365.有多少小于当前数字的数字
+
+#### 题干
+
+给你一个数组 `nums`，对于其中每个元素 `nums[i]`，请你统计数组中比它小的所有数字的数目。
+
+```
+输入：nums = [8,1,2,2,3]
+输出：[4,0,1,1,3]
+```
+
+#### 解法
+
+基本思路：**排序、哈希**
+
+首先是统计更小数字的数目，对数组排序后，下标的值就是正确答案。
+
+其次要以按原数组的顺序返回数目，因此需要快速查找到值，选择**哈希表**存储答案。注意对于相同的数字，应按照排序后数组中的第一个数字的下标为答案，因此在使用哈希表记录时，可以从后向前遍历，这样相同数字的答案最后就会被第一个值覆盖。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> smallerNumbersThanCurrent(vector<int>& nums) {
+        vector<int> add = nums;
+        sort(add.begin(), add.end());
+        int hash[101] = {0};
+        for(int i = add.size() - 1; i >= 0; --i)
+            hash[add[i]] = i;
+        for(int& n : nums)
+            n = hash[n];
+        return nums;
+    }
+};
+```
+
+
+
+### 941.有效的山脉数组
+
+#### 题干
+
+给定一个整数数组 `arr`，如果它是有效的山脉数组就返回 `true`，否则返回 `false`。
+
+让我们回顾一下，如果 `arr` 满足下述条件，那么它是一个山脉数组：
+
+1. `arr.length >= 3`
+2. 在 0 < i < arr.length - 1 条件下，存在 i 使得：
+
+- `arr[0] < arr[1] < ... arr[i-1] < arr[i] `
+- `arr[i] > arr[i+1] > ... > arr[arr.length - 1]`
+
+```
+输入：arr = [4,3,2,1]
+输出：false
+```
+
+#### 解法
+
+基本思路：**双指针**
+
+最朴素的方式就是记录第一个下降点，将标志位置位，之后若再有上升点则返回false。
+
+双指针的方法更好理解一些，从两头向中间遍历，都应是从大到小的顺序，如果有不符时就停止移动。最后**双指针重合且不在两端（两端，存在整个数组都是顺序的情况）**则说明是山脉。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool validMountainArray(vector<int>& arr) {
+        if(arr.size() < 3)  return false;
+        int n = arr.size() - 1;
+        int l = 0, r = n;
+        while(l < n && arr[l] < arr[l+1])   ++l;
+        while(l > 0 && arr[r] < arr[r-1])   --r;
+        return l == r && l != 0 && r != n;
+    }
+};
+```
+
+
+
+### 1207.有效的山脉数组
+
+#### 题干
+
+整数数组 `arr`，统计数组中每个数的出现次数。如果出现次数都是独一无二的，返回 `true`；否则返回 `false`。
+
+```
+输入：arr = [1,2,2,1,1,3]
+输出：true
+```
+
+#### 解法
+
+基本思路：**哈希**
+
+两个哈希，一个 统计数量，一个统计是否chu'xian'guo
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool uniqueOccurrences(vector<int>& arr) {
+        unordered_map<int, int> hash;
+        bool exist[1001] = {false};
+        for(int& n : arr)   hash[n]++;
+        for(auto& p : hash) {
+            if(exist[p.second]) return false;
+            exist[p.second] = true;
+        }
+        return true;
+    }
+};
+```
+
