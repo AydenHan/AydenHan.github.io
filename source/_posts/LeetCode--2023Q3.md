@@ -1423,3 +1423,202 @@ public:
 };
 ```
 
+
+
+## 2023.7.12
+
+### 2544.交替数字和
+
+#### 解法
+
+基本思路：**模拟**
+
+数学计算，从低往高每次取一位数字乘以符号位累加，最后结果 * -sign。符号位假设末位是正，若最高位也是正，则最后sign为-1，乘以-sign相对于不动；反之则是 * -1。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int alternateDigitSum(int n) {
+        int res = 0, sign = 1;
+        while(n > 0) {
+            res += n % 10 * sign;
+            sign = -sign;
+            n /= 10;
+        }
+        return -sign * res;
+    }
+};
+```
+
+
+
+### 283.移动零
+
+#### 解法
+
+基本思路：**双指针**
+
+一个用于遍历，一个指向下一个非零数字的位置。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        for(int i = 0, idx = 0; i < nums.size(); ++i)
+            if(nums[i])
+                swap(nums[i], nums[idx++]);
+    }
+};
+```
+
+
+
+### 189.轮转数组
+
+#### 题干
+
+给定一个整数数组 `nums`，将数组中的元素向右轮转 `k` 个位置，其中 `k` 是非负数。
+
+#### 解法
+
+基本思路：**字符串反转**
+
+整体反转，然后再局部分别反转，就能实现轮转的效果。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        k = k % nums.size();
+        reverse(nums.begin(), nums.end());
+        reverse(nums.begin(), nums.begin() + k);
+        reverse(nums.begin() + k, nums.end());
+    }
+};
+```
+
+
+
+### 724.寻找数组的中心下标
+
+#### 解法
+
+基本思路：**前缀和**
+
+代码随想录里的写法有问题，顺序反了，应该先判断再累加。因为遍历的当前元素是不应该在左侧累加和中的。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int pivotIndex(vector<int>& nums) {
+        int sum = 0;
+        for(int& n : nums)  sum += n;
+        int l = 0;
+        for(int i = 0; i < nums.size(); ++i) {
+            if(sum == 2 * l + nums[i])  return i;
+            l += nums[i];
+        }
+        return -1;
+    }
+};
+```
+
+
+
+### 34.在排序数组中查找元素的第一个和最后一个位置
+
+#### 解法
+
+基本思路：**二分查找**
+
+有序数组查找、O(logn) ，第一反应就是二分查找。这里的注意点在于二分查找找到的第一个元素可能是任意位置的，不一定是边界。因此在**找到时不能直接return，而是继续压缩边界**。如果想找左边界，就压缩右边界，每次找到都更新下标值，直至双指针交错，就能得到边界值了。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        if(nums.size() == 0)    return {-1, -1};
+        auto binarySearch = [&](bool left) -> int {
+            int low = 0, high = nums.size() - 1, res = -1;
+            while(low <= high) {
+                int mid = (low + high) / 2;
+                if(nums[mid] < target)  low = mid + 1;
+                else if(nums[mid] > target) high = mid - 1;
+                else {
+                    res = mid;
+                    if(left)    high = mid - 1;
+                    else        low = mid + 1;
+                }
+            }
+            return res;
+        };
+        return {binarySearch(true), binarySearch(false)};
+    }
+};
+```
+
+
+
+### 922.按奇偶排序数组 Ⅱ
+
+#### 解法
+
+基本思路：**双指针**
+
+双指针一个指向偶数位，一个指向奇数位。当在偶数位遇到奇数时，就向后遍历奇数位，找到第一个奇数位上的偶数位，两者交换即可。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> sortArrayByParityII(vector<int>& nums) {
+        for(int i = 0, odd = 1; i < nums.size(); i += 2) {
+            if(nums[i] % 2) {
+                while(nums[odd] % 2) odd += 2;
+                swap(nums[i], nums[odd]);
+            }
+        }
+        return nums;
+    }
+};
+```
+
+
+
+### 35.搜索插入位置
+
+#### 解法
+
+基本思路：**二分查找**
+
+在二分查找的基础上，理解插入的位置。在闭区间的前提下，应为**左指针**的位置或**右指针位置 + 1**。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int l = 0, r = nums.size() - 1;
+        while(l <= r) {
+            int mid = (l + r) / 2;
+            if(nums[mid] < target)  l = mid + 1;
+            else if(nums[mid] > target) r = mid - 1;
+            else    return mid;
+        }
+        return l;
+    }
+};
+```
+
