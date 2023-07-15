@@ -1622,3 +1622,223 @@ public:
 };
 ```
 
+
+
+## 2023.7.13
+
+### 931.下降路径最小和
+
+#### 解法
+
+基本思路：**动态规划**
+
+一看就是动规。dp[i] [j] 表示到坐标为（i，j-1）位置的下降路径最小和。这里 [j] 长度为 n + 2 是因为便于计算。
+
+**递推**就是**上一行左上角正上方和右上角的dp值**的**最小值**加上**当前值**。空间优化后如下：
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        vector<int> dp(n+2);
+        for(int i = 1; i <= n; ++i) dp[i] = matrix[0][i-1];
+        dp[0] = dp[n+1] = INT_MAX;
+        for(int i = 1; i < n; ++i) {
+            int pre = INT_MAX;
+            for(int j = 1; j <= n; ++j) {
+                int tmp = dp[j];                
+                dp[j] = min({pre, dp[j], dp[j+1]}) + matrix[i][j-1];
+                pre = tmp;
+            }
+        }
+        return *min_element(dp.begin(), dp.end());
+    }
+};
+```
+
+
+
+## 2023.7.15
+
+### 234.回文链表
+
+#### 解法
+
+基本思路：**翻转链表**
+
+基础想法就是遍历链表将值都取出来存入数组，然后用双指针判断数组是否是回文即可。
+
+**空间优化：**O(1) 空间复杂度就需要直接在链表上判断回文，但是单链表是无法向前遍历的。可以思考，如果将链表的后半段翻转过来，那是不是就是两段链表都从头开始遍历了。
+
+因此先通过快慢指针，找到链表的中间节点，之后将链表分割为两部分，翻转后半部分，最后判断相同。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if(head->next == nullptr)    return true;
+        ListNode* pre;
+        ListNode* fast = head;
+        ListNode* slow = head;
+        while(fast && fast->next) {
+            pre = slow;
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        pre->next = nullptr;
+        pre = head;
+        auto revNodes = [](ListNode* root) {
+            ListNode* tmp;
+            ListNode* cur = root;
+            ListNode* pre = nullptr;
+            while(cur) {
+                tmp = cur->next;
+                cur->next = pre;
+                pre = cur;
+                cur = tmp;
+            }
+            return pre;
+        };
+        fast = revNodes(slow);
+        while(pre) {
+            if(pre->val != fast->val)   return false;
+            pre = pre->next;
+            fast = fast->next;
+        }
+        return true;
+    }
+};
+```
+
+#### 相关题目
+
+### 143.重排链表
+
+#### 解法
+
+基本思路：**翻转链表**
+
+思路和上题[234.回文链表](#234.回文链表)类似，同样是取到后半段的翻转链表，然后遍历插入前半段。
+
+细节注意：上题中求回文 ，因此对于**奇数**长度的**链表中点**是放在后半段的，但本题是需要**放在前半段**的，因此要调一下头指针的位置。
+
+***Code***
+
+```cpp
+// ......
+if(fast) {		// 细节
+    slow = slow->next;
+    pre = pre->next;
+}
+pre->next = nullptr;
+pre = head;
+fast = revNodes(slow);
+while(fast) {
+    ListNode* tmp = pre->next;
+    pre->next = fast;
+    fast = fast->next;
+    pre->next->next = tmp;
+    pre = pre->next->next;
+}
+```
+
+
+
+### 141.环形链表
+
+#### 解法
+
+基本思路：**双指针**
+
+快慢指针，若无环，快指针直接到终点，返回false。若有环，则快慢指针一直在环内遍历，快指针必然会套慢指针一圈，此时两个指针相等，说明存在环。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while(fast && fast->next) {
+            fast = fast->next->next;
+            slow = slow->next;
+            if(fast == slow)    return true;
+        }
+        return false;
+    }
+};
+```
+
+
+
+## 2023.7.16
+
+### 205.同构字符串
+
+#### 解法
+
+基本思路：**哈希表**
+
+记录从 s 到 t 和 从 t 到 s 的字符映射。因为同构是互为对方的唯一映射，因此需要两个方向，也就是两个哈希。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool isIsomorphic(string s, string t) {
+        unordered_map<char, char> hash1, hash2;
+        for(int i = 0; i < s.length(); ++i) {
+            if(hash1.count(s[i]) == 0)  hash1[s[i]] = t[i];
+            if(hash2.count(t[i]) == 0)  hash2[t[i]] = s[i];
+            if(hash1[s[i]] != t[i] || hash2[t[i]] != s[i])  return false;
+        }
+        return true;
+    }
+};
+```
+
+
+
+### 1002.查找共用字符
+
+#### 解法
+
+基本思路：**哈希表**
+
+很容易想到哈希，难点在于统计字符在每个字符串中出现的次数：取所有字符串中该字符出现数量的**最小值**。
+
+使用一个全局哈希表，维护每个字符在各个字符串中出现的最小数量，初始化为第一个字符串。
+
+使用一个临时哈希表，遍历保存剩余的每个字符串所有字符的出现数量，并每次都和全局哈希的值中取最小值来更新全局哈希。最后得到的哈希表记录的就是公共字符出现的数量了。卡哥nb。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<string> commonChars(vector<string>& words) {
+        int hash[26] = {0};
+        for(char& c : words[0]) ++hash[c - 'a'];
+        for(int i = 1; i < words.size(); ++i) {
+            int otherHash[26] = {0};
+            for(char& c : words[i]) ++otherHash[c - 'a'];
+            for(int i = 0; i < 26; ++i) hash[i] = min(hash[i], otherHash[i]);
+        }
+        vector<string> res;
+        for(int i = 0; i < 26; ++i)
+            while(hash[i]--)
+                res.push_back(string(1, i + 'a'));
+        return res;
+    }
+};
+```
+
+
+

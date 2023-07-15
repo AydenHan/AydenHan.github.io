@@ -942,6 +942,56 @@ public:
 
 # 算法
 
+## 链表
+
+### 翻转链表 - O(n)
+
+#### 双指针法
+
+**迭代实现**
+
+```cpp
+ListNode* reverseList(ListNode* head) {
+    ListNode* temp; // 保存cur的下一个节点
+    ListNode* cur = head;
+    ListNode* pre = NULL;
+    while(cur) {
+        temp = cur->next; 
+        cur->next = pre; 
+        pre = cur;
+        cur = temp;
+    }
+    return pre;
+}
+```
+
+
+
+### 环形链表
+
+#### 快慢指针
+
+```cpp
+bool hasCycle(ListNode *head) {
+    ListNode* slow = head;
+    ListNode* fast = head;
+    while(fast && fast->next) {
+        fast = fast->next->next;
+        slow = slow->next;
+        if(fast == slow)    return true;
+    }
+    return false;
+}
+```
+
+
+
+### 相交链表
+
+对于相交在尾部的两个链表，要找其交点，首先要让两个链表指针距交点的距离相同。只需计算两个链表的长度并求差值sub，那么长的链表先往前遍历sub个节点，此时两个指针距离交点的位置是一样的，只需在后续共同遍历时判断相等即可。
+
+
+
 ## 查找
 
 ### 二分查找 - O(log(n))
