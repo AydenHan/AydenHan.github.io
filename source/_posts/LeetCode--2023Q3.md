@@ -1842,3 +1842,152 @@ public:
 
 
 
+## 2023.7.17
+
+### 415.字符串相加
+
+#### 解法
+
+基本思路：**双指针**
+
+分别指向两个字符串的末尾，同步向前遍历，计算字符和的末位和进位。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    string addStrings(string num1, string num2) {
+        int i = num1.length() - 1, j = num2.length() - 1;
+        int carry = 0;
+        string res = "";
+        for(; i >= 0 || j >= 0 || carry; --i, --j) {
+            int n1 = i >= 0 ? num1[i] - '0' : 0;
+            int n2 = j >= 0 ? num2[j] - '0' : 0;
+            carry += n1 + n2;
+            res.push_back(carry % 10 + '0');
+            carry = carry / 10;
+        }
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
+```
+
+
+
+### 925.字符串相加
+
+#### 解法
+
+基本思路：**双指针、模拟**
+
+双指针遍历时，若两个字符不同，存在两种情况：1.第一个就不同，直接return；2.后面不同时，若typed和前一个字符相同，则指针 j 右移，若 j 移完了还不同，直接return。
+
+结束循环后判断哪个字符串没有匹配完，若是name，直接return；若是typed，判断剩余字符是否都相同。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool isLongPressedName(string name, string typed) {
+        int i = 0, j = 0;
+        for(; i < name.size() && j < typed.size(); ++i, ++j) {
+            if(name[i] != typed[j]) {
+                if(j == 0)  return false;
+                while(j < typed.size() && typed[j] == typed[j - 1]) ++j;
+                if(name[i] != typed[j]) return false;
+            }
+        }
+        if(i < name.size()) return false;
+        while(j < typed.size() && typed[j] == typed[j - 1]) ++j;
+        return j >= typed.size();
+    }
+};
+```
+
+
+
+### 844.比较含退格的字符串
+
+#### 解法
+
+基本思路：**双指针**
+
+最简单不动脑的就是用栈来模拟删除了。如果不用，就得用一个变量维护退格的数量，记录在退格过程中再次遇到的退格符。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool backspaceCompare(string s, string t) {
+        int i = s.length()-1, j = t.length()-1;
+        for(; i >= 0 || j >= 0; --i, --j) {
+            int back = 0;
+            while(i >= 0) {
+                if(s[i] == '#') ++back;
+                else if(!back--) break;
+                --i;
+            }
+            back = 0;
+            while(j >= 0) {
+                if(t[j] == '#') ++back;
+                else if(!back--) break;
+                --j;
+            }
+            if(i >= 0 && j >= 0 && s[i] != t[j])    return false;
+        }
+        return i == j;
+    }
+};
+```
+
+
+
+### 129.求根节点到叶节点数字之和
+
+#### 解法
+
+基本思路：**回溯**
+
+可以发现本题只需要找到根节点到所有叶节点的路径即可，不需要处理中间节点，因此无所谓前中后序。
+
+确定**终止条件**：到达叶节点，累加该路径生成的数字。
+
+确定**单层逻辑**：如果子节点存在，添加一位数字，进入下一层递归，然后回溯。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int sumNumbers(TreeNode* root) {
+        int sum = 0;
+        string path = "";
+        path += root->val + '0';
+        auto backTrack = [&,
+            circle = [&](auto&& self, TreeNode* cur) -> void {
+                if(!cur->left && ! cur->right) {
+                    sum += stoi(path);
+                    return;
+                }
+                if(cur->left) {
+                    path += cur->left->val + '0';
+                    self(self, cur->left);
+                    path.pop_back();
+                }
+                if(cur->right) {
+                    path += cur->right->val + '0';
+                    self(self, cur->right);
+                    path.pop_back();
+                }
+            }
+        ]() { circle(circle, root); };
+        backTrack();
+        return sum;
+    }
+};
+```
+
