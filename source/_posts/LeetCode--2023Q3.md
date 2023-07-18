@@ -1991,3 +1991,108 @@ public:
 };
 ```
 
+
+
+## 2023.7.18
+
+### 1851.包含每个查询的最小区间
+
+#### 题干
+
+给你一个二维整数数组 `intervals` ，其中 `intervals[i] = [lefti, righti]` 表示第 `i` 个区间开始于 `lefti` 、结束于 `righti`（包含两侧取值，**闭区间**）。区间的 **长度** 的表达是 `righti - lefti + 1` 。
+
+再给你一个整数数组 `queries` 。第 `j` 个查询的答案是满足 `lefti <= queries[j] <= righti` 的 **长度最小区间 `i` 的长度** 。如果不存在这样的区间，那么答案是 `-1` 。
+
+```
+输入：intervals = [[2,3],[2,5],[1,8],[20,25]], queries = [2,19,5,22]
+输出：[2,-1,4,6]
+```
+
+#### 解法
+
+基本思路：**排序、离线查询、小根堆（优先队列）**
+
+简单的暴力双层循环取最小长度，会超时，因此需要优化遍历方式。
+
+如果把`queries`也排序并记录下标，好处在于内层循环不需要从`intervals` 头开始遍历了，而是可以从上一个下标`idx`处开始遍历，这是优化，但是存在问题，即**两个查询值符合的区间有重叠的情况**下，很难去处理 `idx`。
+
+由此引入了小根堆，维护区间的长度由小到大存储。放宽**存储条件**，凡是查询值 ≥ 区间左边界的**区间长度和区间右边界**均可加入小根堆。之后将小根堆顶 区间右边界 < 查询值 的元素剔除，那么之后的堆顶元素就是答案。
+
+进入下一个查询值时，因为必然大于上一个，那么之前加入小根堆的元素必然也是符合**存储条件**的，而上一轮被剔除的元素也是符合**剔除条件**的，此时**两个查询值符合的区间有重叠的情况**已经存入小根堆中了，因此就可以接着使用 `idx++` 向后遍历了。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> minInterval(vector<vector<int>>& intervals, vector<int>& queries) {
+        sort(intervals.begin(), intervals.end());
+        using pii = pair<int, int>;
+        vector<pii> query;
+        for(int i = 0; i < queries.size(); ++i) query.emplace_back(queries[i], i);
+        sort(query.begin(), query.end());
+        priority_queue<pii, vector<pii>, greater<pii>> que;
+        int idx = 0;
+        for(auto& [n, i] : query) {
+            while(idx < intervals.size() && intervals[idx][0] <= n) {
+                que.emplace(intervals[idx][1] - intervals[idx][0] + 1, intervals[idx][1]);
+                ++idx;
+            }
+            while(!que.empty() && que.top().second < n)    que.pop();
+            queries[i] = que.empty() ? -1 : que.top().first;
+        }
+        return queries;
+    }
+};
+```
+
+
+
+### 1382.将二叉搜索树变平衡
+
+#### 题干
+
+给你一棵二叉搜索树，请你返回一棵 **平衡后** 的二叉搜索树，新生成的树应该与原来的树有着相同的节点值。如果有多种构造方法，请你返回任意一种。
+
+如果一棵二叉搜索树中，每个节点的两棵子树高度差不超过 `1` ，我们就称这棵二叉搜索树是 **平衡的** 。
+
+#### 解法
+
+基本思路：**BST、平衡**
+
+先用中序遍历将BST转化为有序数组，再将**有序数组**构造为平衡BST。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    TreeNode* balanceBST(TreeNode* root) {
+        vector<int> nums;
+        auto tree2SortedArray = [&nums,
+            circle = [&](auto&& self, TreeNode* cur) -> void {
+                if(cur == nullptr)  return;
+                self(self, cur->left);
+                nums.emplace_back(cur->val);
+                self(self, cur->right);
+                return;
+            }
+        ](TreeNode* root) { circle(circle, root); };
+        auto SortedArray2BBST = [&nums,
+            circle = [&](auto&& self, int l, int r) -> TreeNode* {
+                if(l > r)   return nullptr;
+                int mid = (l + r) / 2;
+                TreeNode* node = new TreeNode(nums[mid]);
+                node->left = self(self, l, mid - 1);
+                node->right = self(self, mid + 1, r);
+                return node;
+            }
+        ]() { return circle(circle, 0, nums.size() - 1); };
+        tree2SortedArray(root);
+        return SortedArray2BBST();
+    }
+};
+```
+
+
+

@@ -483,11 +483,46 @@ TreeNode* sortedArrayToBST(vector<int>& nums) {
 }
 ```
 
+#### BST2平衡BST
+
+在上一步的基础上，先用中序遍历将BST转化为有序数组，再将数组构造为平衡BST
+
+```cpp
+TreeNode* balanceBST(TreeNode* root) {
+    vector<int> nums;
+    auto tree2SortedArray = [&nums,
+        circle = [&](auto&& self, TreeNode* cur) -> void {
+            if(cur == nullptr)  return;
+            self(self, cur->left);
+            nums.emplace_back(cur->val);
+            self(self, cur->right);
+            return;
+        }
+    ](TreeNode* root) { circle(circle, root); };
+    auto SortedArray2BBST = [&nums,
+        circle = [&](auto&& self, int l, int r) -> TreeNode* {
+            if(l > r)   return nullptr;
+            int mid = (l + r) / 2;
+            TreeNode* node = new TreeNode(nums[mid]);
+            node->left = self(self, l, mid - 1);
+            node->right = self(self, mid + 1, r);
+            return node;
+        }
+    ]() { return circle(circle, 0, nums.size() - 1); };
+    tree2SortedArray(root);
+    return SortedArray2BBST();
+}
+```
+
+
+
 ### 注
 
 - 涉及到二叉树的构造，无论普通二叉树还是二叉搜索树一定前序，都是先构造中节点。
 - 求普通二叉树的属性，一般是后序，一般要通过递归函数的返回值做计算。
 - 求二叉搜索树的属性，一定是中序了，要不白瞎了有序性了。
+
+
 
 
 

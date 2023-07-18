@@ -8,6 +8,56 @@ tags:
 
 # C++11
 
+## 关键字
+
+### using
+
+#### 导入命名空间
+
+使用C++在写不同的功能模块时，为了防止命名冲突，建议对模块取命名空间，这样在使用时就需要指定是哪个命名空间。
+
+使用 using 导入命名空间，即使一个命名空间中的所有名字都在该作用域中可见，常见的如下：
+
+```cpp
+// 导入整个命名空间到当前作用域
+using namespace std;
+// 只导入某个变量到当前作用域 
+using std::cout; 
+```
+
+**在.h头文件中，一般不应该使用using声明。**
+
+因为头文件的内容会拷贝到所有引用它的文件中去，如果头文件里有某个using声明，那么每个使用了该头文件的文件就都会有这个声明，从而可能产生名字冲突。
+
+
+
+#### 指定别名
+
+C++ 11 通过 using 指定别名，作用等同于 typedef，但相比 typedef，逻辑更直观，可读性更好。
+
+```cpp
+typedef int T; // 用 T 代替 int
+using T = int; // 用 T 代替 int
+```
+
+
+
+#### 在派生类中引用基类成员
+
+<img src="%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/v2-c8efe8b7be239e2a01c2089b7bb64880_720w.webp" alt="img" style="zoom: 80%;" />
+
+如上图代码所示，尽管派生类 Derived 对 基类 Base 是**私有继承**，但通过 using 声明，派生类的对象就可以访问基类的 proteced 成员变量和 public 成员函数了。
+
+**注意：using只是引用，不参与形参的指定。**
+
+
+
+### operator
+
+[operator](https://www.cnblogs.com/ZY-Dream/p/10068993.html)
+
+
+
 ## 函数 - TODO
 
 ### 匿名函数
