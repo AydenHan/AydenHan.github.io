@@ -2096,3 +2096,121 @@ public:
 
 
 
+## 2023.7.19
+
+### 874.模拟行走机器人
+
+#### 解法
+
+基本思路：**哈希、模拟、自定义类**
+
+很明显题意需要判断走过的每一步是否存在障碍物，可以通过 `unordered_set` 用哈希快速判断。整体就是模拟转向和前进两种情况。
+
+由于数组坐标的形式判断哈希略显麻烦，刚好昨天看了运算符重载相关，就自定义了一个 `Point` 类，重载了 `==`、`+`、`-`三个运算符。要注意的是，`unordered_set` 使用的是 `std::hash` 来计算哈希的key，但是没有针对自定义类的计算方式的，因此在初始化哈希表时要**自定义哈希函数**。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    class Point {
+    public:
+        int x;
+        int y;
+        Point(int x, int y) {
+            this->x = x;
+            this->y = y;
+        }
+        int empow() { return x * x + y * y; }
+        bool operator==(const Point& p) const { return x == p.x && y == p.y; }
+        Point operator+(const Point& p) const {
+            Point tmp(x, y);
+            tmp.x = x + p.x;
+            tmp.y = y + p.y;
+            return tmp;
+        }
+        Point operator-(const Point& p) const {
+            Point tmp(x, y);
+            tmp.x = x - p.x;
+            tmp.y = y - p.y;
+            return tmp;
+        }
+    };
+    struct myhash {
+        size_t operator() (const Point& p) const { return hash<int>()(p.x) ^ hash<int>()(p.y); }
+    };
+    int robotSim(vector<int>& commands, vector<vector<int>>& obstacles) {
+        vector<Point> dirs = {Point(0,1), Point(1,0), Point(0,-1), Point(-1,0)};
+        unordered_set<Point, myhash> barrier;
+        for(auto& vec : obstacles)  barrier.emplace(Point(vec[0], vec[1]));
+        Point p(0, 0);
+        int dir = 0;
+        int res = 0;
+        for(int c : commands) {
+            if(c < 0)   dir = (dir + (c == -2 ? 3 : 1)) % 4; 
+            else {
+                while(c--) {
+                    p = p + dirs[dir];
+                    if(barrier.count(p)) {
+                        p = p - dirs[dir];
+                        break;
+                    }
+                }
+                res = max(res, p.empow());
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 52.N皇后 Ⅱ
+
+#### 解法
+
+基本思路：**贪心**
+
+和51.N皇后思路一样，只是保存方案改为了计数。本质依旧是，外层遍历行，内层遍历列，依次尝试一行中的每一列放置皇后的效果，迭代出所有结果。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int totalNQueens(int n) {
+        int res = 0;
+        vector<string> path(n, string(n, '.'));
+        auto isValid = [&path, n](int row, int col) -> bool {
+            for(int i = 0; i < row; ++i)
+                if(path[i][col] == 'Q') return false;
+            for(int i = row-1, j = col-1; i >= 0 && j >= 0; --i, --j)
+                if(path[i][j] == 'Q') return false;
+            for(int i = row-1, j = col+1; i >= 0 && j < n; --i, ++j)
+                if(path[i][j] == 'Q') return false;
+            return true;
+        };
+        auto backTrack = [
+            circle = [&](auto&& self, int row) -> void {
+                if(row == n) {
+                    ++res;
+                    return;
+                }   
+                for(int i = 0; i < n; ++i) {
+                    if(isValid(row, i)) {
+                        path[row][i] = 'Q';
+                        self(self, row + 1);
+                        path[row][i] = '.';
+                    }
+                }
+            }
+        ]() { circle(circle, 0); };
+        backTrack();
+        return res;
+    }
+};
+```
+
+
+
