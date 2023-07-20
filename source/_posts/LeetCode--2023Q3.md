@@ -2214,3 +2214,106 @@ public:
 
 
 
+## 2023.7.20
+
+### 918.环形子数组的最大和
+
+#### 解法
+
+基本思路：**前缀和、动态规划**
+
+本题是在53.最大子数组和的基础上增加了一种情况，因为存在环形数组，子数组可能是两端各一部分中间断开的情况，这种情况是不易计算的，可以进行转化：求这种子数组的最大和，相当于**求其余部分数组的最小和**。
+
+这种方法需要处理一种特殊情况：例如{-3，-2，-3}，其余部分的最小和即为整个数组，那么子数组变为了长度为0和为0，而第一种情况下的最大和为-2，应该输出的正确值是第一种情况的-2。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int maxSubarraySumCircular(vector<int>& nums) {
+        int pre = 0, res = INT_MIN;
+        int pre2 = 0, res2 = INT_MAX;
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        for(int& n : nums) {
+            pre = max(n, pre + n);
+            res = max(res, pre);
+            pre2 = min(n, pre2 + n);
+            res2 = min(res2, pre2);
+        }
+        return sum == res2 ? res : max(res, sum - res2);
+    }
+};
+```
+
+
+
+### 649.Dota2 参议院
+
+#### 解法
+
+基本思路：**队列**
+
+简单粗暴的出队和重新排队，直到一个队列为空。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    string predictPartyVictory(string senate) {
+        int n = senate.size();
+         queue<int> qd, qr;
+         for(int i = 0; i < n; ++i) {
+             if(senate[i] == 'R')   qr.push(i);
+             else   qd.push(i);
+         }
+         while(!qd.empty() && !qr.empty()) {
+             if(qd.front() > qr.front()) {
+                 qd.pop();
+                 int idx = qr.front() + n;
+                 qr.pop();
+                 qr.push(idx);
+             }
+             else {
+                 qr.pop();
+                 int idx = qd.front() + n;
+                 qd.pop();
+                 qd.push(idx);
+             }
+         }
+         return qd.empty() ? "Radiant" : "Dire";
+    }
+};
+```
+
+
+
+### 1221.分割平衡字符串
+
+#### 解法
+
+基本思路：**贪心**
+
+分割的尽可能多，也就是子串都尽可能小，那么只要在遍历过程中，遇到一个平衡字串就计数+1即可。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int balancedStringSplit(string s) {
+        int l = 0, r = 0;
+        int res = 0;
+        for(char& c : s) {
+            if(c == 'R')    ++r;
+            else    ++l;
+            if(l == r)  ++res;
+        }
+        return res;
+    }
+};
+```
+
+
+
