@@ -135,7 +135,133 @@ sudo /etc/init.d/mysql restart
 
 ### Epoll
 
+#### I/O复用
 
+**I/O是指网络中的I/O（即输入输出），多路是指多个TCP连接，复用是指一个或少量线程被重复使用。**连起来解就是，**用少量的线程来处理网络上大量的TCP连接中的I/O**。常见的I/O复用有以下三种：**select**、**poll**、**epoll**。
+
+##### select
+
+```cpp
+#include <sys/select.h>
+#include <sys/time.h>
+int select(int maxfdpl,fd_set *readset,fd_set *writeset,fd_set *exceptset,const struct timeval *timeout);
+```
+
+函数第一个参数是**被监听的描述符的最大值+1**，select底层的数据结构是位数组，因此必须知道被监听的最大描述符才可以确定描述符的范围，否则就需要将整个数组遍历一遍。
+
+函数第二、三、四个参数是被监听的事件，分别是**读、写、异常**事件。
+
+函数的最后一个参数是**监听的时间**（NULL、0、正值）
+
+**selct缺点：**
+
+1. 从函数参数列表可见，select只能监听读、写、异常这三个事件
+2. selct监听的描述符是有最大值限制的，在Linux内核中是1024
+3. select的实现是每次将待检测的描述符放在位数组中，全部传给内核进行监听，内核监听之后会返回一个就绪描述符个数，并且修改了监听的事件值，以表示该事件就绪。内核再将修改后的数组传给用户空间。用户空间只能通过遍历所有描述符来处理就绪的描述符，之后再将描述符传给内核继续监听......很明显，这样在监听的描述符少的情况下并不影响效率，但是监听的描述符数量特别大的情况下，每次又只有少数描述符上有事件就绪，大量的换入换出会使得效率十分低下。
+
+
+
+##### poll
+
+```cpp
+struct pollfd{  
+  int fd;
+  short events;
+  short revents;
+};
+int poll(struct pollfd fdarray[], unsigned long nfds, int timeout);
+```
+
+第一个参数是个结构体数组，结构体中声明了被监听描述符和相应的事件，每个被监听的描述符对应一个结构体，数组表示可以监听多个描述符。
+
+第二个参数是被监听描述符的个数。
+
+第三个参数同select，只监听时间。
+
+**poll缺点：**
+
+**从函数参数来看，poll解决了select前两个问题，监听的描述符数量没有严格限制，监听的事件不止读、写、异常，但是第三个缺点依然存在，存在大量的换入换出。**
+
+
+
+#### 函数分析
+
+```cpp
+#include <sys/epoll.h> 
+int epoll_create(int size);
+```
+
+创建一个内核事件表，实际上就是创建文件，这其中包括文件描述符的分配、文件实体的分配等。文件描述符中有一个域很重要：**private_data域**，这是epoll的核心，其中有**内核时间表**、**就绪描述符队列**等信息。
+
+![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-bbe1af804032b9910917f046f2e1106b_720w.webp)
+
+```cpp
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+```
+
+- epfd：为`epoll_create`创建的句柄
+- op：即操作，包含以下三个宏——
+  1. **EPOLL_CTL_ADD** (注册新的fd到epfd)
+  2. **EPOLL_CTL_MOD** (修改已经注册的fd的监听事件)
+  3. **EPOLL_CTL_DEL** (从epfd删除一个fd)
+
+- event：内核需要监听的事件，结构体如下——
+
+```cpp
+struct epoll_event {
+  uint32_t events;		/* Epoll events */
+  epoll_data_t data;	/* User data variable */
+} __EPOLL_PACKED;
+```
+
+**events**描述事件类型，其中epoll事件类型主要有以下几种：
+
+- EPOLLIN：表示对应的文件描述符**可以读**（包括对端SOCKET正常关闭）
+- EPOLLOUT：表示对应的文件描述符**可以写**
+- EPOLLPRI：表示对应的文件描述符有**紧急的数据可读**
+- EPOLLERR：表示对应的文件描述符**发生错误**
+- EPOLLHUP：表示对应的文件描述符**被挂断**；
+- EPOLLET：将EPOLL设为**边缘触发(Edge Triggered)模式**，这是相对于**水平触发**(Level Triggered)而言的
+- EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket的话，需要再次把这个socket加入到EPOLL队列里
+- EPOLLRDHUP：表示读关闭，对端关闭，不是所有的内核版本都支持；
+- ······
+
+
+
+该函数主要是对内核事件表的操作，涉及插入（添加监听描述符）、删除（删除被监听的描述符）、修改（修改被监听的描述符）。主要有以下步骤：
+
+1. 遍历内核事件表，看该描述符是否在内核事件表中。
+2. 判断所要做的操作：插入、删除或是修改
+3. 根据操作做相应处理
+
+![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-e5d595e4f6c400f5e69f5679ebd453c0_720w.webp)
+
+```cpp
+int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
+```
+
+- events：用来存储从内核得到的事件集合
+- maxevents：告之内核这个events有多大，不能大于epoll_create()时的size；
+- timeout：超时时间；
+- return：成功返回有多少文件描述符就绪，时间到时返回0，出错返回-1；、
+
+
+
+内核事件表的底层数据结构是红黑树，就绪描述符的底层数据结构是链表。
+
+epoll_wait的功能就是不断查看就绪队列中有没有描述符，如果没有就一直检查、直到超时。如果有就绪描述符，就将就绪描述符通知给用户。
+
+
+
+#### ET和LT
+
+**ET**模式是高效模式，就绪描述符只通知用户一次，如果用户没做处理内核将不再进行通知；
+
+**LT**模式比较稳定，如果用户没有处理就绪的描述符，内核会不断通知。
+
+当为ET模式时，上边我们提到就绪描述符是用链表组织的，因此只需将**就绪部分断链发给用户**，而在LT模式下，用户没有处理就绪描述符时，内核会再次**将未处理的就绪描述符加入到就绪队列中重复提醒用户**空间。
+
+由于内核对用户态的不信任,内核态和用户态的传输数据总是拷贝的。
 
 
 

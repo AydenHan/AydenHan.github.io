@@ -2317,3 +2317,38 @@ public:
 
 
 
+## 2023.7.21
+
+### 1499.满足不等式的最大值
+
+#### 解法
+
+基本思路：**优先队列、单调队列**
+
+显然暴力双循环是会超时的，似乎又没看到可以剪枝的地方，那么就需要用空间换时间。
+
+绝对值的计算是相对麻烦的，最好去掉：变为求 **yj + xj + (yi - xi)** 的最大值。由于 i < j，那么就需要先在数组的前半段找到 **（yi - xi）**的最大值，然后在后半段中取（xj，yj），计算总的最大值。
+
+涉及最大值，那么很显然可以用单调队列或大根堆存储 **（yi - xi）**，将其最大值始终保持在队首，便于计算。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int findMaxValueOfEquation(vector<vector<int>>& points, int k) {
+        int res = INT_MIN;
+        deque<pair<int, int>> q;
+        for(auto& vec : points) {
+            while(!q.empty() && q.front().second < vec[0] - k)    q.pop_front();
+            if(!q.empty())  res = max(res, q.front().first + vec[0] + vec[1]);
+            while(!q.empty() && q.back().first < vec[1] - vec[0])   q.pop_back();
+            q.push_back({vec[1] - vec[0], vec[0]});
+        }
+        return res;
+    }
+};
+```
+
+
+
