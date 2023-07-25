@@ -2397,3 +2397,107 @@ public:
 
 
 
+## 2023.7.24
+
+### 771.宝石与石头
+
+#### 解法
+
+基本思路：**哈希表**
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int numJewelsInStones(string jewels, string stones) {
+        unordered_set<char> hash;
+        for(char& c : jewels)   if(hash.count(c) == 0)  hash.emplace(c);
+        int res = 0;
+        for(char& c : stones)   if(hash.count(c))   ++res;
+        return res;
+    }
+};
+```
+
+
+
+## 2023.7.25
+
+### 132.分割回文串 Ⅱ
+
+#### 解法
+
+基本思路：**动态规划**
+
+dp[i] 定义为 （0，i）的子串的**最少**分割次数。分析递推公式：一遍for循环肯定是不够的（例abab，再加个a，结果就从1变为了0，即存在加或减的情况），求的又是最少，那么很明显需要**二层循环取最小值**。
+
+因此在（0，i）间遍历取 j ，来得到 dp[i] 的最小值。那么 dp[i] 和 dp[j] 的关系：如果（j+1，i）是回文串，那么**dp[i] = min( dp[j] + 1，dp[i] )** 。注意**剪枝**：在遍历前可以先判断子串本身是否为回文串，若是则记为0，直接跳过当前层循环。
+
+在上述过程中，还需要得到每个子串是否为回文串的信息，若是简单写个判断函数，对于长字符串存在超时情况，因此需要**再用一个dp[i] [j]存储每个子串的情况**。方法即为 [5.最大回文子串](#5.最大回文子串) 的方法。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int minCut(string s) {
+        vector<vector<bool> > isTrue(s.size(), vector<bool>(s.size(), false));
+        for(int i = s.size() - 1; i >= 0; --i)
+            for(int j = i; j < s.size(); ++j)
+                if(s[i] == s[j] && (j-i < 2 || isTrue[i+1][j-1]))   
+                    isTrue[i][j] = true;
+        vector<int> dp(s.size(), INT_MAX);
+        dp[0] = 0;
+        for(int i = 1; i < s.size(); ++i) {
+            if(isTrue[0][i]) {
+                dp[i] = 0;
+                continue;
+            }
+            for(int j = 0; j < i; ++j)
+                if(isTrue[j+1][i])
+                    dp[i] = min(dp[i], dp[j] + 1);
+        }
+        return dp[s.size() - 1];
+    }
+};
+```
+
+
+
+### 2208.将数组和减半的最少操作次数
+
+#### 解法
+
+基本思路：**贪心、优先队列（大根堆）**
+
+求和减半的最少次数，那么就需要每次减半的值尽可能大，所以贪心：**每次取数组中最大的值减半直至符合要求。**用大根堆作为容器，每次只需将堆顶元素减半后重新加入堆即可。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int halveArray(vector<int>& nums) {
+        priority_queue<double> q;
+        double sum = 0;
+        for(int& n : nums) {
+            q.push(n);
+            sum += n;
+        }
+        double target = sum / 2.0;
+        int res = 0;
+        while(sum > target) {
+            double n = q.top() / 2;
+            q.pop(); 
+            q.push(n);
+            sum -= n;
+            res++;
+        }
+        return res;
+    }
+};
+```
+
+
+
