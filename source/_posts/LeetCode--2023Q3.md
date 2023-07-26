@@ -2501,3 +2501,43 @@ public:
 
 
 
+## 2023.7.26
+
+### 673.最长递增子序列的个数
+
+#### 解法
+
+基本思路：**动态规划**
+
+本题是 [300.最长递增子序列](#300.最长递增子序列) 的进阶。光凭一个dp很难直接推出答案，因此需要在计算最长长度`Len`的基础上，再设置一个记录个数的数组`dp`。考虑如何计算 dp :
+
+在用 j 遍历（0，i）子序列时，当满足 `nums[j] < nums[i]`时，考虑  `len[i]`和 `len[j] + 1`的关系，如果前者更大，那么显然此时 j 还没能达到最长的位置，不用处理；当两者相等，说明该处是该子序列的**其中一个最长子序列的倒数第二个元素**，那么 dp[i] 就需要加上 dp[j] （如果有多个最长子序列，一定是在这种情况下计算的）；当后者更大时，则直接更新 dp[i] 为 dp[j] 。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int findNumberOfLIS(vector<int>& nums) {
+        vector<int> len(nums.size(), 1);
+        vector<int> dp(nums.size(), 1);
+        int maxLen = 1;
+        for(int i = 0; i < nums.size(); ++i) {
+            for(int j = 0; j < i; ++j) {
+                if(nums[j] < nums[i]) {
+                    if(len[i] < len[j] + 1) dp[i] = dp[j];
+                    else if(len[i] == len[j] + 1) dp[i] += dp[j];
+                    len[i] = max(len[i], len[j] + 1);
+                }
+            }
+            maxLen = max(maxLen, len[i]);
+        }
+        int res = 0;
+        for(int i = 0; i < nums.size(); ++i)    if(len[i] == maxLen)    res += dp[i];
+        return res;
+    }
+};
+```
+
+
+
