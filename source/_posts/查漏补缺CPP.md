@@ -8,6 +8,151 @@ tags:
 
 # C++11
 
+## 右值引用
+
+### 左值/右值
+
+左值**可以取地址、位于等号左边**；而右值**没法取地址，位于等号右边**。
+
+```cpp
+int a = 5;
+```
+
+- a可以通过 & 取地址，位于等号左边，所以a是左值。
+- 5位于等号右边，5没法通过 & 取地址，所以5是个右值。
+
+**有地址的变量就是左值，没有地址的字面值、临时值就是右值。**
+
+#### 左值引用
+
+**能指向左值，不能指向右值的就是左值引用**。引用是变量的别名，由于**右值没有地址，没法被修改**，所以左值引用无法指向右值。
+
+```cpp
+int a = 5;
+int &ref_a = a; // 左值引用指向左值，编译通过
+int &ref_a = 5; // 左值引用指向了右值，会编译失败
+```
+
+**特例：**
+
+**const**左值引用是可以指向右值的：
+
+```cpp
+const int &ref_a = 5;  // 编译通过
+```
+
+const左值引用不会修改指向值，因此可以指向右值，这也是为什么要使用`const &`作为函数参数的原因之一，如`std::vector`的`push_back`：
+
+```cpp
+void push_back (const value_type& val);
+```
+
+#### 右值引用
+
+右值引用的标志是`&&`，顾名思义，右值引用专门为右值而生，**可以指向右值，不能指向左值**：
+
+```cpp
+int &&ref_a_right = 5; 	// ok
+int a = 5;
+int &&ref_a_left = a; 	// 编译不过，右值引用不可以指向左值
+ 
+ref_a_right = 6; 		// 右值引用的用途：可以修改右值
+```
+
+
+
+#### 引用本身的性质
+
+**被声明出来的左、右值引用都是左值**。 因为被声明出的左右值引用是有地址的，也位于等号左边。
+
+```cpp
+void change(int&& right_value) {		// 形参是个右值引用
+    right_value = 8;
+}
+int main() {
+    int a = 5; 							// a是个左值
+    int &ref_a_left = a; 				// ref_a_left是个左值引用
+    int &&ref_a_right = std::move(a); 	// ref_a_right是个右值引用
+ 
+    change(a); 							// 编译不过，a是左值，change参数要求右值
+    change(ref_a_left); 				// 编译不过，左值引用ref_a_left本身也是个左值
+    change(ref_a_right); 				// 编译不过，右值引用ref_a_right本身也是个左值
+     
+    change(std::move(a)); 				// 编译通过
+    change(std::move(ref_a_right)); 	// 编译通过
+    change(std::move(ref_a_left)); 		// 编译通过
+    change(5); 							// 当然可以直接接右值，编译通过
+     
+    cout << &a << ' ';
+    cout << &ref_a_left << ' ';
+    cout << &ref_a_right;				// 打印这三个左值的地址，都是一样的
+}
+```
+
+**右值引用既可以是左值也可以是右值，如果有名称则为左值，否则是右值**。
+
+<font color="red">**作为函数返回值的 && 是右值，直接声明出来的 && 是左值**。</font> 这同样符合对左值，右值的判定方式：其实引用和普通变量是一样的，`int &&ref = std::move(a)`和 `int a = 5`没有什么区别，等号左边就是左值，右边就是右值。
+
+综上可得以下概念：
+
+1. **从性能上讲，左右值引用没有区别，传参使用左右值引用都可以避免拷贝。**
+2. **右值引用可以直接指向右值，也可以通过std::move指向左值；而左值引用只能指向左值(const左值引用也能指向右值)。**
+3. **作为函数形参时，右值引用更灵活。虽然const左值引用也可以做到左右值都接受，但它无法修改，有一定局限性。**
+
+
+
+### std::move
+
+```cpp
+int a = 5; 				// a是个左值
+int &ref_a_left = a; 	// 左值引用指向左值
+int &&ref_a_right = std::move(a); // 通过std::move将左值转化为右值，可以被右值引用指向
+cout << a; 				// 打印结果：5
+```
+
+该函数本质上等同于一个类型转换：**把左值强制转化为右值**，让右值引用可以指向左值。**单纯的std::move()不会有性能提升。**
+
+#### 实现移动语义
+
+实际场景中，右值引用和std::move被广泛用于STL和自定义类中**实现移动语义，避免拷贝，从而提升程序性能**。 
+
+```cpp
+class Array {
+public:
+    ......
+    // 深拷贝构造
+    Array(const Array& temp_array) {
+        size_ = temp_array.size_;
+        data_ = new int[size_];
+        for (int i = 0; i < size_; i ++) {
+            data_[i] = temp_array.data_[i];
+        }
+    }
+    // 移动构造
+    Array(Array&& temp_array) {
+        data_ = temp_array.data_;
+        size_ = temp_array.size_;
+        // 为防止temp_array析构时delete data，提前置空其data_      
+        temp_array.data_ = nullptr;
+    }    
+public:
+    int *data_;
+    int size_;
+};
+int main(){
+    Array a;
+    Array b(std::move(a));
+}
+```
+
+加个`std::move`会调用到移动语义函数，**避免了深拷贝，这就是提高性能的原理**。
+
+编译器会**默认**在用户自定义的`class`和`struct`中生成移动语义函数，但前提是用户没有主动定义该类的*拷贝构造*等函数。 因此，可移动对象在<**需要拷贝且被拷贝者之后不再被需要**>的场景，建议使用**`std::move`**触发移动语义，提升性能。
+
+还有些STL类是`move-only`的，比如`unique_ptr`，这种类只有移动构造函数，因此只能移动(**转移内部对象所有权**，或者叫浅拷贝)，不能拷贝(深拷贝)。
+
+
+
 ## 关键字
 
 ### using
@@ -58,7 +203,7 @@ using T = int; // 用 T 代替 int
 
 
 
-## 函数 - TODO
+## 函数
 
 ### 匿名函数
 
@@ -271,6 +416,12 @@ struct __hashtable_node {
 **继承关系：input_iterator** → **forward_iterator** → **bidirectional_iterator** → **random_access_iterator**
 
 但**output_iterator**和上述没有继承关系
+
+
+
+## set
+
+`set`和`unordered_set`都有**只读**键。如果键值发生变化，数据结构会将其归档到错误的位置，您将无法再找到它。因此无论是**for循环或迭代器遍历，返回的都是常量值，无法修改**。
 
 
 

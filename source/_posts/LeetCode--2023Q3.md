@@ -2541,3 +2541,261 @@ public:
 
 
 
+## 2023.7.27
+
+### 2500.删除每行中的最大值
+
+#### 解法
+
+基本思路：**排序**
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int deleteGreatestValue(vector<vector<int>>& grid) {
+        for(auto& vec : grid)   sort(vec.begin(), vec.end());
+        int res = 0;
+        for(int i = 0; i < grid[0].size(); ++i) {
+            int tmp = 0;
+            for(int j = 0; j < grid.size(); ++j)
+                tmp = max(tmp, grid[j][i]);
+            res += tmp;
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 841.钥匙和房间
+
+#### 解法
+
+基本思路：**DFS、有向图**
+
+有向图只能通过dfs或bfs来搜索全路径。DFS想明白递归三部曲：**递归参数、终止条件、单层逻辑**分别是什么。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        vector<bool> visited(rooms.size(), false);
+        int res = 0;
+        auto dfs = [&,
+            circle = [&](auto&& self, int key) -> void {
+                if(visited[key])  return;
+                visited[key] = true;
+                ++res;
+                for(int& n : rooms[key])    self(self, n);
+            }
+        ]() { circle(circle, 0); };
+        dfs();
+        return res == rooms.size();
+    }
+};
+```
+
+
+
+### 127.单词接龙
+
+#### 题干
+
+字典 `wordList` 中从单词 `beginWord` 和 `endWord` 的 **转换序列** 是一个按下述规格形成的序列 `beginWord -> s1 -> s2 -> ... -> sk`：
+
+- 每一对相邻的单词只差一个字母。
+-  对于 `1 <= i <= k` 时，每个 `si` 都在 `wordList` 中。注意， `beginWord` 不需要在 `wordList` 中。
+- `sk == endWord`
+
+给你两个单词 `beginWord` 和 `endWord` 和一个字典 `wordList` ，返回 *从 `beginWord` 到 `endWord` 的 **最短转换序列** 中的 **单词数目*** 。如果不存在这样的转换序列，返回 `0` 。
+
+```
+示例1：
+输入：beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+输出：5
+
+示例2：
+输入：beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]
+输出：0
+```
+
+#### 解法
+
+基本思路：**BFS、无向图**
+
+首先要有无向图的概念，这里list中的字符串能推到差一个字符的另一个字符串，另一个自然也能推回来，因此图是**无向**的。**无向图求最短路径，广搜最为合适。BFS只要搜到了终点，那么一定是最短的路径**。
+
+确定了算法主体，那么接下来我们需要一个队列存储每一层要搜索的单词和一个标记集合存储已搜索过的单词**避免重复搜索出现闭环现象**。之后便是循环出队、入队流程了。在代码随想录中，采用的是遍历字符 a - z；相比于遍历列表降低了时间复杂度（从**O(单词长度 X 数量（上限5000）)** 减少为**O(单词长度 X 26)** ）。
+
+**优化：**
+
+1.**查找速度**：用哈希表存储单词，查找只需要O（1）复杂度。因此用 `unordered_set` 替换 `vector` 和 `queue`。
+
+2.**剪枝**：采用**双向BFS**，即设立头尾两个哈希表，从两端进行BFS遍历，每次取**数量更少的那个表进行一层遍历**。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> dict(wordList.begin(), wordList.end());
+        if(dict.count(endWord) == 0) return 0;
+        unordered_set<string> s, e, visited;
+        s.emplace(beginWord);
+        e.emplace(endWord);
+        int res = 2;
+        while(!s.empty()) {
+            unordered_set<string> next;
+            for(auto& str : s) {
+                for(string& word : wordList) {
+                    int cnt = 0;
+                    for(int i = 0; i < beginWord.size(); ++i) {
+                        if(str[i] != word[i])   ++cnt;
+                        if(cnt > 1) break;
+                    }
+                    if(cnt == 1) {
+                        if(e.count(word))   return res;
+                        if(visited.count(word) == 0) {
+                            next.emplace(word);
+                            visited.emplace(word);
+                        }
+                    }
+                }
+            }
+            ++res;
+            s = next;
+            if(s.size() > e.size()) swap(s, e);
+        }
+        return 0;
+    }
+};
+```
+
+#### 相关题目
+
+### 433.最小基因变化
+
+#### 解法
+
+基本思路：**BFS、无向图**
+
+和上题相同的思路，这里尝试了Carl哥的**固定字符遍历**而不是遍历列表，节约时间成本。
+
+注意：本题求的是最短转换次数，上题求的是最短转换序列的单词数（是包含begin的），因此res的初始化为1。
+
+注意2：`set`和`unordered_set`都有**只读**键。如果键值发生变化，数据结构会将其归档到错误的位置，您将无法再找到它。因此无论是**for循环或迭代器遍历，返回的都是常量值，无法修改**。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int minMutation(string startGene, string endGene, vector<string>& bank) {
+        unordered_set<string> dict(bank.begin(), bank.end());
+        if(dict.count(endGene) == 0)    return -1;
+        unordered_set<string> s, e, visited;
+        const char gene[4] = {'A', 'C', 'G', 'T'};
+        s.emplace(startGene);
+        e.emplace(endGene);
+        int res = 1;
+        while(!s.empty()) {
+            unordered_set<string> next;
+            for(auto& str : s) {
+                string newwd = str;
+                for(char& c : newwd) {
+                    char old = c;
+                    for(const char& g : gene) {
+                        if(c == g)  continue;
+                        c = g;
+                        if(e.count(newwd))    return res;
+                        if(visited.count(newwd) == 0 && dict.count(newwd)) {
+                            visited.emplace(newwd);
+                            next.emplace(newwd);
+                        }
+                    }
+                    c = old;
+                }
+            }
+            ++res;
+            s = next;
+            if(s.size() > e.size()) swap(s, e);
+        }
+        return -1;
+    }
+};
+```
+
+### 126.单词接龙 Ⅱ
+
+#### 解法
+
+基本思路：**BFS、无向图**
+
+太复杂了，逻辑对了但是超时。**TODO**
+
+
+
+## 2023.7.30
+
+### 684.冗余连接
+
+#### 解法
+
+基本思路：**并查集**
+
+题意中，若有多个答案，返回数组中最后出现的那个。那么遍历顺序就为从前往后，优先将数组前面的一对节点都连接在同一个集合中。
+
+直到碰到某条边，两个元素已经在同一集合中了，那么加上这条边就一定会出现环，因此直接返回即可。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    class DisjointSet {
+        private:
+            vector<int> father;
+        public:
+            DisjointSet(int size) {
+                father = vector<int>(size);
+                for(int i = 0; i < size; ++i)
+                    father[i] = i;
+            }
+            int find(int u) {
+                return u == father[u] ? u : father[u] = find(father[u]);
+            }
+            bool isSame(int u, int v) {
+                u = find(u);
+                v = find(v);
+                return u == v;
+            }
+            void join(int u, int v) {
+                u = find(u);
+                v = find(v);
+                if (u == v) return ; 
+                father[v] = u;
+            }
+    };
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        DisjointSet ds(1002);
+        for(auto& vec : edges) {
+            if(ds.isSame(vec[0], vec[1]))   return vec;
+            else    ds.join(vec[0], vec[1]);
+        }
+        return {};
+    }
+};
+```
+
+
+
+
+
+
+
