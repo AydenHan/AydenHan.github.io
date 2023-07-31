@@ -2762,8 +2762,7 @@ public:
         private:
             vector<int> father;
         public:
-            DisjointSet(int size) {
-                father = vector<int>(size);
+            DisjointSet(int size) : father(vector<int>(size)) {
                 for(int i = 0; i < size; ++i)
                     father[i] = i;
             }
@@ -2792,6 +2791,220 @@ public:
     }
 };
 ```
+
+
+
+## 2023.7.31
+
+### 685.冗余连接 Ⅱ
+
+#### 解法
+
+基本思路：**并查集、有向图**
+
+根据题意，***每一个节点都有且只有一个父节点，而根节点没有父节点。***而在此基础上多添加一条有向边，可能导致两种情况：
+
+1. 有向边指向**非根**节点，此时指向的节点**入度为2**（唯一）
+2. 有向边指向**根**节点，此时节点入度均为1但存在**环**。
+
+首先统计所有节点的入度，之后记录入度为2的节点（如果有）相关联的两条有向边。再根据以上情况分别处理：
+
+对于1，模拟从两条边中删除一条，那么将剩下的边都加入并查集，如果出现环了，说明删错了，返回另一条边。
+
+对于2，将所有边都加入并查集，如果出现环，那么那条边就是指向根节点的有向边，除去。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
+        int n = edges.size();
+        vector<int> indeg(n + 1, 0);
+        vector<int> candi;
+        for(auto& vec : edges)  indeg[vec[1]]++;
+        for(int i = n-1; i >= 0; --i) 	// 这里注意返回最后的值，因此倒序遍历，这样可以先处理
+            if(indeg[edges[i][1]] == 2)
+                candi.emplace_back(i);
+        auto isTree = [&edges, n](int delEdge) -> bool {
+            DisjointSet ds(n + 1);
+            for(int i = 0; i < n; ++i) {
+                if(i == delEdge)    continue;
+                if(ds.isSame(edges[i][0], edges[i][1])) return false;
+                ds.join(edges[i][0], edges[i][1]);
+            }
+            return true;
+        };
+        auto removeLoop = [&edges, n]() -> vector<int> {
+            DisjointSet ds(n + 1);
+            for(auto& vec : edges) {
+                if(ds.isSame(vec[0], vec[1]))   return vec;
+                ds.join(vec[0], vec[1]);
+            }
+            return {};
+        };
+        if(!candi.empty())  return isTree(candi[0]) ? edges[candi[0]] : edges[candi[1]];
+        return removeLoop();
+    }
+};
+```
+
+
+
+### 721.账户合并
+
+#### 解法
+
+基本思路：**并查集、哈希表**
+
+题意实际就是**根据邮箱判断是否属于同一个账户 **——> 判断两个账户是否在同一集合：并查集。
+
+字符串很多，但统计可以简化：并查集记录**每个账户的下标**即可。
+
+因为是根据邮箱判断，所以建立**邮箱到账户下标的映射**，之后遍历所有邮箱，将重复出现的邮箱所在账户下标加入并查集。这样就建立起了相同账户之间的连通性。
+
+根据并查集和哈希表，再次建立一个**账户下标到邮箱列表的映射**（便于给邮箱列表排序），将格式整理为**合并后的账户下标对应的邮箱列表**。最后将每个账户的邮箱排序后加入结果集。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        int n = accounts.size();
+        unordered_map<string, int> hash;
+        DisjointSet ds(n);
+        for(int i = 0; i < n; ++i) {
+            for(int j = 1; j < accounts[i].size(); ++j) {
+                if(hash.count(accounts[i][j])) ds.join(i, hash[accounts[i][j]]);
+                else    hash[accounts[i][j]] = i;
+            }
+        }
+        vector<vector<string> > res;
+        unordered_map<int, vector<string> > accs;
+        for(auto& [str, n] : hash) accs[ds.find(n)].emplace_back(str);
+        for(auto& [n, vec] : accs) {
+            sort(vec.begin(), vec.end());
+            vector<string> tmp = {accounts[n][0]};
+            tmp.insert(tmp.end(), vec.begin(), vec.end());
+            res.emplace_back(tmp);
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 657.机器人能否回到原点
+
+#### 解法
+
+基本思路：**模拟、哈希**
+
+判断能否回到原点，第一反应就是记录四个方向移动的次数，最后判断左右、上下是否相等。再简化一下，只需维护两个变量，用加减来记录，判断最后是否为0即可。
+
+**剪枝：**如果字符串长度为奇数，必然是false。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool judgeCircle(string moves) {
+        if(moves.size() % 2)    return false;
+        int hash[2] = {0};
+        for(char& c : moves) {
+            if(c == 'U')    hash[0]++;
+            else if(c == 'D')   hash[0]--;
+            else if(c == 'L')   hash[1]++;
+            else   hash[1]--;
+        }
+        return hash[0] == 0 && hash[1] == 0;
+    }
+};
+```
+
+
+
+### 463.岛屿的周长
+
+#### 解法
+
+基本思路：**模拟**
+
+一块土地可以带来4个单位的周长，但是每当土地周围存在一个接壤，周长就会少1。
+
+因此答案为：**土地数 X 4 - 接壤数 X 2。**统计这两个值即可。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int land = 0, border = 0;
+        for(int i = 0; i < grid.size(); ++i) {
+            for(int j = 0; j < grid[0].size(); ++j) {
+                if(grid[i][j]) {
+                    ++land;
+                    if(i > 0 && grid[i-1][j])   ++border;
+                    if(j > 0 && grid[i][j-1])   ++border;
+                }
+            }
+        }
+        return 4 * land - 2 * border;
+    }
+};
+```
+
+
+
+### 1356.根据数字二进制下1的数目排序
+
+#### 解法
+
+基本思路：**二进制**
+
+本题的重点在于如何统计二进制数中1的数目。暴力解法就是遍历每一位是否为1。
+
+`n &= (n - 1)` 可以**去除 n 最低位的1**。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> sortByBits(vector<int>& arr) {
+        auto clearBack = [](int n) -> int {
+            int cnt = 0;
+            while(n) {
+                n &= (n - 1);
+                ++cnt;
+            }
+            return cnt;
+        };
+        sort(arr.begin(), arr.end(), [&](const int& a, const int& b){
+            int ba = clearBack(a);
+            int bb = clearBack(b);
+            return ba == bb ? a < b : ba < bb;
+        });
+        return arr;
+    }
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
