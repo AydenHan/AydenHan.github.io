@@ -551,7 +551,8 @@ TreeNode* balanceBST(TreeNode* root) {
 - 当前节点的父节点 = index / 2(这里我们将结果取整)。
 - 当前节点的左子节点 = index * 2
 - 当前节点的右子节点 = index * 2 + 1。
-- 
+
+
 
 #### 堆的插入删除
 
@@ -1124,6 +1125,8 @@ vector<int> dailyTemperatures(vector<int>& vec) {
 
 ## 排序
 
+![image.png](%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95%E7%9A%84CPP%E5%AE%9E%E7%8E%B0/1617425519-BCKwIu-image.png)
+
 ### 堆排序 - O(n*log(n))
 
 #### 1.函数调用
@@ -1172,6 +1175,30 @@ void heapSort(vector<int>& arr){
     for(int i = len - 1; i > 0; --i){
         swap(arr[i], arr[0]);
         adjustHeap(arr, 0, i - 1);
+    }
+}
+```
+
+
+
+### 归并排序 - O(n*log(n))
+
+```cpp
+void merge(vector<int>& arr, int l, int mid, int r) {
+    vector<int> tmp(r-l+1);
+    int i = l, j = mid+1, k = 0;
+    while(i <= mid && j <= r)
+        tmp[k++] = arr[i] <= arr[j] ? arr[i++] : arr[j++];
+    while(i <= mid)	tmp[k++] = arr[i++];
+    while(j <= r)	tmp[k++] = arr[j++];
+    for(int& n : tmp)	arr[l++] = n;
+}
+void mergeSort(vector<int>& arr, int l, int r) {
+    if(l < r) {
+        int mid = l + (r - l) / 2;	// 防止超出int范围
+        mergeSort(arr, l, mid);
+        mergeSort(arr, mid+1, r);
+        merge(arr, l, mid, r);
     }
 }
 ```

@@ -2996,7 +2996,206 @@ public:
 
 
 
+# 打卡8月LeetCode
 
+## 2023.8.1
+
+### 83.删除排序链表中的重复元素
+
+#### 解法
+
+基本思路：**删除链表**
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(head == nullptr) return head;
+        ListNode* dummy = head;
+        while(dummy->next) {
+            if(dummy->val == dummy->next->val) 
+                dummy->next = dummy->next->next;
+            else
+                dummy = dummy->next;
+        }
+        return head;
+    }
+};
+```
+
+
+
+### 25.K个一组翻转链表
+
+#### 题干
+
+给你链表的头节点 `head` ，每 `k` 个节点一组进行翻转，请你返回修改后的链表。
+
+`k` 是正整数，它的值小于或等于链表的长度。如果节点总数不是 `k` 的整数倍，最后剩余的节点保持原有顺序。
+
+#### 解法
+
+基本思路：**翻转链表**
+
+不能死套模板方法，写一个翻转函数然后再每一段调用，会发现首尾节点的链接变得很复杂不好处理。
+
+要理解翻转的本质：在首节点后的遍历过程中，1.将节点**删除**，2.**插入**到头节点后。（例：dummy --> 1 --> 2 --> 3，先把2从链表中摘出来，然后插入到dummy后，3同理，就这么两步走就行）。
+
+而要翻转的**起始位置**取决于**头节点的位置**，要翻转的**长度**取决于**循环的次数+1**。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(head == nullptr || k == 1)   return head;
+        ListNode* dummy = new ListNode(0, head);
+        int cnt = 0;
+        while(head) {
+            head = head->next;
+            ++cnt;
+        }
+        ListNode* pre = dummy, *cur = dummy->next;
+        while(cnt >= k) {
+            for(int i = 1; i < k; ++i) {
+                ListNode* tmp = cur->next;
+                cur->next = tmp->next;
+                tmp->next = pre->next;
+                pre->next = tmp;
+            }
+            pre = cur;
+            cur = cur->next;
+            cnt -= k;
+        }
+        return dummy->next;
+    }
+};
+```
+
+
+
+### 160.相交链表
+
+#### 解法
+
+基本思路：**双指针**
+
+本质就是统计两个链表的长度后计算差值sub，让长的链表先走sub步，之后一起移动，判断有无相同节点。
+
+写法上可以更简洁：短的先走完后，重新指向长的首节点，等长的走完指向短的首节点时，快慢指针就形成了。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode* a = headA, *b = headB;
+        while(a || b) {
+            if(a == NULL)   a = headB;
+            if(b == NULL)   b = headA;
+            if(a == b)  return a;
+            a = a->next;
+            b = b->next;
+        }
+        return NULL;
+    }
+};
+```
+
+
+
+### 21.合并两个有序链表
+
+#### 解法
+
+基本思路：**双指针**
+
+注意循环结束后的接上。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode* a = list1, *b = list2;
+        ListNode* dummy = new ListNode();
+        ListNode* cur = dummy;
+        while(a && b) {
+            if(a->val > b->val) {
+                cur->next = b;
+                b = b->next;
+            }
+            else {
+                cur->next = a;
+                a = a->next;
+            }
+            cur = cur->next;
+        }
+        cur->next = a ? a : b;
+        return dummy->next;
+    }
+};
+```
+
+
+
+### 148.排序链表
+
+#### 题干
+
+给你链表的头结点 `head` ，请将其按 **升序** 排列并返回 **排序后的链表** 。
+
+#### 解法
+
+基本思路：**归并排序、切链、合并有序链表**
+
+常用的数组排序有快排，堆排，归并排序三种，其中前两种都需要通过数组下标访问元素，并不适合链表排序，因此**归并**是最好的选择，且符合 **O(nlogn)** 的时间复杂度要求。
+
+归并分为两个步骤：分和治。
+
+分就是不断将链表均分为两段，直至链表长度为1。注意 `getMid()` 中，while的判断条件，如果设为 `fast && fast->next`，在切链时会复杂一些，需要维护一个pre指针指向slow前面一格才能切断。
+
+治就是合并，将两段有序链表不断合并为一段有序链表，直至全部合并结束。下面代码中是一种简写的方式，逻辑更清晰的代码可见 [21.合并两个有序链表](#21.合并两个有序链表) 。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* getMid(ListNode* cur) {
+        ListNode* slow = cur;
+        ListNode* fast = cur;
+        while(fast->next && fast->next->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        fast = slow->next;
+        slow->next = nullptr;
+        return fast;
+    }
+    ListNode* mergeList(ListNode* a, ListNode* b) {
+        ListNode* dummy = new ListNode();
+        ListNode* cur = dummy;
+        while(a && b) {
+            ListNode* &tmp = a->val > b->val ? b : a;
+            cur = cur->next = tmp;
+            tmp = tmp->next;
+        }
+        cur->next = a ? a : b;
+        return dummy->next;
+    }
+    ListNode* sortList(ListNode* head) {
+        if(head == nullptr || head->next == nullptr)    return head;
+        ListNode* mid = getMid(head);
+        return mergeList(sortList(head), sortList(mid));
+    }
+};
+```
 
 
 
