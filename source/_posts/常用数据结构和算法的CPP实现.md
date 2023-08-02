@@ -980,22 +980,44 @@ public:
 
 ## 链表
 
+### 头插法
+
+```cpp
+ListNode* dummy = new ListNode();
+dummy->next = new ListNode(val, dummy->next);
+```
+
+
+
 ### 翻转链表 - O(n)
 
-#### 双指针法
-
-**迭代实现**
+#### 双指针法1
 
 ```cpp
 ListNode* reverseList(ListNode* head) {
-    ListNode* temp; // 保存cur的下一个节点
     ListNode* cur = head;
     ListNode* pre = NULL;
     while(cur) {
-        temp = cur->next; 
+        ListNode* temp = cur->next; 	// 保存cur的下一个节点
         cur->next = pre; 
         pre = cur;
         cur = temp;
+    }
+    return pre;
+}
+```
+
+#### 双指针法2
+
+```cpp
+ListNode* reverseList(ListNode* head) {
+    ListNode* dummy = new ListNode(-1, head);
+    ListNode* pre = dummy, *cur = head;
+    while(cur) {
+        ListNode* temp = cur->next; 
+        cur->next = temp->next; 
+        temp->next = pre->next;
+        pre->next = temp;
     }
     return pre;
 }
@@ -1005,7 +1027,7 @@ ListNode* reverseList(ListNode* head) {
 
 ### 环形链表
 
-#### 快慢指针
+#### 判断
 
 ```cpp
 bool hasCycle(ListNode *head) {
@@ -1017,6 +1039,78 @@ bool hasCycle(ListNode *head) {
         if(fast == slow)    return true;
     }
     return false;
+}
+```
+
+#### 找入口
+
+**计算环长**
+
+```cpp
+ListNode* slow = head;
+ListNode* fast = head;
+int len = 0;
+int count = 0;
+while(fast && fast->next && fast->next->next){
+    slow = slow->next;
+    fast = fast->next->next;
+    if(count)   len++;   
+    if(slow == fast){
+        if(count)   break;   
+        count++;
+    }
+}
+```
+
+快指针先移动环长距离，之后一同移动，相同时即为入口。
+
+
+
+### 中点切链
+
+```cpp
+ListNode* getMid(ListNode* cur) {
+    ListNode* slow = cur;
+    ListNode* fast = cur;
+    while(fast->next && fast->next->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    fast = slow->next;
+    slow->next = nullptr;
+    return fast;
+}
+```
+
+
+
+### 合并有序链表
+
+```cpp
+ListNode* mergeList(ListNode* a, ListNode* b) {
+    ListNode* dummy = new ListNode();
+    ListNode* cur = dummy;
+    while(a && b) {
+        ListNode* &tmp = a->val > b->val ? b : a;
+        cur = cur->next = tmp;
+        tmp = tmp->next;
+    }
+    cur->next = a ? a : b;
+    return dummy->next;
+}
+```
+
+
+
+### 链表排序
+
+**归并**
+
+```cpp
+ListNode* sortList(ListNode* head) {
+    if(head == nullptr || head->next == nullptr)    return head;
+    ListNode* mid = getMid(head);
+    return mergeList(sortList(head), sortList(mid));
 }
 ```
 

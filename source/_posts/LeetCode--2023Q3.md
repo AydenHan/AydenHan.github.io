@@ -3199,6 +3199,338 @@ public:
 
 
 
+## 2023.8.2
+
+### 822.翻转卡片游戏
+
+#### 解法
+
+基本思路：**哈希表**
+
+阅读理解题。。首先正反相同的数字必不可能是答案，加入哈希表。之后在两个数组中找到不在哈希表中的最小数字即可。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int flipgame(vector<int>& fronts, vector<int>& backs) {
+        unordered_set<int> hash;
+        for(int i = 0; i < fronts.size(); ++i) 
+            if(fronts[i] == backs[i])
+                hash.emplace(fronts[i]);
+        int res = INT_MAX;
+        for(int& n : fronts)    if(hash.count(n) == 0)  res = min(res, n);        
+        for(int& n : backs)    if(hash.count(n) == 0)  res = min(res, n);        
+        return res == INT_MAX ? 0 : res;
+    }
+};
+```
+
+
+
+### 23.合并K个升序链表
+
+#### 解法
+
+基本思路：**合并有序链表**
+
+合并方法见 [148.排序链表](#148.排序链表)，这里注意合并方式：for循环一个个合并过去时间复杂度为 O(K)，而两两合并可以降低到 O(logK) 。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.size() == 0)   return nullptr;
+        auto merge = [](ListNode* a, ListNode* b) -> ListNode* {
+            ListNode* dummy = new ListNode();
+            ListNode* cur = dummy;
+            while(a && b) {
+                ListNode* &tmp = a->val > b->val ? b : a;
+                cur = cur->next = tmp;
+                tmp = tmp->next;
+            }
+            cur->next = a ? a : b;
+            return dummy->next;
+        };
+        int num = lists.size();
+        while(num > 1) {
+            int idx = 0;
+            for(int i = 0; i < num; i += 2) {
+                if(i == num - 1)    lists[idx++] = lists[i];
+                else    lists[idx++] = merge(lists[i], lists[i+1]);
+            }
+            num = idx;
+        }
+        return lists[0];
+    }
+};
+```
+
+
+
+### 2.两数相加
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* dummy = new ListNode();
+        ListNode* res = dummy;
+        int carry = 0;
+        while(l1 || l2 || carry) {
+            if(l1) {
+                carry += l1->val;
+                l1 = l1->next;
+            }
+            if(l2) {
+                carry += l2->val;
+                l2 = l2->next;
+            }
+            dummy = dummy->next = new ListNode(carry % 10);
+            carry /= 10;
+        }
+        return res->next;
+    }
+};
+```
+
+
+
+### 92.反转链表 Ⅱ
+
+#### 解法
+
+基本思路：**翻转链表**
+
+思路同 [25.K个一组翻转链表](#25.K个一组翻转链表)
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+        ListNode* dummy = new ListNode(-1, head);
+        ListNode* pre = dummy, *cur = dummy;
+        while(left-- && right--) {
+            pre = cur;
+            cur = cur->next;
+        }
+        while(right--) {
+            ListNode* tmp = cur->next;
+            cur->next = tmp->next;
+            tmp->next = pre->next;
+            pre->next = tmp;
+        }
+        return dummy->next;
+    }
+};
+```
+
+
+
+### 82.删除排序链表中的重复元素 II
+
+#### 解法
+
+基本思路：**删除链表**
+
+如果存在多个相同值的节点，一个一个删并不好处理，因为删除次数 = 比较次数 + 1。换一种思路，维护一个pre指向虚拟头节点，cur指向head，当 `cur->val == cur->next->val` 时，就后移cur，直至遍历完相同节点。通过比较 pre的下一个节点和 cur是否相同来判断有无相同值，没有就正常双指针后移，若有则直接后移cur并将pre的下一个节点修改为cur（**跳过所有相同值的节点**）。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        ListNode* dummy = new ListNode(-1, head);
+        ListNode* pre = dummy, *cur = head;
+        while(cur) {
+            while(cur->next && cur->val == cur->next->val)  cur = cur->next;
+            if(pre->next != cur)    pre->next = cur->next;
+            else    pre = cur;
+            cur = cur->next;
+        }
+        return dummy->next;
+    }
+};
+```
+
+
+
+### 445.两数相加 II
+
+#### 解法
+
+基本思路：**栈**
+
+正常思路是翻转两个链表，使用 [2.两数相加](#2.两数相加) 的方法求和后再翻转结果链表。
+
+若不允许翻转，可以用栈来模拟这一过程，在计算位数和创建节点时，采用**头插法**可以一步到位。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        stack<int> st1, st2;
+        for (; l1; l1 = l1->next) st1.push(l1->val);
+        for (; l2; l2 = l2->next) st2.push(l2->val);
+        ListNode* dummy = new ListNode();
+        int carry = 0;
+        while(!st1.empty() || !st2.empty() || carry) {
+            if(!st1.empty()) {
+                carry += st1.top();
+                st1.pop();
+            }
+            if(!st2.empty()) {
+                carry += st2.top();
+                st2.pop();
+            }
+            dummy->next = new ListNode(carry % 10, dummy->next);
+            carry /= 10;
+        }
+        return dummy->next;
+    }
+};
+```
+
+
+
+### 61.旋转链表
+
+#### 解法
+
+基本思路：**轮转链表**
+
+首先统计链表长（因为k可能大于链表长度，需要取余），并将链表结尾链接至head。
+
+其次计算需要切链的位置，并将指针移动过去，完成切链，返回切链后的头节点。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(head == nullptr || head->next == nullptr) return head;
+        ListNode* dummy = new ListNode(-1, head);
+        ListNode* cur = dummy;
+        int len = 0;
+        for(; cur->next; cur = cur->next) ++len;
+        cur->next = head;
+        len = len - k % len;
+        while(len--)    dummy = dummy->next;
+        cur = dummy->next;
+        dummy->next = nullptr;
+        return cur;
+    }
+};
+```
+
+
+
+### 328.奇偶链表
+
+#### 解法
+
+基本思路：**链表拼接**
+
+分别创建奇偶子链的指针，和一个指向偶链头节点的指针用于最后拼接。
+
+因为 `head->next` 可能为空指针，因此while选择 `even` 和 `even->next` 作为判断条件，防止野指针。
+
+遍历时每次移动两格拼接，注意顺序，先奇数，不然链表会断。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    ListNode* oddEvenList(ListNode* head) {
+        if(head == nullptr) return head;
+        ListNode* odd = head, *even = head->next, *node = head->next;
+        while(even && even->next) {
+            odd = odd->next = odd->next->next;
+            even = even->next = even->next->next;
+        }
+        odd->next = node;
+        return head;
+    }
+};
+```
+
+
+
+### 138.复制带随机指针的链表
+
+#### 解法
+
+基本思路：**复制链表**
+
+因为随机指针的缘故，没有办法一边创建一边链接，因此需要保存原链的连接信息，用于复制。
+
+第一遍遍历保存原链到新链**相同位置**节点的映射；第二遍时，将新节点的指针链接至正确位置。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        unordered_map<Node*, Node*> hash;
+        Node* cur = head;
+        while(cur) {
+            hash[cur] = new Node(cur->val);
+            cur = cur->next;
+        }
+        cur = head;
+        while(cur) {
+            hash[cur]->next = hash[cur->next];
+            hash[cur]->random = hash[cur->random];
+            cur = cur->next;
+        }
+        return hash[head];
+    }
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
