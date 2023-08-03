@@ -3503,6 +3503,180 @@ public:
 
 
 
+## 2023.8.3
+
+### 722.删除注释
+
+#### 解法
+
+基本思路：**模拟**
+
+用一个string存储每行剩余内容，若字符串**不为空**且**不处于块注释**中，则加入结果集。
+
+
+
+### 662.二叉树最大宽度
+
+#### 解法
+
+基本思路：**层序、二叉树节点序号**
+
+求最大宽度，要找到每层的最左最右节点，很容易想到层序遍历。如何求宽度？可以给节点标序号，最后计算首尾节点序号的差值即可。
+
+因此在队列存储时还要存储序号信息，注意序号越界问题（每个节点都只有右子树，3000层序号超过int了）。
+
+初始序号为1，左子节点为 **2 * 父节点序号**；初始为0，左子节点为 **2 * 父节点序号 + 1** 。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int widthOfBinaryTree(TreeNode* root) {
+        using pti = pair<TreeNode*, unsigned long long>;
+        queue<pti> q;
+        q.push({root, 1});
+        int maxWid = INT_MIN;
+        while(!q.empty()){
+            int n = q.size();
+            unsigned long long l = q.front().second, r = l;
+            for(int i = 0; i < n; ++i){
+                pti nd = q.front();
+                q.pop();
+                r = nd.second;
+                if(nd.first->left)  q.push({nd.first->left, 2 * r});
+                if(nd.first->right)  q.push({nd.first->right, 2 * r + 1});
+            }
+            maxWid = max(maxWid, (int)(r - l + 1));
+        }
+        return maxWid;
+    }
+};
+```
+
+
+
+### 剑指Offer 54.二叉搜索树的第k大节点
+
+#### 解法
+
+基本思路：**中序、BST**
+
+利用好BST的特性，用中序遍历。求第k大，那么按照**右中左**的顺序，就是从大到小的顺序了。
+
+递归时注意k要传引用进去，才能全局计数。终止条件可以对结果变量做一个判断，找到了直接结束，实现剪枝。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    int res = 0;
+    void dfs(TreeNode* root, int& k) {
+        if(!root || res)   return;
+        dfs(root->right, k);
+        if(--k == 0)    res = root->val;
+        dfs(root->left, k);
+    }
+    int kthLargest(TreeNode* root, int k) {
+        dfs(root, k);
+        return res;
+    }
+};
+```
+
+#### 相关题目
+
+### 230. 二叉搜索树中第K小的元素
+
+#### 解法
+
+同上，遍历顺序左右换一下即可。
+
+
+
+### 958.二叉树的完全性检验
+
+#### 解法
+
+基本思路：**层序**
+
+层序遍历，记录上一个节点的指针，若上个指针是null但当前不是，则不完全。遍历完成则是完全的。
+
+巧妙的方法是层序将节点放入队列的同时判断出队的节点有无null，有则结束入队操作。遍历队列中剩余节点，若存在非空值，则返回false。实现剪枝。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool isCompleteTree(TreeNode* root) {
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()) {
+            TreeNode* nd = q.front();
+            q.pop();
+            if(!nd) break;
+            q.push(nd->left);
+            q.push(nd->right);
+        }
+        while(!q.empty()) {
+            TreeNode* nd = q.front();
+            q.pop();
+            if(nd) return false;
+        }
+        return true;
+    }
+};
+```
+
+
+
+### 剑指Offer 26.树的子结构
+
+#### 解法
+
+基本思路：**递归**
+
+相比于 [572.另一个树的子树](http://hanhan0223.cn/%E5%8E%9F%E7%90%86/LeetCode--2023Q2/#572.另一个树的子树) ，本题是**子结构**，意味着子结构可能在树的中间，即树本身在子结构下还有节点。
+
+因此 `check()` 函数中的判断条件需稍作修改。
+
+#### 代码
+
+```cpp
+class Solution {
+public:
+    bool check(TreeNode* root, TreeNode* sub) {
+        if(!sub)   return true;	
+        if(!root || root->val != sub->val)   return false;
+        return check(root->left, sub->left) && check(root->right, sub->right);
+    }
+    bool isSubStructure(TreeNode* A, TreeNode* B) {
+        if(!A || !B)    return false;
+        return check(A, B) || isSubStructure(A->left, B) || isSubStructure(A->right, B);
+    }
+};
+```
+
+
+
+### 103.二叉树的锯齿形层序遍历
+
+#### 解法
+
+基本思路：**层序遍历**
+
+层序的基础上维护一个bool变量，每层取反，true时翻转单层数组即可。
+
+
+
+
+
+
+
+
+
 
 
 

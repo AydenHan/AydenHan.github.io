@@ -3837,7 +3837,7 @@ res = q.front()->val;	// 在每次进入下一层时取队首值即可
 
 代码中的回溯表现不明显，实际上当我们使用 **去掉当前节点后**的目标和 时，回溯表现在：当前叶子节点不是正确路径时，需要退回父节点进入其另一个子节点，此时 **targetSum**需要回溯至上一个状态（加回当前节点值）。
 
-而这里直接将 **targetSum - root->val** 输入递归函数，省去了这一加减过程，从一个节点退出来可以直接进入另一个。d熬制在递归中不能直接减去当前值  **targetSum - root->val** 后判断是否等于0，而是直接判断两者是否相等，更加省事儿。
+而这里直接将 **targetSum - root->val** 输入递归函数，省去了这一加减过程，从一个节点退出来可以直接进入另一个。导致在递归中不能直接减去当前值  **targetSum - root->val** 后判断是否等于0，而是直接判断两者是否相等，更加省事儿。
 
 #### 代码
 
@@ -3886,26 +3886,19 @@ public:
 ```cpp
 class Solution {
 public:
-    void traversal(TreeNode* cur, int targetSum, vector<vector<int>>& res, vector<int>& path) {
-        path.push_back(cur->val);
-        if(!cur->left && !cur->right && cur->val == targetSum) {
-            res.push_back(path);
-            return;
-        }
-        if(cur->left) {
-            traversal(cur->left, targetSum - cur->val, res, path);
-            path.pop_back();		// 回溯
-        }
-        if(cur->right) {
-            traversal(cur->right, targetSum - cur->val, res, path);
-            path.pop_back();
-        }
+    vector<vector<int> > res;
+    void dfs(TreeNode* cur, int sum, vector<int>& path) {
+        if(!cur)    return;
+        path.emplace_back(cur->val);
+        if(!cur->left && !cur->right && sum == cur->val)    res.emplace_back(path);
+        dfs(cur->left, sum - cur->val, path);
+        dfs(cur->right, sum - cur->val, path);
+        path.pop_back();
     }
     vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
-        vector<vector<int>> res;
-        if(root == nullptr) return res;
+        if(!root)   return {};
         vector<int> path;
-        traversal(root, targetSum, res, path);
+        dfs(root, targetSum, path);
         return res;
     }
 };
