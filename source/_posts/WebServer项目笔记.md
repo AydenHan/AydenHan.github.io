@@ -301,6 +301,131 @@ HTTP的处理流程分为以下三个步骤：
 
 
 
+### 互斥锁
+
+在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，*同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。*
+
+在多线程中使用**互斥锁**（**mutex**）保护共享资源。互斥锁是一种简单的加锁的方法来控制对共享资源的访问，互斥锁只有两种状态，即**上锁**（lock）和**解锁**（unlock）。
+
+#### 特点
+
+1. **原子性**：把一个互斥量锁定为一个原子操作，这意味着如果一个线程锁定了一个互斥量，没有其他线程在同一时间可以成功锁定这个互斥量；
+
+2. **唯一性**：如果一个线程锁定了一个互斥量，在它解除锁定之前，没有其他线程可以锁定这个互斥量；
+
+3. **非繁忙等待**：如果一个线程已经锁定了一个互斥量，第二个线程又试图去锁定这个互斥量，则第二个线程将**被挂起**（不占用任何cpu资源），直到第一个线程解除对这个互斥量的锁定为止，第二个线程则被唤醒并继续执行，同时锁定这个互斥量。
+
+
+
+#### 创建与初始化
+
+**创建**
+
+在使用互斥锁之前，需要先创建一个互斥锁的对象。 互斥锁的类型是 **pthread_mutex_t** ，这是一个联合体，存储了互斥锁的相关信息，所以定义一个变量就是创建了一个互斥锁。
+
+```cpp
+#include <pthread.h>
+pthread_mutex_t _mutex;
+```
+
+**初始化**
+
+有两种方式，第一种是调用函数。
+
+```cpp
+pthread_mutex_init(&_mutex, NULL);	// 第二个参数为 NULL，则互斥锁的属性会设置为默认属性
+```
+
+第二种是使用宏定义初始化赋值，因为这个互斥锁变量本质就是个联合体。
+
+```cpp
+# define PTHREAD_MUTEX_INITIALIZER \
+   { { 0, 0, 0, 0, 0, 0, { 0, 0 } } }	// 在 pthread.h 中，对该宏的定义
+pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
+```
+
+
+
+#### 上锁
+
+**阻塞调用**
+
+```cpp
+pthread_mutex_lock(&mtx);
+```
+
+如果这个锁此时正在被其它线程占用， 那么 `pthread_mutex_lock()` 调用会进入锁的排队队列中，并进入阻塞状态， 直到拿到锁之后才会返回。*若该锁此时已被当前线程占用，则会发生死锁。*
+
+**非阻塞调用**
+
+若不想阻塞，只想尝试获取一下，锁被占用就不用，没被占用就用， 可以使用 `pthread_mutex_trylock()` 函数。 这个函数和 pthread_mutex_lock() 用法一样，只不过当请求的锁正在被占用的时候， 不会进入阻塞状态，而是立刻返回，并返回一个错误代码 `EBUSY`。*若该锁此时已被当前线程占用，同样会发生死锁。*
+
+```cpp
+if(0 != pthread_mutex_trylock(&_mutex)) {
+    //The mutex could not be acquired because it was already locked.
+}
+```
+
+**超时调用**
+
+如果不想不断的调用 pthread_mutex_trylock() 来测试互斥锁是否可用， 而是想阻塞调用，但是增加一个超时时间，可以使用 `pthread_mutex_timedlock()` 来实现：
+
+```cpp
+struct timespec {
+    __time_t tv_sec;        /* Seconds.  */
+    long int tv_nsec;       /* Nanoseconds.  */
+};
+struct timespec abs_timeout;
+abs_timeout.tv_sec = time(NULL) + 1;
+abs_timeout.tv_nsec = 0;
+
+if(0 != pthread_mutex_timedlock(&_mutex, &abs_timeout)) {
+    //The mutex could not be locked before the specified timeout expired.
+}
+```
+
+ 阻塞等待线程锁，但只等待1秒钟，1秒钟后若还未拿到锁， 就返回一个错误代码 `ETIMEDOUT`。
+
+*注意的是，这个函数里面调用的时间是**绝对时间**，所以这里用 time() 函数返回的时间增加了 1 秒。*
+
+
+
+#### 解锁
+
+```cpp
+pthread_mutex_unlock(&_mutex);
+```
+
+#### 销毁
+
+```cpp
+pthread_mutex_destroy(&_mutex)
+```
+
+被销毁的线程锁可以被再次初始化使用。
+
+*对一个处于已初始化但未锁定状态的线程锁进行销毁是安全的。尽量避免对一个处于锁定状态的线程锁进行销毁操作。*
+
+
+
+#### std::mutex
+
+本质就是对 `pthread.h` 中的 **pthread_mutex_t** 的封装。
+
+```cpp
+class mutex {
+    pthread_mutex_t _M_mutex;
+public:
+    mutex() { _M_mutex = PTHREAD_MUTEX_INITIALIZER; }
+    ~mutex() { pthread_mutex_destroy(&_M_mutex); }
+    void lock() { pthread_mutex_lock(&_M_mutex); }
+    bool try_lock() { return pthread_mutex_trylock(&_M_mutex) == 0; }
+    void unlock() { pthread_mutex_unlock(&_M_mutex); }
+}
+```
+
+
+
 ### 线程池
 
 #### 概念
@@ -354,18 +479,28 @@ int pthread_detach (pthread_t __th)		// 返回值：0 - 成功；非0 - 失败
 
 pthread有两种状态：**joinable**状态和**unjoinable**状态。
 
-- **joinable**状态：当线程函数自己返回退出时或pthread_exit时都不会释放线程所占用堆栈和线程描述符。只有当你调用了`pthread_join`之后这些资源才会被释放。
+- **joinable**状态：当线程函数自己返回退出时或pthread_exit时都不会释放线程所占用堆栈和线程描述符。只有当你调用了`pthread_join`之后这些资源才会被释放。默认为此状态。
 - **unjoinable**状态：这些资源在线程函数退出时或pthread_exit时**自动会被释放**。
 
 unjoinable属性可以在pthread_create前指定，或在线程创建后在线程中pthread_detach。
 
 ##### 配置参数
 
+
+
 ##### 任务队列初始化
+
+1. 维护一个**任务队列** `list<T*>` 管理待执行任务；
+2. 维护一个**互斥锁**（自实现），保护请求队列；
+3. 维护一个**条件变量**（自实现），告诉线程池是否有任务需要处理。
 
 
 
 #### 2.任务调度
+
+**任务队列管理**
+
+线程池需要提供添加任务的接口，将接收到的任务加入任务队列。在添加任务的过程中，需使用互斥量锁住任务队列以实现同步访问。任务添加成功后，通知等待中的线程有新任务可以执行。
 
 
 

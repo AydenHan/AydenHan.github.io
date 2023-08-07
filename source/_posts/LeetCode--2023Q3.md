@@ -4232,7 +4232,118 @@ public:
 
 
 
+## 2023.8.7
 
+### 8.字符串转换整数(atoi)
+
+**解法**
+
+基本思路：**字符串**
+
+去除先导0、正负判断和终止遍历没啥好说的，重点在于判断字符串数是否越界上。
+
+因为会越界不能直接*10判断，而是要除法判断`INT_MIN/10`。而除法因为是取整，实际上还需要补判，即本次循环中累加的**个位数的负值是否比取余的结果更小**。
+
+这里为什么用个位数的负值累加和，并且取INT_MIN而非INT_MAX，是因为 INT_MAX 的负值，是要比 INT_MIN 还要大1的，也就是没达到边界条件，这样处理会出现缺失。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int myAtoi(string s) {
+        int sign = 1, idx = 0;
+        while(idx < s.size() && s[idx] == ' ')  ++idx;
+        if(s[idx] == '-') {
+            sign = 0;
+            ++idx;
+        } 
+        else if(s[idx] == '+')  ++idx;
+        int res = 0;
+        while(idx < s.size() && s[idx] >= '0' && s[idx] <= '9') {
+            int digit = '0' - s[idx];
+            if(res < INT_MIN/10 || (res == INT_MIN/10 && digit < INT_MIN%10)) {
+                res = INT_MIN;
+                break;
+            }
+            res = res * 10 + digit;
+            ++idx;
+        }
+        if(res == INT_MIN && sign)  return INT_MAX;
+        if(sign)    res = -res;
+        return res;
+    }
+};
+```
+
+
+
+### 165.比较版本号
+
+**解法1**
+
+基本思路：**字符串、双指针**
+
+常规思路，双指针遍历两个串，累加得到一个数遇到 '.' 停止，然后比较大小，直至都遍历完了返回0。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int compareVersion(string v1, string v2) {
+        int i = 0, j = 0;
+        while(i < v1.size() || j < v2.size())
+        {
+            long long num1 = 0, num2 = 0;   
+            while(i < v1.size() && v1[i] != '.') num1 = num1 * 10 + v1[i++] - '0';
+            while(j < v2.size() && v2[j] != '.') num2 = num2 * 10 + v2[j++] - '0';
+            if(num1 > num2) return 1;
+            else if( num1 < num2) return -1;
+            i++,j++;
+        }
+        return 0;
+    }
+};
+```
+
+**解法2**
+
+基本思路：**字符串分割split、双指针**
+
+这样写思路都是一样的，但是更耗空间。主要是实现了一种**split**。
+
+第三个参数 `const char& c` 也可以是 `const string& c`。start和end 都是 `string::size_type` 类型的。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int compareVersion(string version1, string version2) {
+        auto split = [](const string& str, vector<string>& res, const char& c) -> void {
+            auto start = str.find_first_not_of(c, 0);
+            auto end = str.find_first_of(c, start);
+            while(start != string::npos || end != string::npos) {
+                res.emplace_back(str.substr(start, end - start));
+                start = str.find_first_not_of(c, end);
+                end = str.find_first_of(c, start);
+            }
+        };
+        vector<string> arr1, arr2;
+        split(version1, arr1, '.');
+        split(version2, arr2, '.');
+        int i = 0, j = 0;
+        while(i < arr1.size() || j < arr2.size()) {
+            int a = 0, b = 0;
+            if(i < arr1.size()) a = stoi(arr1[i++]);
+            if(j < arr2.size()) b = stoi(arr2[j++]);
+            if(a != b)  return a > b ? 1 : -1;
+        }
+        return 0;
+    }
+};
+```
 
 
 
