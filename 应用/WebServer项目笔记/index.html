@@ -1,18 +1,18 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>WebServer项目笔记 | 小涵的米奇妙妙屋</title><meta name="keywords" content="CPP,服务器"><meta name="author" content="Szh"><meta name="copyright" content="Szh"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="WebServer项目理论知识MySQL环境配置配置MySQL安装sudo apt update sudo apt install mysql-server  安装完成后，MySQL 服务将会自动启动。">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>WebServer项目笔记 | 小涵的米奇妙妙屋</title><meta name="keywords" content="CPP,服务器"><meta name="author" content="Szh"><meta name="copyright" content="Szh"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="WebServer项目理论知识互斥锁在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。 在多线程中使用互斥锁（mutex）保护共享资源。互斥锁是一种简单的加锁的方法来控制对共享资源的访问，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="WebServer项目笔记">
 <meta property="og:url" content="https://www.hanhan0223.cn/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="小涵的米奇妙妙屋">
-<meta property="og:description" content="WebServer项目理论知识MySQL环境配置配置MySQL安装sudo apt update sudo apt install mysql-server  安装完成后，MySQL 服务将会自动启动。">
+<meta property="og:description" content="WebServer项目理论知识互斥锁在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。 在多线程中使用互斥锁（mutex）保护共享资源。互斥锁是一种简单的加锁的方法来控制对共享资源的访问，">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/4.jpg">
+<meta property="og:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg">
 <meta property="article:published_time" content="2023-07-11T15:04:11.000Z">
-<meta property="article:modified_time" content="2023-08-07T15:58:02.352Z">
+<meta property="article:modified_time" content="2023-08-11T16:33:12.529Z">
 <meta property="article:author" content="Szh">
 <meta property="article:tag" content="CPP">
 <meta property="article:tag" content="服务器">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/4.jpg"><link rel="shortcut icon" href="/img/Sign.ico"><link rel="canonical" href="https://www.hanhan0223.cn/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+<meta name="twitter:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg"><link rel="shortcut icon" href="/img/Sign.ico"><link rel="canonical" href="https://www.hanhan0223.cn/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
   hm.src = "https://hm.baidu.com/hm.js?a8ed5b37dd0aaae924c52eb382109c5d";
@@ -61,7 +61,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2023-08-07 23:58:02'
+  postUpdate: '2023-08-12 00:33:12'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -150,7 +150,197 @@
       }
     }
     detectApple()
-    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/4.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小涵的米奇妙妙屋</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">WebServer项目笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-07T15:58:02.352Z" title="更新于 2023-08-07 23:58:02">2023-08-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BA%94%E7%94%A8/">应用</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">5.1k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="WebServer项目笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="WebServer项目"><a href="#WebServer项目" class="headerlink" title="WebServer项目"></a>WebServer项目</h1><h2 id="理论知识"><a href="#理论知识" class="headerlink" title="理论知识"></a>理论知识</h2><h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><h3 id="配置MySQL"><a href="#配置MySQL" class="headerlink" title="配置MySQL"></a>配置MySQL</h3><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><pre class="language-shell" data-language="shell"><code class="language-shell">sudo apt update
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小涵的米奇妙妙屋</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">WebServer项目笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-11T16:33:12.529Z" title="更新于 2023-08-12 00:33:12">2023-08-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BA%94%E7%94%A8/">应用</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">8.1k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="WebServer项目笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="WebServer项目"><a href="#WebServer项目" class="headerlink" title="WebServer项目"></a>WebServer项目</h1><h2 id="理论知识"><a href="#理论知识" class="headerlink" title="理论知识"></a>理论知识</h2><h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，<em>同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。</em></p>
+<p>在多线程中使用<strong>互斥锁</strong>（<strong>mutex</strong>）保护共享资源。互斥锁是一种简单的加锁的方法来控制对共享资源的访问，互斥锁只有两种状态，即<strong>上锁</strong>（lock）和<strong>解锁</strong>（unlock）。</p>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ol>
+<li><p><strong>原子性</strong>：把一个互斥量锁定为一个原子操作，这意味着如果一个线程锁定了一个互斥量，没有其他线程在同一时间可以成功锁定这个互斥量；</p>
+</li>
+<li><p><strong>唯一性</strong>：如果一个线程锁定了一个互斥量，在它解除锁定之前，没有其他线程可以锁定这个互斥量；</p>
+</li>
+<li><p><strong>非繁忙等待</strong>：如果一个线程已经锁定了一个互斥量，第二个线程又试图去锁定这个互斥量，则第二个线程将<strong>被挂起</strong>（不占用任何cpu资源），直到第一个线程解除对这个互斥量的锁定为止，第二个线程则被唤醒并继续执行，同时锁定这个互斥量。</p>
+</li>
+</ol>
+<h4 id="创建与初始化"><a href="#创建与初始化" class="headerlink" title="创建与初始化"></a>创建与初始化</h4><p><strong>创建</strong></p>
+<p>在使用互斥锁之前，需要先创建一个互斥锁的对象。 互斥锁的类型是 <strong>pthread_mutex_t</strong> ，这是一个联合体，存储了互斥锁的相关信息，所以定义一个变量就是创建了一个互斥锁。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;pthread.h&gt;
+pthread_mutex_t _mutex;</code></pre>
+
+<p><strong>初始化</strong></p>
+<p>有两种方式，第一种是调用函数。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_init(&amp;_mutex, NULL);	&#x2F;&#x2F; 第二个参数为 NULL，则互斥锁的属性会设置为默认属性</code></pre>
+
+<p>第二种是使用宏定义初始化赋值，因为这个互斥锁变量本质就是个联合体。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp"># define PTHREAD_MUTEX_INITIALIZER \
+   &#123; &#123; 0, 0, 0, 0, 0, 0, &#123; 0, 0 &#125; &#125; &#125;	&#x2F;&#x2F; 在 pthread.h 中，对该宏的定义
+pthread_mutex_t _mutex &#x3D; PTHREAD_MUTEX_INITIALIZER;</code></pre>
+
+<h4 id="上锁"><a href="#上锁" class="headerlink" title="上锁"></a>上锁</h4><p><strong>阻塞调用</strong></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_lock(&amp;mtx);</code></pre>
+
+<p>如果这个锁此时正在被其它线程占用， 那么 <code>pthread_mutex_lock()</code> 调用会进入锁的排队队列中，并进入阻塞状态， 直到拿到锁之后才会返回。<em>若该锁此时已被当前线程占用，则会发生死锁。</em></p>
+<p><strong>非阻塞调用</strong></p>
+<p>若不想阻塞，只想尝试获取一下，锁被占用就不用，没被占用就用， 可以使用 <code>pthread_mutex_trylock()</code> 函数。 这个函数和 pthread_mutex_lock() 用法一样，只不过当请求的锁正在被占用的时候， 不会进入阻塞状态，而是立刻返回，并返回一个错误代码 <code>EBUSY</code>。<em>若该锁此时已被当前线程占用，同样会发生死锁。</em></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">if(0 !&#x3D; pthread_mutex_trylock(&amp;_mutex)) &#123;
+    &#x2F;&#x2F;The mutex could not be acquired because it was already locked.
+&#125;</code></pre>
+
+<p><strong>超时调用</strong></p>
+<p>如果不想不断的调用 pthread_mutex_trylock() 来测试互斥锁是否可用， 而是想阻塞调用，但是增加一个超时时间，可以使用 <code>pthread_mutex_timedlock()</code> 来实现：</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct timespec &#123;
+    __time_t tv_sec;        &#x2F;* Seconds.  *&#x2F;
+    long int tv_nsec;       &#x2F;* Nanoseconds.  *&#x2F;
+&#125;;
+struct timespec abs_timeout;
+abs_timeout.tv_sec &#x3D; time(NULL) + 1;
+abs_timeout.tv_nsec &#x3D; 0;
+
+if(0 !&#x3D; pthread_mutex_timedlock(&amp;_mutex, &amp;abs_timeout)) &#123;
+    &#x2F;&#x2F;The mutex could not be locked before the specified timeout expired.
+&#125;</code></pre>
+
+<p> 阻塞等待线程锁，但只等待1秒钟，1秒钟后若还未拿到锁， 就返回一个错误代码 <code>ETIMEDOUT</code>。</p>
+<p><em>注意的是，这个函数里面调用的时间是<strong>绝对时间</strong>，所以这里用 time() 函数返回的时间增加了 1 秒。</em></p>
+<h4 id="解锁"><a href="#解锁" class="headerlink" title="解锁"></a>解锁</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_unlock(&amp;_mutex);</code></pre>
+
+<h4 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_destroy(&amp;_mutex)</code></pre>
+
+<p>被销毁的线程锁可以被再次初始化使用。</p>
+<p><em>对一个处于已初始化但未锁定状态的线程锁进行销毁是安全的。尽量避免对一个处于锁定状态的线程锁进行销毁操作。</em></p>
+<h4 id="std-mutex"><a href="#std-mutex" class="headerlink" title="std::mutex"></a>std::mutex</h4><p>本质就是对 <code>pthread.h</code> 中的 <strong>pthread_mutex_t</strong> 的封装。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">class mutex &#123;
+    pthread_mutex_t _M_mutex;
+public:
+    mutex() &#123; _M_mutex &#x3D; PTHREAD_MUTEX_INITIALIZER; &#125;
+    ~mutex() &#123; pthread_mutex_destroy(&amp;_M_mutex); &#125;
+    void lock() &#123; pthread_mutex_lock(&amp;_M_mutex); &#125;
+    bool try_lock() &#123; return pthread_mutex_trylock(&amp;_M_mutex) &#x3D;&#x3D; 0; &#125;
+    void unlock() &#123; pthread_mutex_unlock(&amp;_M_mutex); &#125;
+&#125;</code></pre>
+
+
+
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3><h4 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h4><p>除了初始化之外，其余的函数使用基本类同上述互斥锁：</p>
+<p><strong>初始化</strong>：<code>int sem_init (sem_t *sem, int pshared, unsigned int value)</code></p>
+<p><strong>sem</strong>为指向信号量结构的一个指针；<strong>pshared</strong>不为０时此信号量在进程间共享，否则只能为当前进程的所有线程共享；<strong>value</strong>给出了信号量的初始值。</p>
+<p><strong>销毁</strong>： <code>int sem_destroy(sem_t *sem)</code></p>
+<p><strong>信号增量：</strong><code>int sem_post( sem_t *sem )</code></p>
+<p>用来增加信号量的值。当有线程阻塞在这个信号量上时，调用这个函数会使其中的一个线程不在阻塞，选择机制同样是由线程的调度策略决定的。</p>
+<p><strong>信号等待：</strong>同互斥锁，含有阻塞、非阻塞、定时阻塞三个版本</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int sem_wait( sem_t *sem );
+int sem_trywait( sem_t *sem );
+int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);</code></pre>
+
+<p>以上函数<strong>调用成功均会返回0</strong>。</p>
+<h4 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">class SemS &#123;
+public:
+    SemS() &#123; sem_init(&amp;_sem, 0, 0); &#125;
+    SemS(int val) &#123; sem_init(&amp;_sem, 0, val); &#125;
+    ~SemS() &#123; sem_destroy(&amp;_sem); &#125;
+    bool wait() &#123; sem_wait(&amp;_sem) &#x3D;&#x3D; 0; &#125;
+    bool post() &#123; sem_post(&amp;_sem) &#x3D;&#x3D; 0; &#125;
+private:
+    sem_t _sem;
+&#125;;</code></pre>
+
+
+
+<h3 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h3><ul>
+<li>条件变量是线程可用的<strong>另一种同步机制</strong></li>
+<li>条件变量<strong>给多个线程</strong>提供了一个会合的场所</li>
+<li>条件变量<strong>与互斥量一起使用</strong>时，允许线程以<strong>无竞争的方式等待</strong>特定的条件发生</li>
+</ul>
+<h4 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h4><ul>
+<li>条件变量要与互斥量一起使用，条件本身是由互斥量保护的。线程在<strong>改变条件状态之前</strong>必须首<strong>先锁住</strong>互斥量</li>
+<li>其他线程在获得互斥量之前<strong>不会察觉</strong>到这种改变，因为互斥量必须在锁定以后才能计算条件</li>
+</ul>
+<h4 id="函数-1"><a href="#函数-1" class="headerlink" title="函数"></a>函数</h4><p>condition的函数使用也与互斥锁的使用基本类似。</p>
+<p><strong>等待条件变量</strong></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_cond_wait(pthread_cond_t* restrict cond,pthread_mutex_t* restrict mutex);
+int pthread_cond_timedwait(pthread_cond_t* cond,pthread_mutex_t* restrict mutex,const struct timespec* restrict tsptr);</code></pre>
+
+<ul>
+<li>参数mutex互斥量提前锁定（<em>使用mutex的lock函数</em>），然后该互斥量对条件进行保护，等待参数cond条件变量变为真。在等待条件变量变为真的过程中，此函数一直处于阻塞状态。但是处于阻塞状态的时候，<strong>mutex互斥量被解锁</strong>（因为其他线程需要使用到这个锁来使条件变量变为真）</li>
+<li>当pthread_cond_wait函数返回时，互斥量再次被锁住</li>
+</ul>
+<p><strong>发送信号</strong></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_cond_signal(pthread_cond_t* cond);
+int pthread_cond_broadcast(pthread_cond_t* cond);</code></pre>
+
+<p>这两个函数用于通知线程条件变量已经满足条件（变为真）。调用这两个函数时，是在给线程或者条件发信号。</p>
+<h4 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">lock(&amp;mutex);
+while(value&lt;&#x3D;0) 	&#x2F;&#x2F; 需要value &gt; 0 所以 value &lt;&#x3D; 0 就条件不满足
+    pthread_cond_wait(&amp;cond, &amp;mutex);
+unlock(&amp;mutex);</code></pre>
+
+<p>这里在等待时用的while，是为了防止<strong>虚假唤醒</strong>。signal原本意图是唤醒一个等待的线程，但是在多核处理器下，可能会激活多个等待的线程，导致继续执行后资源不足。因此用while在wait返回后再做一次判断。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">lock(&amp;mutex);
+if(value&#x3D;&#x3D;0)
+	value++;
+if(value&gt;0)
+	pthread_cond_signal(&amp;cond);
+unlock(&amp;mutex);</code></pre>
+
+
+
+<h4 id="注意事项1"><a href="#注意事项1" class="headerlink" title="注意事项1"></a>注意事项1</h4><p><em><strong>传入前为何要锁，传入后为何要释放，返回时又为何再次锁？</strong></em></p>
+<img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/20190506080943669.png" alt="在这里插入图片描述">
+
+<p><strong>1.传入前锁mutex是为了保证线程从条件判断到进入pthread_cond_wait前，条件不被改变。</strong></p>
+<p>若没有传入前的锁，会出现如下情况：</p>
+<ol>
+<li>线程A判断条件不满足（进入while循环）之后，调用<code>pthread_cond_wait</code>之前，A因为休眠或多线程下多个线程执行顺序和快慢的因素，令线程B更改了条件，使得条件满足。</li>
+<li>但此时线程A还没有调用<code>pthread_cond_wait</code>，但是线程B的通知信号<code>pthread_cond_signal</code>已经来了，这就造成了<strong>信号丢失</strong>问题。</li>
+<li>等到线程A进入<code>pthread_cond_wait</code>后虽然条件满足，但却错过了通知信号的唤醒，就会一直阻塞下去。</li>
+</ol>
+<p><strong>2.传入后解锁是为了条件能够被改变</strong></p>
+<p>传入后的解锁，是因为另一个线程需要<em>先加锁更改条件</em>后才调用<code>pthread_cond_signal</code>。（更改条件与等待条件满足，都是针对条件这一个资源的竞争，所以调用<code>pthread_cond_wait</code>和调用<code>pthread_cond_signal</code>的两个线程需要同一把锁）。</p>
+<p>如果不对<code>mutex</code>解锁，那么在调用<code>pthread_cond_wait</code>后，其他线程就不能更改条件，就会一直阻塞。</p>
+<p><strong>3.返回前再次锁</strong></p>
+<ul>
+<li><strong>保证线程从pthread_cond_wait返回后 到 再次条件判断前不被改变。</strong></li>
+<li><strong>保证在pthread_cond_signal之后与解锁mutex之间可能需要的其他语句能够执行</strong></li>
+</ul>
+<p>对于1，理由与第一点差不多。如果不锁，那么线程A调用<code>pthread_cond_wait</code>后，条件满足，线程A被唤醒返回。线程B在此时更改了条件，使得条件不满足。但线程A不知道条件又被更改，以为条件满足，就可能出错。</p>
+<p>对于2，只要线程B在<code>pthread_cond_signal</code>之后与<strong>解锁mutex</strong>之间有其他语句需要执行。由于mutex在这时已经被这个线程锁，还没有解锁，所以在<code>pthread_cond_wait</code>返回前的锁mutex的行为就会阻塞，直到线程B剩余的语句执行完并解锁，线程A才会返回。</p>
+<h4 id="注意事项2"><a href="#注意事项2" class="headerlink" title="注意事项2"></a>注意事项2</h4><p><strong>pthread_cond_signal的两种写法</strong></p>
+<p>1.<em>写在加锁和解锁中间</em></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">lock(&amp;mutex);
+&#x2F;&#x2F;一些操作
+pthread_cond_signal(&amp;cond);
+&#x2F;&#x2F;一些操作
+unlock(&amp;mutex);</code></pre>
+
+<p>优点：安全</p>
+<p>缺点：在某些线程的实现中，会造成等待线程从内核中唤醒（由于cond_signal)回到用户空间，因为返回前需要加锁，但是发现锁没有被释放，又回到内核空间所以一来一回会有性能的问题。</p>
+<p>但是在LinuxThreads或者NPTL里面，就不会有这个问题，因为在Linux线程中，有两个队列，分别是cond_wait队列和mutex_lock队列， cond_signal只是让线程从cond_wait队列移到mutex_lock队列，而不用返回到用户空间，不会有性能的损耗。所以<strong>Linux中这样用没问题。</strong></p>
+<p>2.<em>写在解锁后</em></p>
+<p>优点：没有上述性能损耗</p>
+<p>缺点：如果unlock之后signal之前，发生进程交换，另一个进程（不是等待条件的进程）拿到这把梦寐以求的锁后加锁操作，那么等最终切换到等待条件的线程时锁被别人拿去还没归还，只能继续等待。<strong>不安全。</strong></p>
+<h3 id="生产者-消费者问题"><a href="#生产者-消费者问题" class="headerlink" title="生产者-消费者问题"></a>生产者-消费者问题</h3><p>生产者-消费者问题描述：</p>
+<ul>
+<li><strong>生产者</strong>在生成数据后，放在一个缓冲区中；</li>
+<li><strong>消费者</strong>从缓冲区取出数据处理；</li>
+<li>任何时刻，<strong>只能有一个</strong>生产者或消费者可以访问缓冲区；</li>
+</ul>
+<p>我们对问题分析可以得出：</p>
+<ul>
+<li>任何时刻只能有一个线程操作缓冲区，说明操作缓冲区是临界代码，<strong>需要互斥</strong>；</li>
+<li>缓冲区空时，消费者必须等待生产者生成数据；缓冲区满时，生产者必须等待消费者取出数据。说明生产者和消费者<strong>需要同步</strong>。</li>
+</ul>
+<p>那么我们需要三个信号量，分别是：</p>
+<ul>
+<li>互斥信号量 <code>mutex</code>：用于互斥访问缓冲区，初始化值为 1；</li>
+<li>资源信号量 <code>fullBuffers</code>：用于消费者询问缓冲区是否有数据，有数据则读取数据，初始化值为 0（表明缓冲区一开始为空）；</li>
+<li>资源信号量 <code>emptyBuffers</code>：用于生产者询问缓冲区是否有空位，有空位则生成数据，初始化值为 n （缓冲区大小）；</li>
+</ul>
+<p>具体的实现代码：</p>
+<p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-30a45d5e797dc9ef999ee1fca7388345_720w.png" alt="img"></p>
+<h3 id="常见同步问题"><a href="#常见同步问题" class="headerlink" title="常见同步问题"></a>常见同步问题</h3><p>见 [常见同步问题](<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/40562993">(26 封私信 / 80 条消息) 如何理解互斥锁和信号量，以及他们在系统编程中是如何配合使用的？ - 知乎 (zhihu.com)</a>)</p>
+<ul>
+<li>「哲学家进餐问题」对于互斥访问有限的竞争问题（如 I/O 设备）一类的建模过程十分有用。</li>
+<li>「读者-写者」，它为数据库访问建立了一个模型。</li>
+</ul>
+<h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><h3 id="配置MySQL"><a href="#配置MySQL" class="headerlink" title="配置MySQL"></a>配置MySQL</h3><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><pre class="language-shell" data-language="shell"><code class="language-shell">sudo apt update
 sudo apt install mysql-server</code></pre>
 
 <p>安装完成后，MySQL 服务将会自动启动。</p>
@@ -222,6 +412,126 @@ quit;</code></pre>
 <li>实现同步/异步日志系统，记录服务器运行状态</li>
 <li>经Webbench压力测试可以实现上万的并发连接数据交换</li>
 </ul>
+<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>线程池是一种并发编程技术，它能有效地管理并发的线程、减少资源占用和提高程序的性能。</p>
+<p>线程池在系统启动时即创建大量空闲的线程。程序将一个任务传给线程池，线程池就会启动一条线程来执行这个任务，执行结束以后，该线程并不会死亡，而是再次返回线程池中成为空闲状态,在这里说是空闲状态其实是被条件变量阻塞了，等待执行下一个任务。</p>
+<h4 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h4><p><strong>1.提高性能与资源利用率</strong></p>
+<p>线程池主要解决两个问题：<strong>线程创建与销毁的开销</strong>以及<strong>线程竞争造成的性能瓶颈</strong>。通过预先创建一组线程并复用它们，线程池有效地降低了线程创建和销毁的时间和资源消耗。同时，通过管理线程并发数量，线程池有助于减少线程之间的竞争，增加资源利用率，并提高程序运行的性能。</p>
+<p><strong>2.线程创建开销解决</strong></p>
+<p>多线程环境下，每当需要执行一个任务时，创建与销毁线程都需要额外的系统资源。线程池通过预先创建一定数量的线程，可以减少这种资源消耗。</p>
+<p><strong>3.线程竞争问题解决</strong></p>
+<p>过多的线程可能导致线程竞争，影响系统性能。线程池通过维护一个可控制的并发数量，有助于减轻线程之间的竞争。例如，当CPU密集型任务和I/O密集型任务共存时，可以通过调整线程池资源，实现更高效的负载平衡。</p>
+<h4 id="1-线程池初始化"><a href="#1-线程池初始化" class="headerlink" title="1.线程池初始化"></a>1.线程池初始化</h4><h5 id="线程创建"><a href="#线程创建" class="headerlink" title="线程创建"></a>线程创建</h5><p>维护一个指定大小 <code>_thread_num</code> 的线程id的数组 <code>_threads</code>，存储所有创建的线程。</p>
+<p>循环调用 <code>pthread_create</code> 和 <code>pthread_detach</code> 库函数，创建线程。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+           		   		void *(*start_routine) (void *), void *arg);</code></pre>
+
+<ul>
+<li><strong>thread</strong>：传递存储线程（pthread_t变量）的地址</li>
+<li><strong>attr</strong>：手动设置新建线程的属性，如线程的调用策略、线程所能使用的栈内存的大小等。默认为NULL</li>
+<li><strong>start_routine</strong>：以函数指针的方式指明新建线程需要执行的函数，该函数的参数最多有 1 个（可以省略不写），形参和返回值的类型都必须为 void* 类型。<em>如果该函数有返回值，则线程执行完函数后，函数的返回值可以由 pthread_join() 函数接收。</em></li>
+<li><strong>arg</strong>：指定传递给 <code>start_routine</code> 函数的实参，当不需要传递任何数据时，将 arg 赋值为 NULL 即可。</li>
+<li><strong>返回值</strong>：成功返回0。失败返回非0值，常见有：<ol>
+<li><strong>EINVAL</strong> == 22：传递给 pthread_create() 函数的 attr 参数无效。</li>
+<li><strong>EAGAIN</strong> == 11：系统资源不足，无法提供创建线程所需的资源。</li>
+</ol>
+</li>
+</ul>
+<p>定义一个静态函数作为第三个参数传入，用于<strong>运行工作线程</strong>（从任务队列中取任务并执行）。为了使得函数能正常访问其他非静态成员变量，将<code>this</code>指针（<strong>本实例</strong>）作为第四个参数传入，实现在静态函数中调用实例的方法（具体的工作线程运行实现）。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_detach (pthread_t __th)		&#x2F;&#x2F; 返回值：0 - 成功；非0 - 失败 </code></pre>
+
+<p>pthread有两种状态：<strong>joinable</strong>状态和<strong>unjoinable</strong>状态。</p>
+<ul>
+<li><strong>joinable</strong>状态：当线程函数自己返回退出时或pthread_exit时都不会释放线程所占用堆栈和线程描述符。只有当你调用了<code>pthread_join</code>之后这些资源才会被释放。默认为此状态。</li>
+<li><strong>unjoinable</strong>状态：这些资源在<em>线程函数退出</em>时或<code>pthread_exit</code>时<strong>自动会被释放</strong>。</li>
+</ul>
+<p>unjoinable属性可以在<code>pthread_create</code>前指定，或在线程创建后在线程中<code>pthread_detach</code>。</p>
+<h5 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h5><pre class="language-cpp" data-language="cpp"><code class="language-cpp">std::vector&lt;pthread_t&gt; _threads;    &#x2F;&#x2F; 存储线程的数组，大小为 _thread_num
+int _thread_num;                    &#x2F;&#x2F; 线程池中的线程数
+std::atomic&lt;bool&gt; _run;             &#x2F;&#x2F; 原子布尔变量，标记线程终止运行
+
+int _max_requests;                  &#x2F;&#x2F; 请求队列中允许的最大请求数
+std::list&lt;T*&gt; _taskqueue;           &#x2F;&#x2F; 请求任务队列
+
+MutexS _queue_mutex;                &#x2F;&#x2F; 保护请求队列的互斥锁
+SemS _queue_sem;                    &#x2F;&#x2F; 通知线程的信号量</code></pre>
+
+<h5 id="任务队列初始化"><a href="#任务队列初始化" class="headerlink" title="任务队列初始化"></a>任务队列初始化</h5><ol>
+<li>维护一个<strong>任务队列</strong> <code>list&lt;T*&gt;</code> 管理待执行任务；</li>
+<li>维护一个<strong>互斥锁</strong>（自实现），保护请求队列；</li>
+<li>维护一个<strong>条件变量</strong>（自实现），告诉线程池是否有任务需要处理。</li>
+</ol>
+<h4 id="2-任务调度"><a href="#2-任务调度" class="headerlink" title="2.任务调度"></a>2.任务调度</h4><p><strong>任务队列管理</strong></p>
+<p>线程池需要提供添加任务的接口，将接收到的任务加入任务队列。在添加任务的过程中，需使用互斥量锁住任务队列以实现同步访问。任务添加成功后，通知等待中的线程有新任务可以执行。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">template &lt;typename T&gt;
+bool ThreadPool&lt;T&gt;::append(T *req) &#123;
+    _queue_mutex.lock();
+    if (_taskqueue.size() &gt;&#x3D; _max_requests) &#123;
+        _queue_mutex.unlock();
+        return false;
+    &#125;
+    _taskqueue.push_back(req);
+    _queue_mutex.unlock();
+    _queue_sem.post();
+    return true;
+&#125;</code></pre>
+
+<h5 id="线程取任务执行"><a href="#线程取任务执行" class="headerlink" title="线程取任务执行"></a>线程取任务执行</h5><p>线程执行体应按照预设策略从任务队列中获取任务并执行。获取任务时，需要在条件变量上等待，直到有新任务或线程池被终止。任务获取成功后，线程从队列中移除任务并执行。执行完成后，线程可以被再次复用。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">template &lt;typename T&gt;
+void ThreadPool&lt;T&gt;::work() &#123;
+    while (true) &#123;
+        _queue_sem.wait();
+        _queue_mutex.lock();
+        if (_taskqueue.empty()) &#123;
+            _queue_mutex.unlock();
+            continue;
+        &#125;
+        T* request &#x3D; _taskqueue.front();
+        _taskqueue.pop_front();
+        _queue_mutex.unlock();
+        if (!request)
+            continue;
+        &#x2F;&#x2F; handle
+    &#125;
+&#125;</code></pre>
+
+<h5 id="任务状态跟踪"><a href="#任务状态跟踪" class="headerlink" title="任务状态跟踪"></a>任务状态跟踪</h5><p>为了确保任务的执行正确性和完整性，可以使用一定机制来跟踪任务的状态。例如：</p>
+<ul>
+<li>任务开始时，记录任务运行的开始时间。</li>
+<li>任务执行期间，跟踪任务的进度，如百分比、耗时等。</li>
+<li>任务结束时，记录任务的结束状态，如正常完成、出错等。</li>
+</ul>
+<p>通过跟踪任务状态，可以调整线程池的执行策略，以适应不同类型的任务需求。同时及时发现并处理任务执行中的异常，提高线程池的稳定性和可靠性。</p>
+<h4 id="3-线程池的终止"><a href="#3-线程池的终止" class="headerlink" title="3.线程池的终止"></a>3.线程池的终止</h4><h5 id="标记线程池终止状态"><a href="#标记线程池终止状态" class="headerlink" title="标记线程池终止状态"></a>标记线程池终止状态</h5><p>在线程池类中，添加一个原子布尔类型的成员变量 <code>_run</code>，当线程池需要终止时，将其设置为 <code>false</code>。在线程取任务的过程中，会检查 <code>_run</code> 变量，根据其值决定继续执行或退出。(<em>替换2.2中while的判断条件</em>)</p>
+<h5 id="等待线程执行完成"><a href="#等待线程执行完成" class="headerlink" title="等待线程执行完成"></a>等待线程执行完成</h5><p>在线程池析构函数中，需要等待所有线程执行完成。将<code>_run</code>标记设置为<code>false</code>，线程函数执行完一遍后即跳出循环，因为之前已被<strong>detach</strong>，因此会由系统自动释放资源。</p>
+<h4 id="4-动态调整线程数"><a href="#4-动态调整线程数" class="headerlink" title="4.动态调整线程数"></a>4.动态调整线程数</h4><h5 id="增加线程数"><a href="#增加线程数" class="headerlink" title="增加线程数"></a>增加线程数</h5><pre class="language-cpp" data-language="cpp"><code class="language-cpp">bool ThreadPool&lt;T&gt;::append_thread(int new_num) &#123;
+    if(!_dynamic_ctl)   return false;
+    _threads.resize(_thread_num + new_num);
+    for(int i &#x3D; 0; i &lt; new_num; ++i) &#123;
+        if(pthread_create(&amp;_threads[_thread_num + i], NULL, transfer, (void*)this)) &#123;
+            return false;
+        &#125;
+        if(pthread_detach(_threads[_thread_num + i])) &#123;
+            return false;
+        &#125;
+    &#125;
+    _thread_num +&#x3D; new_num;
+    return true;
+&#125;</code></pre>
+
+<h5 id="减少线程数-TODO"><a href="#减少线程数-TODO" class="headerlink" title="减少线程数 TODO"></a>减少线程数 TODO</h5><p>不太好搞，可以通过设置一个信号量判断还需要删除几个线程。在删除函数中，循环对该信号量<code>post</code>，并添加一个空任务到任务队列中。在工作线程中，取出空的任务时，使用<code>trywait</code> 判断是否需要删除该线程，若删除则直接break掉while循环，退出函数后<strong>该线程自动释放</strong>。</p>
+<p>问题也就在这里，当线程释放后，其id依旧保留在线程数组中，那么何时去更新这个数组才能保证那些线程都退出释放了呢？又如何判断哪个线程id是被释放了需要删除呢（pthread库中找不到<code>pthread_kill</code>函数了，且该函数也不稳定）？</p>
+<p>这是因为线程被<code>detach</code>了的缘故，如果是 joinable 模式，用join释放可能比较容易一些？</p>
+<h4 id="5-自定义任务调度策略-TODO"><a href="#5-自定义任务调度策略-TODO" class="headerlink" title="5.自定义任务调度策略 TODO"></a>5.自定义任务调度策略 TODO</h4><p>设置任务优先级，使用优先队列实现。但是这样无法实现线程池的泛型了？</p>
+<h4 id="6-监控线程池状态"><a href="#6-监控线程池状态" class="headerlink" title="6.监控线程池状态"></a>6.监控线程池状态</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">int get_thread_num() const &#123; return _thread_num; &#125;
+int get_task_num() const &#123; return _taskqueue.size(); &#125;
+int get_completed_task_num() const &#123; return _completed_tasknum.load(); &#125;
+double get_run_time() const &#123; 
+    std::chrono::duration&lt;double&gt; diff &#x3D; std::chrono::steady_clock::now() - start_time; 
+    return diff.count();
+&#125;</code></pre>
+
+
+
 <h3 id="Epoll"><a href="#Epoll" class="headerlink" title="Epoll"></a>Epoll</h3><h4 id="I-O复用"><a href="#I-O复用" class="headerlink" title="I/O复用"></a>I/O复用</h4><p><strong>I/O是指网络中的I/O（即输入输出），多路是指多个TCP连接，复用是指一个或少量线程被重复使用。</strong>连起来解就是，<strong>用少量的线程来处理网络上大量的TCP连接中的I/O</strong>。常见的I/O复用有以下三种：<strong>select</strong>、<strong>poll</strong>、<strong>epoll</strong>。</p>
 <h5 id="select"><a href="#select" class="headerlink" title="select"></a>select</h5><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;sys&#x2F;select.h&gt;
 #include &lt;sys&#x2F;time.h&gt;
@@ -318,117 +628,6 @@ int epoll_create(int size);</code></pre>
 </ul>
 <h5 id="连接处理"><a href="#连接处理" class="headerlink" title="连接处理"></a>连接处理</h5><p>在连接阶段，最重要的是<strong>tcp连接过程和读取http的请求报文</strong>。</p>
 <p>服务器是如何实现读取http的报文的呢？首先，服务器需要对每一个<strong>已建立连接http建立一个http的类对象</strong></p>
-<h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，<em>同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。</em></p>
-<p>在多线程中使用<strong>互斥锁</strong>（<strong>mutex</strong>）保护共享资源。互斥锁是一种简单的加锁的方法来控制对共享资源的访问，互斥锁只有两种状态，即<strong>上锁</strong>（lock）和<strong>解锁</strong>（unlock）。</p>
-<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ol>
-<li><p><strong>原子性</strong>：把一个互斥量锁定为一个原子操作，这意味着如果一个线程锁定了一个互斥量，没有其他线程在同一时间可以成功锁定这个互斥量；</p>
-</li>
-<li><p><strong>唯一性</strong>：如果一个线程锁定了一个互斥量，在它解除锁定之前，没有其他线程可以锁定这个互斥量；</p>
-</li>
-<li><p><strong>非繁忙等待</strong>：如果一个线程已经锁定了一个互斥量，第二个线程又试图去锁定这个互斥量，则第二个线程将<strong>被挂起</strong>（不占用任何cpu资源），直到第一个线程解除对这个互斥量的锁定为止，第二个线程则被唤醒并继续执行，同时锁定这个互斥量。</p>
-</li>
-</ol>
-<h4 id="创建与初始化"><a href="#创建与初始化" class="headerlink" title="创建与初始化"></a>创建与初始化</h4><p><strong>创建</strong></p>
-<p>在使用互斥锁之前，需要先创建一个互斥锁的对象。 互斥锁的类型是 <strong>pthread_mutex_t</strong> ，这是一个联合体，存储了互斥锁的相关信息，所以定义一个变量就是创建了一个互斥锁。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;pthread.h&gt;
-pthread_mutex_t _mutex;</code></pre>
-
-<p><strong>初始化</strong></p>
-<p>有两种方式，第一种是调用函数。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_init(&amp;_mutex, NULL);	&#x2F;&#x2F; 第二个参数为 NULL，则互斥锁的属性会设置为默认属性</code></pre>
-
-<p>第二种是使用宏定义初始化赋值，因为这个互斥锁变量本质就是个联合体。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp"># define PTHREAD_MUTEX_INITIALIZER \
-   &#123; &#123; 0, 0, 0, 0, 0, 0, &#123; 0, 0 &#125; &#125; &#125;	&#x2F;&#x2F; 在 pthread.h 中，对该宏的定义
-pthread_mutex_t _mutex &#x3D; PTHREAD_MUTEX_INITIALIZER;</code></pre>
-
-
-
-<h4 id="上锁"><a href="#上锁" class="headerlink" title="上锁"></a>上锁</h4><p><strong>阻塞调用</strong></p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_lock(&amp;mtx);</code></pre>
-
-<p>如果这个锁此时正在被其它线程占用， 那么 <code>pthread_mutex_lock()</code> 调用会进入锁的排队队列中，并进入阻塞状态， 直到拿到锁之后才会返回。<em>若该锁此时已被当前线程占用，则会发生死锁。</em></p>
-<p><strong>非阻塞调用</strong></p>
-<p>若不想阻塞，只想尝试获取一下，锁被占用就不用，没被占用就用， 可以使用 <code>pthread_mutex_trylock()</code> 函数。 这个函数和 pthread_mutex_lock() 用法一样，只不过当请求的锁正在被占用的时候， 不会进入阻塞状态，而是立刻返回，并返回一个错误代码 <code>EBUSY</code>。<em>若该锁此时已被当前线程占用，同样会发生死锁。</em></p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">if(0 !&#x3D; pthread_mutex_trylock(&amp;_mutex)) &#123;
-    &#x2F;&#x2F;The mutex could not be acquired because it was already locked.
-&#125;</code></pre>
-
-<p><strong>超时调用</strong></p>
-<p>如果不想不断的调用 pthread_mutex_trylock() 来测试互斥锁是否可用， 而是想阻塞调用，但是增加一个超时时间，可以使用 <code>pthread_mutex_timedlock()</code> 来实现：</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct timespec &#123;
-    __time_t tv_sec;        &#x2F;* Seconds.  *&#x2F;
-    long int tv_nsec;       &#x2F;* Nanoseconds.  *&#x2F;
-&#125;;
-struct timespec abs_timeout;
-abs_timeout.tv_sec &#x3D; time(NULL) + 1;
-abs_timeout.tv_nsec &#x3D; 0;
-
-if(0 !&#x3D; pthread_mutex_timedlock(&amp;_mutex, &amp;abs_timeout)) &#123;
-    &#x2F;&#x2F;The mutex could not be locked before the specified timeout expired.
-&#125;</code></pre>
-
-<p> 阻塞等待线程锁，但只等待1秒钟，1秒钟后若还未拿到锁， 就返回一个错误代码 <code>ETIMEDOUT</code>。</p>
-<p><em>注意的是，这个函数里面调用的时间是<strong>绝对时间</strong>，所以这里用 time() 函数返回的时间增加了 1 秒。</em></p>
-<h4 id="解锁"><a href="#解锁" class="headerlink" title="解锁"></a>解锁</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_unlock(&amp;_mutex);</code></pre>
-
-<h4 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_destroy(&amp;_mutex)</code></pre>
-
-<p>被销毁的线程锁可以被再次初始化使用。</p>
-<p><em>对一个处于已初始化但未锁定状态的线程锁进行销毁是安全的。尽量避免对一个处于锁定状态的线程锁进行销毁操作。</em></p>
-<h4 id="std-mutex"><a href="#std-mutex" class="headerlink" title="std::mutex"></a>std::mutex</h4><p>本质就是对 <code>pthread.h</code> 中的 <strong>pthread_mutex_t</strong> 的封装。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">class mutex &#123;
-    pthread_mutex_t _M_mutex;
-public:
-    mutex() &#123; _M_mutex &#x3D; PTHREAD_MUTEX_INITIALIZER; &#125;
-    ~mutex() &#123; pthread_mutex_destroy(&amp;_M_mutex); &#125;
-    void lock() &#123; pthread_mutex_lock(&amp;_M_mutex); &#125;
-    bool try_lock() &#123; return pthread_mutex_trylock(&amp;_M_mutex) &#x3D;&#x3D; 0; &#125;
-    void unlock() &#123; pthread_mutex_unlock(&amp;_M_mutex); &#125;
-&#125;</code></pre>
-
-
-
-<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>线程池是一种并发编程技术，它能有效地管理并发的线程、减少资源占用和提高程序的性能。</p>
-<p>线程池在系统启动时即创建大量空闲的线程。程序将一个任务传给线程池，线程池就会启动一条线程来执行这个任务，执行结束以后，该线程并不会死亡，而是再次返回线程池中成为空闲状态,在这里说是空闲状态其实是被条件变量阻塞了，等待执行下一个任务。</p>
-<h4 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h4><p><strong>1.提高性能与资源利用率</strong></p>
-<p>线程池主要解决两个问题：<strong>线程创建与销毁的开销</strong>以及<strong>线程竞争造成的性能瓶颈</strong>。通过预先创建一组线程并复用它们，线程池有效地降低了线程创建和销毁的时间和资源消耗。同时，通过管理线程并发数量，线程池有助于减少线程之间的竞争，增加资源利用率，并提高程序运行的性能。</p>
-<p><strong>2.线程创建开销解决</strong></p>
-<p>多线程环境下，每当需要执行一个任务时，创建与销毁线程都需要额外的系统资源。线程池通过预先创建一定数量的线程，可以减少这种资源消耗。</p>
-<p><strong>3.线程竞争问题解决</strong></p>
-<p>过多的线程可能导致线程竞争，影响系统性能。线程池通过维护一个可控制的并发数量，有助于减轻线程之间的竞争。例如，当CPU密集型任务和I/O密集型任务共存时，可以通过调整线程池资源，实现更高效的负载平衡。</p>
-<h4 id="1-线程池初始化"><a href="#1-线程池初始化" class="headerlink" title="1.线程池初始化"></a>1.线程池初始化</h4><h5 id="线程创建"><a href="#线程创建" class="headerlink" title="线程创建"></a>线程创建</h5><p>维护一个指定大小 <code>_thread_num</code> 的线程id的数组 <code>_threads</code>，存储所有创建的线程。</p>
-<p>循环调用 <code>pthread_create</code> 和 <code>pthread_detach</code> 库函数，创建线程。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
-           		   		void *(*start_routine) (void *), void *arg);</code></pre>
-
-<ul>
-<li><strong>thread</strong>：传递存储线程（pthread_t变量）的地址</li>
-<li><strong>attr</strong>：手动设置新建线程的属性，如线程的调用策略、线程所能使用的栈内存的大小等。默认为NULL</li>
-<li><strong>start_routine</strong>：以函数指针的方式指明新建线程需要执行的函数，该函数的参数最多有 1 个（可以省略不写），形参和返回值的类型都必须为 void* 类型。<em>如果该函数有返回值，则线程执行完函数后，函数的返回值可以由 pthread_join() 函数接收。</em></li>
-<li><strong>arg</strong>：指定传递给 <code>start_routine</code> 函数的实参，当不需要传递任何数据时，将 arg 赋值为 NULL 即可。</li>
-<li><strong>返回值</strong>：成功返回0。失败返回非0值，常见有：<ol>
-<li><strong>EINVAL</strong> == 22：传递给 pthread_create() 函数的 attr 参数无效。</li>
-<li><strong>EAGAIN</strong> == 11：系统资源不足，无法提供创建线程所需的资源。</li>
-</ol>
-</li>
-</ul>
-<p>定义一个静态函数作为第三个参数传入，用于<strong>运行工作线程</strong>（从任务队列中取任务并执行）。为了使得函数能正常访问其他非静态成员变量，将<code>this</code>指针（<strong>本实例</strong>）作为第四个参数传入，实现在静态函数中调用实例的方法（具体的工作线程运行实现）。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_detach (pthread_t __th)		&#x2F;&#x2F; 返回值：0 - 成功；非0 - 失败 </code></pre>
-
-<p>pthread有两种状态：<strong>joinable</strong>状态和<strong>unjoinable</strong>状态。</p>
-<ul>
-<li><strong>joinable</strong>状态：当线程函数自己返回退出时或pthread_exit时都不会释放线程所占用堆栈和线程描述符。只有当你调用了<code>pthread_join</code>之后这些资源才会被释放。默认为此状态。</li>
-<li><strong>unjoinable</strong>状态：这些资源在线程函数退出时或pthread_exit时<strong>自动会被释放</strong>。</li>
-</ul>
-<p>unjoinable属性可以在pthread_create前指定，或在线程创建后在线程中pthread_detach。</p>
-<h5 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h5><h5 id="任务队列初始化"><a href="#任务队列初始化" class="headerlink" title="任务队列初始化"></a>任务队列初始化</h5><ol>
-<li>维护一个<strong>任务队列</strong> <code>list&lt;T*&gt;</code> 管理待执行任务；</li>
-<li>维护一个<strong>互斥锁</strong>（自实现），保护请求队列；</li>
-<li>维护一个<strong>条件变量</strong>（自实现），告诉线程池是否有任务需要处理。</li>
-</ol>
-<h4 id="2-任务调度"><a href="#2-任务调度" class="headerlink" title="2.任务调度"></a>2.任务调度</h4><p><strong>任务队列管理</strong></p>
-<p>线程池需要提供添加任务的接口，将接收到的任务加入任务队列。在添加任务的过程中，需使用互斥量锁住任务队列以实现同步访问。任务添加成功后，通知等待中的线程有新任务可以执行。</p>
 <h3 id="登录和注册"><a href="#登录和注册" class="headerlink" title="登录和注册"></a>登录和注册</h3><p>页面跳转逻辑如下：</p>
 <p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/640.jpeg" alt="img"></p>
 <p>首先需要从数据库中<strong>获取所有的用户名和密码</strong>（用户密码加密传输参考<a href="https://link.zhihu.com/?target=https://blog.csdn.net/bjspo/article/details/90059325">用户登录实践</a>），这些用户名和密码以某种数据结构（如哈希表）保存。当浏览器请求到达时，根据其请求访问，<strong>返回对应的界面html或是错误提示</strong>。</p>
@@ -492,4 +691,4 @@ set global validate_password.length&#x3D;1;	# 最低好像是4，不能</code></
 <p><strong>原因：</strong>没有安装 <strong>g++</strong> 编译器</p>
 <p><strong>解决：</strong><code>sudo apt-get install build-essential</code></p>
 <p><strong>拓展：</strong> <strong>build-essential</strong> 是 Ubuntu 软件源默认包含的一个软件包组，它包含了 GNU 编辑器集合，GNU 调试器，和其他编译软件所必需的开发库和工具，也包括 <code>gcc</code> ，<code>g++</code> 和 <code>make</code>。</p>
-</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CPP/">CPP</a><a class="post-meta__tags" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a></div><div class="post_share"><div class="social-share" data-image="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/"><img class="next-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LeetCode--2023Q3</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q2/" title="LeetCode--2023Q2"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="title">LeetCode--2023Q2</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/opencv%E5%9B%BE%E5%83%8F%E7%AE%97%E6%B3%95/" title="opencv图像算法"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-23</div><div class="title">opencv图像算法</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-01</div><div class="title">LeetCode--2023Q3</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Szh</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shen962806862"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎光临 我的快乐</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WebServer%E9%A1%B9%E7%9B%AE"><span class="toc-text">WebServer项目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86"><span class="toc-text">理论知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL"><span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEMySQL"><span class="toc-text">配置MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="toc-text">设置密码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E7%8E%B0"><span class="toc-text">项目实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84"><span class="toc-text">代码架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%A1%86%E6%9E%B6"><span class="toc-text">项目框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD"><span class="toc-text">实现功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Epoll"><span class="toc-text">Epoll</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#I-O%E5%A4%8D%E7%94%A8"><span class="toc-text">I&#x2F;O复用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#select"><span class="toc-text">select</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#poll"><span class="toc-text">poll</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ET%E5%92%8CLT"><span class="toc-text">ET和LT</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP"><span class="toc-text">HTTP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="toc-text">请求报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%8A%A5%E6%96%87"><span class="toc-text">响应报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95"><span class="toc-text">请求方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-text">状态码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-text">HTTP处理流程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%A4%84%E7%90%86"><span class="toc-text">连接处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%96%A5%E9%94%81"><span class="toc-text">互斥锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">创建与初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E9%94%81"><span class="toc-text">上锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%94%81"><span class="toc-text">解锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%80%E6%AF%81"><span class="toc-text">销毁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#std-mutex"><span class="toc-text">std::mutex</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8A%BF"><span class="toc-text">优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">1.线程池初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="toc-text">线程创建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E9%98%9F%E5%88%97%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">任务队列初始化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6"><span class="toc-text">2.任务调度</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E5%92%8C%E6%B3%A8%E5%86%8C"><span class="toc-text">登录和注册</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-text">有限状态机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Epoll-1"><span class="toc-text">Epoll</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debug"><span class="toc-text">Debug</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-1"><span class="toc-text">MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="toc-text">关于用户密码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-text">编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Emysql-h"><span class="toc-text">关于mysql.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Eg"><span class="toc-text">关于g++</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WebServer项目笔记"/></a><div class="content"><a class="title" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记">WebServer项目笔记</a><time datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode--2023Q3"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3">LeetCode--2023Q3</a><time datetime="2023-07-01T02:01:40.000Z" title="发表于 2023-07-01 10:01:40">2023-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查漏补缺CPP"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP">查漏补缺CPP</a><time datetime="2023-06-20T08:08:36.000Z" title="发表于 2023-06-20 16:08:36">2023-06-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Szh</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CPP/">CPP</a><a class="post-meta__tags" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a></div><div class="post_share"><div class="social-share" data-image="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/"><img class="next-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LeetCode--2023Q3</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q2/" title="LeetCode--2023Q2"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="title">LeetCode--2023Q2</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/opencv%E5%9B%BE%E5%83%8F%E7%AE%97%E6%B3%95/" title="opencv图像算法"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-23</div><div class="title">opencv图像算法</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-01</div><div class="title">LeetCode--2023Q3</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Szh</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shen962806862"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎光临 我的快乐</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WebServer%E9%A1%B9%E7%9B%AE"><span class="toc-text">WebServer项目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86"><span class="toc-text">理论知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%96%A5%E9%94%81"><span class="toc-text">互斥锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">创建与初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E9%94%81"><span class="toc-text">上锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%94%81"><span class="toc-text">解锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%80%E6%AF%81"><span class="toc-text">销毁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#std-mutex"><span class="toc-text">std::mutex</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-text">信号量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%81%E8%A3%85"><span class="toc-text">封装</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="toc-text">条件变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0-1"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B91"><span class="toc-text">注意事项1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B92"><span class="toc-text">注意事项2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-text">生产者-消费者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98"><span class="toc-text">常见同步问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL"><span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEMySQL"><span class="toc-text">配置MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="toc-text">设置密码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E7%8E%B0"><span class="toc-text">项目实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84"><span class="toc-text">代码架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%A1%86%E6%9E%B6"><span class="toc-text">项目框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD"><span class="toc-text">实现功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8A%BF"><span class="toc-text">优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">1.线程池初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="toc-text">线程创建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E9%98%9F%E5%88%97%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">任务队列初始化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6"><span class="toc-text">2.任务调度</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%8F%96%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C"><span class="toc-text">线程取任务执行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E8%B7%9F%E8%B8%AA"><span class="toc-text">任务状态跟踪</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E7%BB%88%E6%AD%A2"><span class="toc-text">3.线程池的终止</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%BB%88%E6%AD%A2%E7%8A%B6%E6%80%81"><span class="toc-text">标记线程池终止状态</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E7%BA%BF%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%AE%8C%E6%88%90"><span class="toc-text">等待线程执行完成</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8A%A8%E6%80%81%E8%B0%83%E6%95%B4%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="toc-text">4.动态调整线程数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="toc-text">增加线程数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E7%BA%BF%E7%A8%8B%E6%95%B0-TODO"><span class="toc-text">减少线程数 TODO</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5-TODO"><span class="toc-text">5.自定义任务调度策略 TODO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E7%9B%91%E6%8E%A7%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%8A%B6%E6%80%81"><span class="toc-text">6.监控线程池状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Epoll"><span class="toc-text">Epoll</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#I-O%E5%A4%8D%E7%94%A8"><span class="toc-text">I&#x2F;O复用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#select"><span class="toc-text">select</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#poll"><span class="toc-text">poll</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ET%E5%92%8CLT"><span class="toc-text">ET和LT</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP"><span class="toc-text">HTTP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="toc-text">请求报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%8A%A5%E6%96%87"><span class="toc-text">响应报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95"><span class="toc-text">请求方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-text">状态码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-text">HTTP处理流程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%A4%84%E7%90%86"><span class="toc-text">连接处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E5%92%8C%E6%B3%A8%E5%86%8C"><span class="toc-text">登录和注册</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-text">有限状态机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Epoll-1"><span class="toc-text">Epoll</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debug"><span class="toc-text">Debug</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-1"><span class="toc-text">MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="toc-text">关于用户密码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-text">编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Emysql-h"><span class="toc-text">关于mysql.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Eg"><span class="toc-text">关于g++</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WebServer项目笔记"/></a><div class="content"><a class="title" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记">WebServer项目笔记</a><time datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode--2023Q3"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3">LeetCode--2023Q3</a><time datetime="2023-07-01T02:01:40.000Z" title="发表于 2023-07-01 10:01:40">2023-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查漏补缺CPP"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP">查漏补缺CPP</a><time datetime="2023-06-20T08:08:36.000Z" title="发表于 2023-06-20 16:08:36">2023-06-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Szh</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
