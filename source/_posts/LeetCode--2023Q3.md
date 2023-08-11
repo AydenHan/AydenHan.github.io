@@ -4347,11 +4347,151 @@ public:
 
 
 
+## 2023.8.8
+
+### 1749.任意子数组和的绝对值的最大值
+
+**解法**
+
+基本思路：**动态规划**
+
+一眼动规。考虑到子数组是连续的，那么dp应该是一维的：dp[i] 表示**以 nums[i] 结尾的子数组的和的最大值**。
+
+题中要求的是绝对值的最大值，我们可以再定一个dp表示 **子数组和的最小值** 。最后取 **负的最小值**和**最大值**之间的最大值即可。优化为常数级。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int maxAbsoluteSum(vector<int>& nums) {
+        int min_dp = 0, max_dp = 0, res = 0;
+        for(int n : nums) {
+            max_dp = max(max_dp, 0) + n;
+            min_dp = min(min_dp, 0) + n;
+            res = max(res, max(max_dp, -min_dp));
+        }
+        return res;
+    }
+};
+```
 
 
 
+## 2023.8.9
+
+### 1281.整数的各位积和之差
+
+**解法**
+
+基本思路：**数学计算**
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int subtractProductAndSum(int n) {
+        int pro = 1, sum = 0;
+        while(n) {
+            int digit = n % 10;
+            pro *= digit;
+            sum += digit;
+            n /= 10;
+        }
+        return pro - sum;
+    }
+};
+```
 
 
 
+## 2023.8.10
 
+### 1289.下降路径最小和 Ⅱ
+
+**解法**
+
+基本思路：**动态规划**
+
+一眼动态规划。dp[i] [j] 定义为到达（i，j）处的最小和，显然是由**上一层除同一列外的所有最小和中的最小值推出来的**。因此双循环中还需要再加一个循环遍历上一层dp中的最小值。最后在最后一层dp中遍历出最小值即可。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        if(n == 1)  return grid[0][0];
+        vector<vector<int >> dp(n+1, vector<int>(n, 0));
+        for(int i = 1; i <= n; ++i) {
+            for(int j = 0; j < n; ++j) {
+                int minLast = INT_MAX;
+                for(int k = 0; k < n; ++k)  
+                    if(k != j)  
+                        minLast = min(minLast, dp[i-1][k]);
+                dp[i][j] = minLast + grid[i-1][j];
+            }
+        }
+        int res = INT_MAX;
+        for(int n : dp[n])  res = min(res, n);
+        return res;
+    }
+};
+```
+
+**空间优化**
+
+可以发现，递推操作就是找到上一层的最小值，然后加上当前节点的值。那么可以维护**上一层的最小值**来替代二维数组dp。但当遍历到跟上层最小值同一列时，是不能直接相加的。可以维护**上一层的第二小值**，用于这种情况的计算，同时维护**上一层最小值所在的列**用于判断。计算完成后更新这三个值为本层的即可。
+
+```cpp
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int minLast = 0, min2Last = 0, minIdx = -1;
+        for(vector<int>& vec : grid) {
+            int tml = INT_MAX, tm2l = INT_MAX, tmi = -1;
+            for(int i = 0; i < n; ++i) {
+                int sum = (i == minIdx ? min2Last : minLast) + vec[i];
+                if(sum < tml) {
+                    tm2l = tml;
+                    tml = sum;
+                    tmi = i;
+                } 
+                else if(sum < tm2l) tm2l = sum;
+            }
+            minLast = tml; min2Last = tm2l; minIdx = tmi;
+        }
+        return minLast;
+    }
+};
+```
+
+
+
+## 2023.8.11
+
+### 1572.矩阵对角线元素的和
+
+**解法**
+
+基本思路：**普通遍历**
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int diagonalSum(vector<vector<int>>& mat) {
+        int res = 0, row = 0;
+        for(int i = 0, j = mat.size()-1; j >= 0; ++i, --j) {
+            if(i != j)	res += mat[row][j];
+            res += mat[row++][i];
+        } 
+        return res;
+    }
+};
+```
 
