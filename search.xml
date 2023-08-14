@@ -4,31 +4,6 @@
   
     
     <entry>
-      <title>WebServer项目笔记</title>
-      <link href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/"/>
-      <url>/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/</url>
-      
-      
-      <categories>
-          
-          <category> 应用 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> CPP </tag>
-            
-            <tag> 服务器 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>LeetCode--2023Q3</title>
       <link href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/"/>
       <url>/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/</url>
@@ -43,9 +18,9 @@
       
         <tags>
             
-            <tag> CPP </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> CPP </tag>
             
         </tags>
       
@@ -91,9 +66,9 @@
       
         <tags>
             
-            <tag> CPP </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> CPP </tag>
             
         </tags>
       
@@ -116,9 +91,9 @@
       
         <tags>
             
-            <tag> CPP </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> CPP </tag>
             
         </tags>
       
@@ -141,9 +116,9 @@
       
         <tags>
             
-            <tag> CPP </tag>
-            
             <tag> 算法 </tag>
+            
+            <tag> CPP </tag>
             
         </tags>
       
@@ -445,9 +420,9 @@
             
             <tag> PyQt5 </tag>
             
-            <tag> 小软件 </tag>
-            
             <tag> 加密与编码 </tag>
+            
+            <tag> 小软件 </tag>
             
         </tags>
       
