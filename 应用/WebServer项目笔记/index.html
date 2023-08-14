@@ -5,14 +5,14 @@
 <meta property="og:site_name" content="小涵的米奇妙妙屋">
 <meta property="og:description" content="WebServer项目理论知识互斥锁在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。 在多线程中使用互斥锁（mutex）保护共享资源。互斥锁是一种简单的加锁的方法来控制对共享资源的访问，">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg">
+<meta property="og:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg">
 <meta property="article:published_time" content="2023-07-11T15:04:11.000Z">
-<meta property="article:modified_time" content="2023-08-11T16:33:12.529Z">
+<meta property="article:modified_time" content="2023-08-14T16:07:13.058Z">
 <meta property="article:author" content="Szh">
 <meta property="article:tag" content="CPP">
 <meta property="article:tag" content="服务器">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg"><link rel="shortcut icon" href="/img/Sign.ico"><link rel="canonical" href="https://www.hanhan0223.cn/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+<meta name="twitter:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg"><link rel="shortcut icon" href="/img/Sign.ico"><link rel="canonical" href="https://www.hanhan0223.cn/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
   hm.src = "https://hm.baidu.com/hm.js?a8ed5b37dd0aaae924c52eb382109c5d";
@@ -61,7 +61,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2023-08-12 00:33:12'
+  postUpdate: '2023-08-15 00:07:13'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -150,7 +150,7 @@
       }
     }
     detectApple()
-    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小涵的米奇妙妙屋</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">WebServer项目笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-11T16:33:12.529Z" title="更新于 2023-08-12 00:33:12">2023-08-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BA%94%E7%94%A8/">应用</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">8.1k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="WebServer项目笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="WebServer项目"><a href="#WebServer项目" class="headerlink" title="WebServer项目"></a>WebServer项目</h1><h2 id="理论知识"><a href="#理论知识" class="headerlink" title="理论知识"></a>理论知识</h2><h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，<em>同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。</em></p>
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小涵的米奇妙妙屋</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">WebServer项目笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-14T16:07:13.058Z" title="更新于 2023-08-15 00:07:13">2023-08-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BA%94%E7%94%A8/">应用</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">12.8k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="WebServer项目笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="WebServer项目"><a href="#WebServer项目" class="headerlink" title="WebServer项目"></a>WebServer项目</h1><h2 id="理论知识"><a href="#理论知识" class="headerlink" title="理论知识"></a>理论知识</h2><h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>在多任务操作系统中，同时运行的多个任务可能都需要使用同一种资源。例如，<em>同一个文件，可能一个线程会对其进行写操作，而另一个线程需要对这个文件进行读操作。如果写线程还没有写结束，而此时读线程开始了，或者读线程还没有读结束而写线程开始了，那么最终的结果显然会是混乱的。</em></p>
 <p>在多线程中使用<strong>互斥锁</strong>（<strong>mutex</strong>）保护共享资源。互斥锁是一种简单的加锁的方法来控制对共享资源的访问，互斥锁只有两种状态，即<strong>上锁</strong>（lock）和<strong>解锁</strong>（unlock）。</p>
 <h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ol>
 <li><p><strong>原子性</strong>：把一个互斥量锁定为一个原子操作，这意味着如果一个线程锁定了一个互斥量，没有其他线程在同一时间可以成功锁定这个互斥量；</p>
@@ -167,11 +167,11 @@ pthread_mutex_t _mutex;</code></pre>
 
 <p><strong>初始化</strong></p>
 <p>有两种方式，第一种是调用函数。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_init(&amp;_mutex, NULL);	&#x2F;&#x2F; 第二个参数为 NULL，则互斥锁的属性会设置为默认属性</code></pre>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">pthread_mutex_init(&amp;_mutex，NULL);	&#x2F;&#x2F; 第二个参数为 NULL，则互斥锁的属性会设置为默认属性</code></pre>
 
 <p>第二种是使用宏定义初始化赋值，因为这个互斥锁变量本质就是个联合体。</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp"># define PTHREAD_MUTEX_INITIALIZER \
-   &#123; &#123; 0, 0, 0, 0, 0, 0, &#123; 0, 0 &#125; &#125; &#125;	&#x2F;&#x2F; 在 pthread.h 中，对该宏的定义
+   &#123; &#123; 0，0，0，0，0，0，&#123; 0，0 &#125; &#125; &#125;	&#x2F;&#x2F; 在 pthread.h 中，对该宏的定义
 pthread_mutex_t _mutex &#x3D; PTHREAD_MUTEX_INITIALIZER;</code></pre>
 
 <h4 id="上锁"><a href="#上锁" class="headerlink" title="上锁"></a>上锁</h4><p><strong>阻塞调用</strong></p>
@@ -187,14 +187,14 @@ pthread_mutex_t _mutex &#x3D; PTHREAD_MUTEX_INITIALIZER;</code></pre>
 <p><strong>超时调用</strong></p>
 <p>如果不想不断的调用 pthread_mutex_trylock() 来测试互斥锁是否可用， 而是想阻塞调用，但是增加一个超时时间，可以使用 <code>pthread_mutex_timedlock()</code> 来实现：</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct timespec &#123;
-    __time_t tv_sec;        &#x2F;* Seconds.  *&#x2F;
-    long int tv_nsec;       &#x2F;* Nanoseconds.  *&#x2F;
+    __time_t tv_sec;        &#x2F;* Seconds。 *&#x2F;
+    long int tv_nsec;       &#x2F;* Nanoseconds。 *&#x2F;
 &#125;;
 struct timespec abs_timeout;
 abs_timeout.tv_sec &#x3D; time(NULL) + 1;
 abs_timeout.tv_nsec &#x3D; 0;
 
-if(0 !&#x3D; pthread_mutex_timedlock(&amp;_mutex, &amp;abs_timeout)) &#123;
+if(0 !&#x3D; pthread_mutex_timedlock(&amp;_mutex，&amp;abs_timeout)) &#123;
     &#x2F;&#x2F;The mutex could not be locked before the specified timeout expired.
 &#125;</code></pre>
 
@@ -220,7 +220,7 @@ public:
 
 
 <h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3><h4 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h4><p>除了初始化之外，其余的函数使用基本类同上述互斥锁：</p>
-<p><strong>初始化</strong>：<code>int sem_init (sem_t *sem, int pshared, unsigned int value)</code></p>
+<p><strong>初始化</strong>：<code>int sem_init (sem_t *sem，int pshared，unsigned int value)</code></p>
 <p><strong>sem</strong>为指向信号量结构的一个指针；<strong>pshared</strong>不为０时此信号量在进程间共享，否则只能为当前进程的所有线程共享；<strong>value</strong>给出了信号量的初始值。</p>
 <p><strong>销毁</strong>： <code>int sem_destroy(sem_t *sem)</code></p>
 <p><strong>信号增量：</strong><code>int sem_post( sem_t *sem )</code></p>
@@ -228,13 +228,13 @@ public:
 <p><strong>信号等待：</strong>同互斥锁，含有阻塞、非阻塞、定时阻塞三个版本</p>
 <pre class="language-cpp" data-language="cpp"><code class="language-cpp">int sem_wait( sem_t *sem );
 int sem_trywait( sem_t *sem );
-int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);</code></pre>
+int sem_timedwait(sem_t *sem，const struct timespec *abs_timeout);</code></pre>
 
 <p>以上函数<strong>调用成功均会返回0</strong>。</p>
 <h4 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">class SemS &#123;
 public:
-    SemS() &#123; sem_init(&amp;_sem, 0, 0); &#125;
-    SemS(int val) &#123; sem_init(&amp;_sem, 0, val); &#125;
+    SemS() &#123; sem_init(&amp;_sem，0，0); &#125;
+    SemS(int val) &#123; sem_init(&amp;_sem，0，val); &#125;
     ~SemS() &#123; sem_destroy(&amp;_sem); &#125;
     bool wait() &#123; sem_wait(&amp;_sem) &#x3D;&#x3D; 0; &#125;
     bool post() &#123; sem_post(&amp;_sem) &#x3D;&#x3D; 0; &#125;
@@ -269,7 +269,7 @@ int pthread_cond_broadcast(pthread_cond_t* cond);</code></pre>
 <p>这两个函数用于通知线程条件变量已经满足条件（变为真）。调用这两个函数时，是在给线程或者条件发信号。</p>
 <h4 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">lock(&amp;mutex);
 while(value&lt;&#x3D;0) 	&#x2F;&#x2F; 需要value &gt; 0 所以 value &lt;&#x3D; 0 就条件不满足
-    pthread_cond_wait(&amp;cond, &amp;mutex);
+    pthread_cond_wait(&amp;cond，&amp;mutex);
 unlock(&amp;mutex);</code></pre>
 
 <p>这里在等待时用的while，是为了防止<strong>虚假唤醒</strong>。signal原本意图是唤醒一个等待的线程，但是在多核处理器下，可能会激活多个等待的线程，导致继续执行后资源不足。因此用while在wait返回后再做一次判断。</p>
@@ -340,6 +340,284 @@ unlock(&amp;mutex);</code></pre>
 <li>「哲学家进餐问题」对于互斥访问有限的竞争问题（如 I/O 设备）一类的建模过程十分有用。</li>
 <li>「读者-写者」，它为数据库访问建立了一个模型。</li>
 </ul>
+<h3 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h3><h4 id="socket"><a href="#socket" class="headerlink" title="socket()"></a>socket()</h4><p>该函数建立一个协议族为domain、协议类型为type、协议编号为protocol的套接字文件描述符。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include&lt;sys&#x2F;socket.h&gt;
+int socket(int domain，int type，int protocol);</code></pre>
+
+<p><strong>domain</strong></p>
+<p>最常用的参数为 <code>AF_INET / PF_INET</code> 均表示<strong>IPv4 Internet协议</strong>。其中 AF = Address Family，PF = Protocol Family。在windows系统中两者完全一致，在Linux系统中，也基本一致（对于BSD,是<strong>AF</strong>,对于POSIX是<strong>PF</strong>）</p>
+<p>所以在实际使用时，根据命名释义，在初始化时选择 <code>PF_INET</code>，后面调用设置地址的函数时选用 <code>AF_INET</code>。</p>
+<p><strong>type</strong></p>
+<p>常用的有两种：</p>
+<ul>
+<li><strong>SOCK_STREAM</strong>：TCP连接，提供序列化的、可靠的、双向连接的字节流。支持带外数据传输。</li>
+<li><strong>SOCK_DGRAM：</strong>支持UDP连接（无连接状态的消息）</li>
+</ul>
+<p><strong>protocol</strong></p>
+<p>用于制定某个协议的特定类型，即type类型中的某个类型。通常某协议中只有一种特定类型，这样protocol参数仅能设置为0；但是有些协议有多种特定的类型，就需要设置这个参数来选择特定的类型。<strong>TCP设置为0</strong>。</p>
+<p><strong>返回值</strong></p>
+<p>成功，会返回一个标识这个套接字的文件描述符；失败的时候返回-1。 </p>
+<h4 id="sockaddr-in"><a href="#sockaddr-in" class="headerlink" title="sockaddr_in"></a>sockaddr_in</h4><p><strong>sockaddr</strong>在头文件<code>#include &lt;sys/socket.h&gt;</code>中定义，sockaddr的缺陷是：sa_data把目标地址和端口信息混在一起了，如下：</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct sockaddr &#123;  
+    sa_family_t sin_family;	&#x2F;&#x2F;地址族
+    char sa_data[14]; 		&#x2F;&#x2F;14字节，包含套接字中的目标地址和端口信息               
+&#125;; </code></pre>
+
+<p><strong>sockaddr_in</strong>在头文件<code>#include&lt;netinet/in.h&gt;或#include &lt;arpa/inet.h&gt;</code>中定义，该结构体解决了sockaddr的缺陷，把port和addr 分开储存在两个变量中，如下：</p>
+<p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/20161125160930613.png" alt="这里写图片描述"></p>
+<p><code>sockaddr_in</code> 是internet环境下套接字的地址形式。所以在网络编程中我们会对sockaddr_in结构体进行操作，使用sockaddr_in来建立所需的信息，最后使用类型转化就可以了。<strong>sockaddr_in用于socket定义和赋值；sockaddr用于函数参数。</strong></p>
+<p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/20161124222509661.png" alt="这里写图片描述"></p>
+<p>在给地址和端口赋值时注意要把值转为NBO（<strong>网络字节序</strong>），这样在发送网络数据时才能接收到正确值。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct sockaddr_in address;
+bzero(&amp;address，sizeof(address));
+address.sin_family &#x3D; AF_INET;
+address.sin_addr.s_addr &#x3D; htonl(INADDR_ANY);
+address.sin_port &#x3D; htons(port);</code></pre>
+
+
+
+<h4 id="setsockopt"><a href="#setsockopt" class="headerlink" title="setsockopt()"></a>setsockopt()</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cthon/p/9270778.html">setsockopt函数功能及参数详解</a></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int reuse_addr_ctl &#x3D; 1;
+setsockopt(listenfd，SOL_SOCKET，SO_REUSEADDR，&amp;reuse_addr_ctl，sizeof(reuse_addr_ctl));</code></pre>
+
+<p>在本项目中，由于<strong>大规模并发的TCP连接</strong>，就需要控制socket的地址复用。</p>
+<ol>
+<li><p><strong>SO_REUSEADDR</strong>允许启动一个监听服务器并捆绑其众所周知端口，即使以前建立的将此端口用做他们的本地端口的连接仍存在。这通常是重启监听服务器时出现，若不设置此选项，则bind时将出错。</p>
+</li>
+<li><p>允许在同一端口上启动同一服务器的多个实例，只要每个实例捆绑一个不同的本地IP地址即可。对于TCP，我们根本不可能启动捆绑相同IP地址和相同端口号的多个服务器。</p>
+</li>
+<li><p>允许单个进程捆绑同一端口到多个套接口上，只要每个捆绑指定不同的本地IP地址。一般不用于TCP服务器。</p>
+</li>
+<li><p>允许完全重复的捆绑：当一个IP地址和端口绑定到某个套接口上时，还允许此IP地址和端口捆绑到另一个套接口上。一般来说，这个特性仅在支持多播的系统上才有，而且只对UDP套接口而言（TCP不支持多播）。</p>
+</li>
+</ol>
+<p>这个套接字选项通知内核，如果端口忙，但TCP状态位于 <code>TIME_WAIT</code> （端口释放后可能出现），可以重用端口。如果端口忙，而TCP状态位于其他状态，重用端口时依旧得到一个错误信息，指明”地址已经使用中”。</p>
+<p><strong>端口复用最常用的用途应该是防止服务器重启时之前绑定的端口还未释放或者程序突然退出而系统没有释放端口。这种情况下如果设定了端口复用，则新启动的服务器进程可以直接绑定端口。如果没有设定端口复用，绑定会失败。</strong></p>
+<h4 id="bind"><a href="#bind" class="headerlink" title="bind()"></a>bind()</h4><p>服务端用于把用于通信的地址和端口绑定到 socket上。</p>
+<p><code>bind(listenfd，(sockaddr*)&amp;address，sizeof(address));</code></p>
+<h4 id="listen"><a href="#listen" class="headerlink" title="listen()"></a>listen()</h4><p>侦听功能将套接字置于<strong>侦听传入连接</strong>的状态。<code>int listen (int __fd，int __n);</code></p>
+<p>第二个参数为相应socket<strong>可以排队的最大连接个数</strong>。(<em>例：有100个用户链接请求，但是系统一次只能处理20个，剩下的80个不能不理，所以系统创建队列记录这些暂时不能处理、一会儿处理的连接请求，依先后顺序处理</em>)</p>
+<p>socket()函数创建的socket默认是一个主动类型的，listen函数将socket变为<strong>被动</strong>类型的，<strong>等待客户的连接请求</strong>。</p>
+<h4 id="accept"><a href="#accept" class="headerlink" title="accept()"></a>accept()</h4><p>TCP服务器端依次调用socket()、bind()、listen()之后，就会监听指定的socket地址了。TCP客户端依次调用socket()、connect()之后向TCP服务器发送一个连接请求。TCP服务器监听到这个请求之后，就会调用accept()函数取接收请求，此时连接建立成功。之后就可以开始网络I/O操作了，即类同于普通文件的读写I/O操作。</p>
+<p><code>int accept(int sockfd，struct sockaddr *addr，socklen_t *addrlen);</code></p>
+<ul>
+<li>第一个参数为服务器的socket描述字；</li>
+<li>第二个参数为指向struct sockaddr *的指针，用于返回客户端的协议地址；</li>
+<li>第三个参数为客户端协议地址的长度。</li>
+<li>如果accpet成功，那么其返回值是由内核自动生成的一个全新的描述字，代表与客户的TCP连接。若出现错误，返回值小于0。</li>
+</ul>
+<p>一个服务器通常通常仅仅只创建一个监听socket描述字，它在该服务器的生命周期内一直存在。内核为每个由服务器进程接受的客户连接创建了一个已连接socket描述字，当服务器完成了对某个客户的服务，相应的已连接socket描述字就被关闭。</p>
+<h4 id="socketpair"><a href="#socketpair" class="headerlink" title="socketpair()"></a>socketpair()</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;sys&#x2F;socket.h&gt;
+int socketpair(int d，int type，int protocol，int sv[2])；</code></pre>
+
+<p>用于<strong>创建一对无名的、相互连接的套接字</strong>（匿名管道）。 如果函数成功，则返回0，创建好的套接字分别是sv[0]和sv[1]；否则返回-1，错误码保存于errno中。</p>
+<ul>
+<li><strong>domain</strong>：表示协议族，在Linux下只能为PF_LOCAL或PF_UNIX（ <code>#define PF_UNIX  PF_LOCAL</code>）（自从Linux 2.6.27后也支持SOCK_NONBLOCK和SOCK_CLOEXEC）。</li>
+<li><strong>type</strong>：表示协议，可以是<code>SOCK_STREAM</code>或者<code>SOCK_DGRAM</code>。SOCK_STREAM是基于TCP的，而SOCK_DGRAM是基于UDP的</li>
+<li><strong>protocol</strong>：表示类型，只能为0</li>
+<li>**sv[2]**：套节字柄对，该两个句柄作用相同，均能进行读写双向操作</li>
+</ul>
+<p><strong>基本用法：</strong> </p>
+<ol>
+<li>这对套接字可以用于<strong>全双工通信</strong>，每一个套接字既可以读也可以写。例如，可以往sv[0]中写，从sv[1]中读；或者从sv[1]中写，从sv[0]中读； </li>
+<li>如果往一个套接字(如sv[0])中写入后，再从该套接字读时会阻塞，只能在另一个套接字中(sv[1])上读成功； </li>
+<li>读、写操作可以位于同一个进程，也可以分别位于不同的进程，如父子进程。如果是父子进程时，一般会功能分离，一个进程用来读，一个用来写。因为文件描述副sv[0]和sv[1]是进程共享的，所以读的进程要关闭写描述符，反之，写的进程关闭读描述符。 </li>
+</ol>
+<p><strong>注意：</strong></p>
+<ol>
+<li>该函数只能用于UNIX域（LINUX）下。</li>
+<li>只能用于有亲缘关系的进程（或线程）间通信。</li>
+<li>所创建的套节字对作用是一样的，均能够可读可写（而管道PIPE只能进行单向读或写）。</li>
+<li>在读的时候，管道内必须有内容，否则将会阻塞；简而言之，该函数是阻塞的。</li>
+</ol>
+<h3 id="Epoll"><a href="#Epoll" class="headerlink" title="Epoll"></a>Epoll</h3><h4 id="I-O复用"><a href="#I-O复用" class="headerlink" title="I/O复用"></a>I/O复用</h4><p><strong>I/O是指网络中的I/O（即输入输出），多路是指多个TCP连接，复用是指一个或少量线程被重复使用。</strong>连起来解就是，<strong>用少量的线程来处理网络上大量的TCP连接中的I/O</strong>。常见的I/O复用有以下三种：<strong>select</strong>、<strong>poll</strong>、<strong>epoll</strong>。</p>
+<h5 id="select"><a href="#select" class="headerlink" title="select"></a>select</h5><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;sys&#x2F;select.h&gt;
+#include &lt;sys&#x2F;time.h&gt;
+int select(int maxfdpl,fd_set *readset,fd_set *writeset,fd_set *exceptset,const struct timeval *timeout);</code></pre>
+
+<p>函数第一个参数是<strong>被监听的描述符的最大值+1</strong>，select底层的数据结构是位数组，因此必须知道被监听的最大描述符才可以确定描述符的范围，否则就需要将整个数组遍历一遍。</p>
+<p>函数第二、三、四个参数是被监听的事件，分别是<strong>读、写、异常</strong>事件。</p>
+<p>函数的最后一个参数是<strong>监听的时间</strong>（NULL、0、正值）</p>
+<p><strong>selct缺点：</strong></p>
+<ol>
+<li>从函数参数列表可见，select只能监听读、写、异常这三个事件</li>
+<li>selct监听的描述符是有最大值限制的，在Linux内核中是1024</li>
+<li>select的实现是每次将待检测的描述符放在位数组中，全部传给内核进行监听，内核监听之后会返回一个就绪描述符个数，并且修改了监听的事件值，以表示该事件就绪。内核再将修改后的数组传给用户空间。用户空间只能通过遍历所有描述符来处理就绪的描述符，之后再将描述符传给内核继续监听……很明显，这样在监听的描述符少的情况下并不影响效率，但是监听的描述符数量特别大的情况下，每次又只有少数描述符上有事件就绪，大量的换入换出会使得效率十分低下。</li>
+</ol>
+<h5 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h5><pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct pollfd&#123;  
+  int fd;
+  short events;
+  short revents;
+&#125;;
+int poll(struct pollfd fdarray[]，unsigned long nfds，int timeout);</code></pre>
+
+<p>第一个参数是个结构体数组，结构体中声明了被监听描述符和相应的事件，每个被监听的描述符对应一个结构体，数组表示可以监听多个描述符。</p>
+<p>第二个参数是被监听描述符的个数。</p>
+<p>第三个参数同select，只监听时间。</p>
+<p><strong>poll缺点：</strong></p>
+<p><strong>从函数参数来看，poll解决了select前两个问题，监听的描述符数量没有严格限制，监听的事件不止读、写、异常，但是第三个缺点依然存在，存在大量的换入换出。</strong></p>
+<h4 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;sys&#x2F;epoll.h&gt; 
+int epoll_create(int size);</code></pre>
+
+<p>创建一个epoll实例。返回值为epoll实例的文件描述符，参数size标识该实例监听的最大数目。</p>
+<ul>
+<li>当创建好epoll句柄后，它就是会占用一个fd值，在linux下如果查看/proc/进程id/fd/，是能够看到这个fd的，所以在使用完epoll后，必须调用close()关闭，否则可能导致fd被耗尽。</li>
+<li>size参数只是告诉内核这个 epoll对象会处理的事件大致数目，而不是能够处理的事件的最大个数。在 Linux最新的一些内核版本的实现中，这个 size参数没有任何意义。</li>
+</ul>
+<p>内核事件表：包括文件描述符的分配、文件实体的分配等。文件描述符中有一个域很重要：<strong>private_data域</strong>，这是epoll的核心，其中有<strong>内核时间表</strong>、<strong>就绪描述符队列</strong>等信息。</p>
+<p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-bbe1af804032b9910917f046f2e1106b_720w.webp" alt="img"></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int epoll_ctl(int epfd，int op，int fd，struct epoll_event *event);</code></pre>
+
+<ul>
+<li><p>epfd：为<code>epoll_create</code>创建的句柄</p>
+</li>
+<li><p>op：即操作，包含以下三个宏——</p>
+<ol>
+<li><strong>EPOLL_CTL_ADD</strong> (注册新的fd到epfd)</li>
+<li><strong>EPOLL_CTL_MOD</strong> (修改已经注册的fd的监听事件)</li>
+<li><strong>EPOLL_CTL_DEL</strong> (从epfd删除一个fd)</li>
+</ol>
+</li>
+<li><p>fd：需要监听的fd</p>
+</li>
+<li><p>event：内核需要监听什么类型的事件，结构体如下——</p>
+</li>
+</ul>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">typedef union epoll_data &#123;
+    void *ptr;
+    int fd;
+    __uint32_t u32;
+    __uint64_t u64;
+&#125; epoll_data_t;
+struct epoll_event &#123;
+    uint32_t events;		&#x2F;* Epoll events *&#x2F;
+    epoll_data_t data;		&#x2F;* User data variable *&#x2F;
+&#125; __EPOLL_PACKED;</code></pre>
+
+<p><strong>events</strong>描述事件类型，其中epoll事件类型主要有以下几种：</p>
+<ul>
+<li>EPOLLIN：表示对应的文件描述符<strong>可以读</strong>（包括对端SOCKET正常关闭）</li>
+<li>EPOLLOUT：表示对应的文件描述符<strong>可以写</strong></li>
+<li>EPOLLPRI：表示对应的文件描述符有<strong>紧急的数据可读</strong></li>
+<li>EPOLLERR：表示对应的文件描述符<strong>发生错误</strong></li>
+<li>EPOLLHUP：表示对应的文件描述符<strong>被挂断</strong>；</li>
+<li>EPOLLET：将EPOLL设为<strong>边缘触发(Edge Triggered)模式</strong>，这是相对于<strong>水平触发</strong>(Level Triggered)而言的</li>
+<li>EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket的话，需要再次把这个socket加入到EPOLL队列里</li>
+<li>EPOLLRDHUP：表示读关闭，对端关闭，不是所有的内核版本都支持；</li>
+<li>······</li>
+</ul>
+<p>该函数主要是对内核事件表的操作，涉及插入（添加监听描述符）、删除（删除被监听的描述符）、修改（修改被监听的描述符）。主要有以下步骤：</p>
+<ol>
+<li>遍历内核事件表，看该描述符是否在内核事件表中。</li>
+<li>判断所要做的操作：插入、删除或是修改</li>
+<li>根据操作做相应处理</li>
+</ol>
+<p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-e5d595e4f6c400f5e69f5679ebd453c0_720w.webp" alt="img"></p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int epoll_wait(int epfd，struct epoll_event *events，int maxevents，int timeout);</code></pre>
+
+<ul>
+<li><strong>events</strong>：分配好内存的 epoll_event结构体数组，epoll将会把发生的事件复制到 events数组中（events不可以是空指针，内核只负责把数据复制到这个 events数组中，不会去帮助我们在用户态中分配内存。内核这种做法效率很高）。</li>
+<li><strong>maxevents</strong>：本次可返回的最大事件数目，通常 maxevents参数与预分配的events数组的大小是相等的。</li>
+<li><strong>timeout</strong>：超时时间；为0，则表示 epoll_wait在 rdllist链表中为空，立刻返回，不会等待。为-1，则表示一直在等待，直至有事件发生。</li>
+<li><strong>return</strong>：成功返回有多少文件描述符就绪，时间到时返回0，出错返回-1；</li>
+</ul>
+<p>内核事件表的底层数据结构是红黑树，就绪描述符的底层数据结构是链表。</p>
+<p>epoll_wait的功能就是不断查看就绪队列中有没有描述符，如果没有就一直检查、直到超时。如果有就绪描述符，就将就绪描述符通知给用户。</p>
+<h4 id="ET和LT"><a href="#ET和LT" class="headerlink" title="ET和LT"></a>ET和LT</h4><p><strong>ET</strong>模式是高效模式，就绪描述符只通知用户一次，如果用户没做处理内核将不再进行通知；</p>
+<p><strong>LT</strong>模式比较稳定，如果用户没有处理就绪的描述符，内核会不断通知。</p>
+<p>当为ET模式时，上边我们提到就绪描述符是用链表组织的，因此只需将<strong>就绪部分断链发给用户</strong>，而在LT模式下，用户没有处理就绪描述符时，内核会再次<strong>将未处理的就绪描述符加入到就绪队列中重复提醒用户</strong>空间。</p>
+<p>由于内核对用户态的不信任,内核态和用户态的传输数据总是拷贝的。</p>
+<p>区别在于：</p>
+<p>当一个新的事件到来时，ET模式下当然可以从 epoll_wait调用中获取到这个事件，可是如果这次没有把这个事件对应的套接字缓冲区处理完，在这个套接字没有新的事件再次到来时，在 ET模式下是无法再次从 epoll_wait调用中获取这个事件的；而 LT模式则相反，只要一个事件对应的套接字缓冲区还有数据，就总能从 epoll_wait中获取这个事件。因此，在 LT模式下开发基于 epoll的应用要简单一些，不太容易出错，而在 ET模式下事件发生时，如果没有彻底地将缓冲区数据处理完，则会导致缓冲区中的用户请求得不到响应。默认情况下，Nginx是通过 ET模式使用 epoll的。</p>
+<h4 id="阻塞与非阻塞"><a href="#阻塞与非阻塞" class="headerlink" title="阻塞与非阻塞"></a>阻塞与非阻塞</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;fcntl.h&gt;
+int fcntl(int fd，int cmd，long arg);</code></pre>
+
+<p><code>fcntl()</code>针对文件描述符提供控制。参数fd是被参数cmd操作的描述符。</p>
+<ul>
+<li> <strong>F_SETFL</strong> 设置arg标志参数，可选的几个标志是：O_APPEND、O_NONBLOCK、O_SYNC、O_ASYNC。</li>
+<li><strong>F_GETFL</strong>  取得fd的文件状态标志,同上述(arg被忽略)   </li>
+</ul>
+<p><strong>cmd常用例：</strong>用命令<code>F_GETFL</code>和<code>F_SETFL</code>设置文件标志，比如阻塞与非阻塞。</p>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">flags &#x3D; fcntl(fd，F_GETFL);
+flags |&#x3D; O_NONBLOCK;
+fcntl(fd，F_SETFL，flags);</code></pre>
+
+
+
+<h3 id="Linux信号"><a href="#Linux信号" class="headerlink" title="Linux信号"></a>Linux信号</h3><p>信号就是由用户、系统或进程发送给<strong>目标进程</strong>的信息，以通知目标进程中某个状态的改变或是异常。</p>
+<h4 id="sigaction-结构体"><a href="#sigaction-结构体" class="headerlink" title="sigaction 结构体"></a>sigaction 结构体</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct sigaction &#123;
+    void     (*sa_handler)(int);
+    void     (*sa_sigaction)(int，siginfo_t *，void *);
+    sigset_t   sa_mask;
+    int        sa_flags;
+    void     (*sa_restorer)(void);
+&#125;;</code></pre>
+
+<p><strong>1.sa_handler：指定信号关联函数</strong></p>
+<p>输入为一个函数指针（函数名），即用户指定的信号处理函数。除此之外，还可以赋值为常数<code>SIG_IGN</code>表示<strong>忽略信号</strong>，赋值为常数<code>SIG_DFL</code>表示<strong>执行系统默认动作</strong>(采用缺省的处理方式)。</p>
+<p><code>typedef void (*__sighandler_t) (int);</code></p>
+<p>赋值为一个函数指针表示用自定义函数捕捉信号，或者说向内核注册了一个信号处理函数，该函数返回值为void，带一个int参数，通过参数可以得知当前信号的编号，这样就可以用同一个函数处理多种信号。</p>
+<p><strong>2.sa_sigaction指定信号关联函数</strong></p>
+<p>由<code>_sa_sigaction</code>是指定的信号处理函数带有三个参数，是为<strong>实时信号</strong>而设的（当然同样支持非实时信号），它指定一个3参数信号处理函数。第一个参数为信号值，第二个参数是指向siginfo_t结构的指针，结构中包含信号携带的数据值，第三个参数没有使用（posix没有规范使用该参数的标准）。</p>
+<p><strong>sa_handler</strong>主要用于不可靠信号（实时信号当然也可以，只是不能带信息），<strong>sa_sigaction</strong>用于实时信号可以带信息(siginfo_t)，两者不能同时出现（如果设置了<code>SA_SIGINFO</code>标志位，则会使用<code>sa_sigaction</code>处理函数，否则使用<code>sa_handler</code>处理函数。）。</p>
+<p><strong>3.sa_mask存放需要手动屏蔽的信号</strong></p>
+<p>指定在信号处理程序执行过程中，哪些信号应当<strong>被阻塞</strong>。缺省情况下当前信号本身被阻塞，防止信号的嵌套发送，除非指定<code>SA_NODEFER</code>或者<code>SA_NOMASK</code>标志位，处理程序执行完后，被阻塞的信号开始执行。</p>
+<p><strong>4.sa_flags指定一组修改信号行为的标志</strong></p>
+<p><strong>5.sa_restorer</strong>：已过时，POSIX不支持它，不应再被使用。</p>
+<h4 id="sigfillset"><a href="#sigfillset" class="headerlink" title="sigfillset()"></a>sigfillset()</h4><p><code>int sigfillset (sigset_t *set);</code></p>
+<p>初始化一个满的信号集，集合当中有所有的信号，所有的信号都被添加到这个集合中了。用于初始化上述结构体中的 <code>sa_mask</code>。</p>
+<h4 id="sigaction"><a href="#sigaction" class="headerlink" title="sigaction()"></a>sigaction()</h4><p><strong>检查或修改指定信号的设置(或同时执行)</strong></p>
+<p><code>int sigaction(int signum,const struct sigaction *act,const struct sigaction *old);</code></p>
+<ul>
+<li><strong>signum：</strong>为信号的值，可以为除<code>sigkill</code>及<code>sigstop</code>外的任何一 个特定有效的信号（为这两个信号定义自己的处理函数，将导致信号安装错误）</li>
+<li><strong>act：</strong>要设置的对信号的新处理方式(传入)</li>
+<li><strong>oldact：</strong>原来对信号的处理方式(传出)</li>
+<li>如果act指针非空，则要改变指定信号的处理方式，如果oldact指针非空 则系统将此前指定信号的处理方式引入 oldact。</li>
+<li>返回值:函数成功返回0，失败返回-1。</li>
+</ul>
+<h4 id="alarm"><a href="#alarm" class="headerlink" title="alarm()"></a>alarm()</h4><p><code>unsigned int alarm(unsigned int seconds);</code></p>
+<p>设置定时器(闹钟)。在指定seconds后，内核会给当前进程发送<strong>SIGALRM</strong>信号。进程收到该信号，默认动作终止。每个进程都有且只有唯一的一个定时器。</p>
+<p>返回0或剩余的秒数，无失败。</p>
+<p>取消定时器<code>alarm(0)</code>，返回旧闹钟余下秒数。</p>
+<p>alarm使用的是自然定时法，与进程状态无关，就绪、运行、挂起(阻塞、暂停)、终止、僵尸…无论进程处于何种状态，alarm都计时。</p>
+<h4 id="SIGPIPE信号"><a href="#SIGPIPE信号" class="headerlink" title="SIGPIPE信号"></a>SIGPIPE信号</h4><p>当服务器close一个连接时，若client端接着发数据，根据TCP协议的规定，会收到一个RST响应，client再往这个服务器发送数据时，系统会发出一个SIGPIPE信号给进程，告诉进程这个连接已经断开了，不要再写了。</p>
+<p> 对一个对端已经关闭的socket调用两次write，第二次将会生成<strong>SIGPIPE</strong>信号，该信号的<strong>缺省处理方法为结束进程</strong>。为了避免进程退出，需要重载这个信号的处理方法。</p>
+<p>结合TCP的”四次握手”关闭：TCP是全双工的信道，可以看作两条单工信道，TCP连接两端的两个端点各负责一条。当对端调用close时，虽然本意是关闭整个两条信道，但本端只是收到FIN包。按照TCP协议的语义，表示对端只是关闭了其所负责的那一条单工信道，仍然可以继续接收数据。也就是说，因为TCP协议的限制，一个端点无法获知对端的socket是调用了close还是shutdown。</p>
+<p>因此第一次对其调用write方法时，如果发送缓冲没问题，会返回正确写入(发送)。但发送的报文会导致对端发送RST报文，因为对端的socket已经调用了close，完全关闭，既不发送，也不接收数据。所以，第二次调用write方法(假设在收到RST之后)，会生成<strong>SIGPIPE</strong>信号，导致进程退出。</p>
+<p>为了避免进程退出，可以捕获<strong>SIGPIPE</strong>信号，或者忽略它，给它设置<strong>SIG_IGN</strong>信号处理函数。这样，第二次调用write方法时，会返回-1，同时errno置为<strong>SIGPIPE</strong>。程序便能知道对端已经关闭。</p>
+<h4 id="SIGALRM信号"><a href="#SIGALRM信号" class="headerlink" title="SIGALRM信号"></a>SIGALRM信号</h4><p>在进行阻塞式系统调用时，为避免进程陷入无限期的等待，可以为这些阻塞式系统调用设置定时器。Linux提供了上述的<code>alarm</code>系统调用和<strong>SIGALRM</strong>信号实现这个功能。</p>
+<p>如果客户端长时间没有与服务器进行交互，需要服务器在一定时间之后主动关闭socket连接。在这种场景下，就可以在服务器收到客户端的socket的连接时，设置一个定时信号，然后在定时信号到来时，关闭掉socket连接。</p>
+<h4 id="SIGTERM信号"><a href="#SIGTERM信号" class="headerlink" title="SIGTERM信号"></a>SIGTERM信号</h4><p>SIGINT、SIGKILL、SIGTERM，三者都是结束/终止进程运行，但略微有区别。</p>
+<p><strong>SIGINT</strong></p>
+<ul>
+<li>产生方式：键盘Ctrl+C</li>
+<li>产生结果：只对当前前台进程，和他的所在的进程组的每个进程都发送<code>SIGINT</code>信号，之后这些进程会执行信号处理程序再终止。</li>
+</ul>
+<p><strong>SIGKILL</strong></p>
+<ul>
+<li>产生方式：和任何控制字符无关,用<code>kill</code>函数发送。</li>
+<li>本质：相当于<code>shell&gt; kill -9 pid</code>。</li>
+<li>产生结果：当前进程收到该信号（该信号无法被捕获），也就是说进程无法执行信号处理程序，会直接发送默认行为——直接退出。这也是为何<code>kill -9 pid</code>一定能杀死程序的原因。故这也造成了进程被结束前无法清理或者关闭已分配的资源，这样是不好的。</li>
+</ul>
+<p><strong>SIGTERM</strong></p>
+<ul>
+<li>产生方式：和任何控制字符无关，用<code>kill</code>函数发送。</li>
+<li>本质：相当于<code>shell&gt; kill</code>不加-9时 pid。</li>
+<li>产生结果：当前进程会收到信号，而其子进程不会收到。如果当前进程被kill(即收到SIGTERM)，则其子进程的父进程将为init，即pid为1的进程。</li>
+<li>与SIGKILL的不同：SIGTERM<strong>可以被阻塞、忽略、捕获</strong>，即可以进行信号处理程序，那么这样就可以让进程很好的终止，允许清理和关闭文件。</li>
+</ul>
+<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><h4 id="请求报文"><a href="#请求报文" class="headerlink" title="请求报文"></a>请求报文</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16.png" alt="在这里插入图片描述"></p>
+<h4 id="响应报文"><a href="#响应报文" class="headerlink" title="响应报文"></a>响应报文</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909889143773.png" alt="在这里插入图片描述"></p>
+<h4 id="请求方法"><a href="#请求方法" class="headerlink" title="请求方法"></a>请求方法</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/73b3056eeb3fe6bc8cbbb54ec1fcf0a7.jpeg" alt="img"></p>
+<h4 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909895342368.png" alt="在这里插入图片描述"></p>
+<h4 id="HTTP处理流程"><a href="#HTTP处理流程" class="headerlink" title="HTTP处理流程"></a>HTTP处理流程</h4><p>HTTP的处理流程分为以下三个步骤：</p>
+<ul>
+<li><strong>连接处理：</strong>浏览器端发出http连接请求，主线程创建http对象接收请求并将所有数据读入对应buffer，将该对象插入任务队列，等待工作线程从任务队列中取出一个任务进行处理。</li>
+<li><strong>处理报文请求</strong>：工作线程取出任务后，调用进程处理函数，通过主、从状态机对请求报文进行解析。</li>
+<li><strong>返回响应报文：</strong>解析完之后，生成响应报文，返回给浏览器端。</li>
+</ul>
+<h5 id="连接处理"><a href="#连接处理" class="headerlink" title="连接处理"></a>连接处理</h5><p>在连接阶段，最重要的是<strong>tcp连接过程和读取http的请求报文</strong>。</p>
+<p>服务器是如何实现读取http的报文的呢？首先，服务器需要对每一个<strong>已建立连接http建立一个http的类对象</strong></p>
 <h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><h3 id="配置MySQL"><a href="#配置MySQL" class="headerlink" title="配置MySQL"></a>配置MySQL</h3><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><pre class="language-shell" data-language="shell"><code class="language-shell">sudo apt update
 sudo apt install mysql-server</code></pre>
 
@@ -348,17 +626,17 @@ sudo apt install mysql-server</code></pre>
 <pre class="language-shell" data-language="shell"><code class="language-shell">sudo systemctl status mysql</code></pre>
 
 <pre class="language-shell" data-language="shell"><code class="language-shell">● mysql.service - MySQL Community Server
-     Loaded: loaded (&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;mysql.service; enabled; vendor preset: enabled)
-     Active: active (running) since Tue 2023-07-11 06:28:50 PDT; 3min 22s ago
-   Main PID: 4805 (mysqld)
-     Status: &quot;Server is operational&quot;
-      Tasks: 37 (limit: 6984)
-     Memory: 364.6M
-     CGroup: &#x2F;system.slice&#x2F;mysql.service
+     Loaded：loaded (&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;mysql.service; enabled; vendor preset：enabled)
+     Active：active (running) since Tue 2023-07-11 06:28:50 PDT; 3min 22s ago
+   Main PID：4805 (mysqld)
+     Status：&quot;Server is operational&quot;
+      Tasks：37 (limit：6984)
+     Memory：364.6M
+     CGroup：&#x2F;system.slice&#x2F;mysql.service
              └─4805 &#x2F;usr&#x2F;sbin&#x2F;mysqld
 
-Jul 11 06:28:49 ubuntu systemd[1]: Starting MySQL Community Server...
-Jul 11 06:28:50 ubuntu systemd[1]: Started MySQL Community Server.</code></pre>
+Jul 11 06:28:49 ubuntu systemd[1]：Starting MySQL Community Server...
+Jul 11 06:28:50 ubuntu systemd[1]：Started MySQL Community Server.</code></pre>
 
 
 
@@ -422,8 +700,8 @@ quit;</code></pre>
 <p>过多的线程可能导致线程竞争，影响系统性能。线程池通过维护一个可控制的并发数量，有助于减轻线程之间的竞争。例如，当CPU密集型任务和I/O密集型任务共存时，可以通过调整线程池资源，实现更高效的负载平衡。</p>
 <h4 id="1-线程池初始化"><a href="#1-线程池初始化" class="headerlink" title="1.线程池初始化"></a>1.线程池初始化</h4><h5 id="线程创建"><a href="#线程创建" class="headerlink" title="线程创建"></a>线程创建</h5><p>维护一个指定大小 <code>_thread_num</code> 的线程id的数组 <code>_threads</code>，存储所有创建的线程。</p>
 <p>循环调用 <code>pthread_create</code> 和 <code>pthread_detach</code> 库函数，创建线程。</p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
-           		   		void *(*start_routine) (void *), void *arg);</code></pre>
+<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int pthread_create(pthread_t *thread，const pthread_attr_t *attr,
+           		   		void *(*start_routine) (void *)，void *arg);</code></pre>
 
 <ul>
 <li><strong>thread</strong>：传递存储线程（pthread_t变量）的地址</li>
@@ -507,7 +785,7 @@ void ThreadPool&lt;T&gt;::work() &#123;
     if(!_dynamic_ctl)   return false;
     _threads.resize(_thread_num + new_num);
     for(int i &#x3D; 0; i &lt; new_num; ++i) &#123;
-        if(pthread_create(&amp;_threads[_thread_num + i], NULL, transfer, (void*)this)) &#123;
+        if(pthread_create(&amp;_threads[_thread_num + i]，NULL，transfer，(void*)this)) &#123;
             return false;
         &#125;
         if(pthread_detach(_threads[_thread_num + i])) &#123;
@@ -532,102 +810,8 @@ double get_run_time() const &#123;
 
 
 
-<h3 id="Epoll"><a href="#Epoll" class="headerlink" title="Epoll"></a>Epoll</h3><h4 id="I-O复用"><a href="#I-O复用" class="headerlink" title="I/O复用"></a>I/O复用</h4><p><strong>I/O是指网络中的I/O（即输入输出），多路是指多个TCP连接，复用是指一个或少量线程被重复使用。</strong>连起来解就是，<strong>用少量的线程来处理网络上大量的TCP连接中的I/O</strong>。常见的I/O复用有以下三种：<strong>select</strong>、<strong>poll</strong>、<strong>epoll</strong>。</p>
-<h5 id="select"><a href="#select" class="headerlink" title="select"></a>select</h5><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;sys&#x2F;select.h&gt;
-#include &lt;sys&#x2F;time.h&gt;
-int select(int maxfdpl,fd_set *readset,fd_set *writeset,fd_set *exceptset,const struct timeval *timeout);</code></pre>
-
-<p>函数第一个参数是<strong>被监听的描述符的最大值+1</strong>，select底层的数据结构是位数组，因此必须知道被监听的最大描述符才可以确定描述符的范围，否则就需要将整个数组遍历一遍。</p>
-<p>函数第二、三、四个参数是被监听的事件，分别是<strong>读、写、异常</strong>事件。</p>
-<p>函数的最后一个参数是<strong>监听的时间</strong>（NULL、0、正值）</p>
-<p><strong>selct缺点：</strong></p>
-<ol>
-<li>从函数参数列表可见，select只能监听读、写、异常这三个事件</li>
-<li>selct监听的描述符是有最大值限制的，在Linux内核中是1024</li>
-<li>select的实现是每次将待检测的描述符放在位数组中，全部传给内核进行监听，内核监听之后会返回一个就绪描述符个数，并且修改了监听的事件值，以表示该事件就绪。内核再将修改后的数组传给用户空间。用户空间只能通过遍历所有描述符来处理就绪的描述符，之后再将描述符传给内核继续监听……很明显，这样在监听的描述符少的情况下并不影响效率，但是监听的描述符数量特别大的情况下，每次又只有少数描述符上有事件就绪，大量的换入换出会使得效率十分低下。</li>
-</ol>
-<h5 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h5><pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct pollfd&#123;  
-  int fd;
-  short events;
-  short revents;
-&#125;;
-int poll(struct pollfd fdarray[], unsigned long nfds, int timeout);</code></pre>
-
-<p>第一个参数是个结构体数组，结构体中声明了被监听描述符和相应的事件，每个被监听的描述符对应一个结构体，数组表示可以监听多个描述符。</p>
-<p>第二个参数是被监听描述符的个数。</p>
-<p>第三个参数同select，只监听时间。</p>
-<p><strong>poll缺点：</strong></p>
-<p><strong>从函数参数来看，poll解决了select前两个问题，监听的描述符数量没有严格限制，监听的事件不止读、写、异常，但是第三个缺点依然存在，存在大量的换入换出。</strong></p>
-<h4 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h4><pre class="language-cpp" data-language="cpp"><code class="language-cpp">#include &lt;sys&#x2F;epoll.h&gt; 
-int epoll_create(int size);</code></pre>
-
-<p>创建一个内核事件表，实际上就是创建文件，这其中包括文件描述符的分配、文件实体的分配等。文件描述符中有一个域很重要：<strong>private_data域</strong>，这是epoll的核心，其中有<strong>内核时间表</strong>、<strong>就绪描述符队列</strong>等信息。</p>
-<p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-bbe1af804032b9910917f046f2e1106b_720w.webp" alt="img"></p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);</code></pre>
-
-<ul>
-<li><p>epfd：为<code>epoll_create</code>创建的句柄</p>
-</li>
-<li><p>op：即操作，包含以下三个宏——</p>
-<ol>
-<li><strong>EPOLL_CTL_ADD</strong> (注册新的fd到epfd)</li>
-<li><strong>EPOLL_CTL_MOD</strong> (修改已经注册的fd的监听事件)</li>
-<li><strong>EPOLL_CTL_DEL</strong> (从epfd删除一个fd)</li>
-</ol>
-</li>
-<li><p>event：内核需要监听的事件，结构体如下——</p>
-</li>
-</ul>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">struct epoll_event &#123;
-  uint32_t events;		&#x2F;* Epoll events *&#x2F;
-  epoll_data_t data;	&#x2F;* User data variable *&#x2F;
-&#125; __EPOLL_PACKED;</code></pre>
-
-<p><strong>events</strong>描述事件类型，其中epoll事件类型主要有以下几种：</p>
-<ul>
-<li>EPOLLIN：表示对应的文件描述符<strong>可以读</strong>（包括对端SOCKET正常关闭）</li>
-<li>EPOLLOUT：表示对应的文件描述符<strong>可以写</strong></li>
-<li>EPOLLPRI：表示对应的文件描述符有<strong>紧急的数据可读</strong></li>
-<li>EPOLLERR：表示对应的文件描述符<strong>发生错误</strong></li>
-<li>EPOLLHUP：表示对应的文件描述符<strong>被挂断</strong>；</li>
-<li>EPOLLET：将EPOLL设为<strong>边缘触发(Edge Triggered)模式</strong>，这是相对于<strong>水平触发</strong>(Level Triggered)而言的</li>
-<li>EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket的话，需要再次把这个socket加入到EPOLL队列里</li>
-<li>EPOLLRDHUP：表示读关闭，对端关闭，不是所有的内核版本都支持；</li>
-<li>······</li>
-</ul>
-<p>该函数主要是对内核事件表的操作，涉及插入（添加监听描述符）、删除（删除被监听的描述符）、修改（修改被监听的描述符）。主要有以下步骤：</p>
-<ol>
-<li>遍历内核事件表，看该描述符是否在内核事件表中。</li>
-<li>判断所要做的操作：插入、删除或是修改</li>
-<li>根据操作做相应处理</li>
-</ol>
-<p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-e5d595e4f6c400f5e69f5679ebd453c0_720w.webp" alt="img"></p>
-<pre class="language-cpp" data-language="cpp"><code class="language-cpp">int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);</code></pre>
-
-<ul>
-<li>events：用来存储从内核得到的事件集合</li>
-<li>maxevents：告之内核这个events有多大，不能大于epoll_create()时的size；</li>
-<li>timeout：超时时间；</li>
-<li>return：成功返回有多少文件描述符就绪，时间到时返回0，出错返回-1；、</li>
-</ul>
-<p>内核事件表的底层数据结构是红黑树，就绪描述符的底层数据结构是链表。</p>
-<p>epoll_wait的功能就是不断查看就绪队列中有没有描述符，如果没有就一直检查、直到超时。如果有就绪描述符，就将就绪描述符通知给用户。</p>
-<h4 id="ET和LT"><a href="#ET和LT" class="headerlink" title="ET和LT"></a>ET和LT</h4><p><strong>ET</strong>模式是高效模式，就绪描述符只通知用户一次，如果用户没做处理内核将不再进行通知；</p>
-<p><strong>LT</strong>模式比较稳定，如果用户没有处理就绪的描述符，内核会不断通知。</p>
-<p>当为ET模式时，上边我们提到就绪描述符是用链表组织的，因此只需将<strong>就绪部分断链发给用户</strong>，而在LT模式下，用户没有处理就绪描述符时，内核会再次<strong>将未处理的就绪描述符加入到就绪队列中重复提醒用户</strong>空间。</p>
-<p>由于内核对用户态的不信任,内核态和用户态的传输数据总是拷贝的。</p>
-<h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><h4 id="请求报文"><a href="#请求报文" class="headerlink" title="请求报文"></a>请求报文</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16.png" alt="在这里插入图片描述"></p>
-<h4 id="响应报文"><a href="#响应报文" class="headerlink" title="响应报文"></a>响应报文</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909889143773.png" alt="在这里插入图片描述"></p>
-<h4 id="请求方法"><a href="#请求方法" class="headerlink" title="请求方法"></a>请求方法</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/73b3056eeb3fe6bc8cbbb54ec1fcf0a7.jpeg" alt="img"></p>
-<h4 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h4><p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909895342368.png" alt="在这里插入图片描述"></p>
-<h4 id="HTTP处理流程"><a href="#HTTP处理流程" class="headerlink" title="HTTP处理流程"></a>HTTP处理流程</h4><p>HTTP的处理流程分为以下三个步骤：</p>
-<ul>
-<li><strong>连接处理：</strong>浏览器端发出http连接请求，主线程创建http对象接收请求并将所有数据读入对应buffer，将该对象插入任务队列，等待工作线程从任务队列中取出一个任务进行处理。</li>
-<li><strong>处理报文请求</strong>：工作线程取出任务后，调用进程处理函数，通过主、从状态机对请求报文进行解析。</li>
-<li><strong>返回响应报文：</strong>解析完之后，生成响应报文，返回给浏览器端。</li>
-</ul>
-<h5 id="连接处理"><a href="#连接处理" class="headerlink" title="连接处理"></a>连接处理</h5><p>在连接阶段，最重要的是<strong>tcp连接过程和读取http的请求报文</strong>。</p>
-<p>服务器是如何实现读取http的报文的呢？首先，服务器需要对每一个<strong>已建立连接http建立一个http的类对象</strong></p>
+<h3 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h3><p>如果一个客户端与服务器长时间连接，并且不进行数据的交互，这个连接就没有存在的意义还占据了服务器的资源。在这种情况下，服务器就需要一种手段检测无意义的连接，并对这些连接进行处理。除了处理非活跃的连接之外，服务器还有一些定时事件，比如关闭文件描述符等。为实现这些功能，服务器就需要为各事件分配一个定时器。</p>
+<p>该项目使用SIGALRM信号来实现定时器，首先每一个定时事件都处于一个升序链表上，<strong>通过alarm()函数周期性触发SIGALRM信号</strong>，而后信号回调函数利用管道通知主循环，主循环接收到信号之后对升序链表上的定时器进行处理：若一定时间内无数据交换则关闭连接。</p>
 <h3 id="登录和注册"><a href="#登录和注册" class="headerlink" title="登录和注册"></a>登录和注册</h3><p>页面跳转逻辑如下：</p>
 <p><img src="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/640.jpeg" alt="img"></p>
 <p>首先需要从数据库中<strong>获取所有的用户名和密码</strong>（用户密码加密传输参考<a href="https://link.zhihu.com/?target=https://blog.csdn.net/bjspo/article/details/90059325">用户登录实践</a>），这些用户名和密码以某种数据结构（如哈希表）保存。当浏览器请求到达时，根据其请求访问，<strong>返回对应的界面html或是错误提示</strong>。</p>
@@ -653,7 +837,7 @@ FLUSH PRIVILEGES;</code></pre>
 
 
 <p><strong>问题2：</strong>修改密码时报错</p>
-<p><code>ERROR 1819 (HY000): Your password does not satisfy the current policy requirements</code></p>
+<p><code>ERROR 1819 (HY000)：Your password does not satisfy the current policy requirements</code></p>
 <p><strong>原因：</strong>由于默认安装了validate_password插件，密码不符合<strong>当前策略要求</strong></p>
 <p><strong>解决：</strong></p>
 <p>设置类似123456的简单密码时，要将密码策略设置为0（LOW），默认为1（MEDIUM），并修改长度（默认为8），最低为4。</p>
@@ -684,11 +868,11 @@ set global validate_password.length&#x3D;1;	# 最低好像是4，不能</code></
 
 
 
-<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><h4 id="关于mysql-h"><a href="#关于mysql-h" class="headerlink" title="关于mysql.h"></a>关于mysql.h</h4><p><strong>问题：</strong><code>fatal error: mysql/mysql.h: No such file or directory</code></p>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><h4 id="关于mysql-h"><a href="#关于mysql-h" class="headerlink" title="关于mysql.h"></a>关于mysql.h</h4><p><strong>问题：</strong><code>fatal error：mysql/mysql.h：No such file or directory</code></p>
 <p><strong>原因：</strong>没有安装 <strong>mysql</strong>的<strong>相关链接库</strong></p>
 <p><strong>解决：</strong><code>sudo apt-get install libmysqlclient-dev</code></p>
-<h4 id="关于g"><a href="#关于g" class="headerlink" title="关于g++"></a>关于g++</h4><p><strong>问题：</strong><code>make: g++: Command not found</code></p>
+<h4 id="关于g"><a href="#关于g" class="headerlink" title="关于g++"></a>关于g++</h4><p><strong>问题：</strong><code>make：g++：Command not found</code></p>
 <p><strong>原因：</strong>没有安装 <strong>g++</strong> 编译器</p>
 <p><strong>解决：</strong><code>sudo apt-get install build-essential</code></p>
 <p><strong>拓展：</strong> <strong>build-essential</strong> 是 Ubuntu 软件源默认包含的一个软件包组，它包含了 GNU 编辑器集合，GNU 调试器，和其他编译软件所必需的开发库和工具，也包括 <code>gcc</code> ，<code>g++</code> 和 <code>make</code>。</p>
-</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CPP/">CPP</a><a class="post-meta__tags" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a></div><div class="post_share"><div class="social-share" data-image="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/"><img class="next-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LeetCode--2023Q3</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q2/" title="LeetCode--2023Q2"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="title">LeetCode--2023Q2</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/opencv%E5%9B%BE%E5%83%8F%E7%AE%97%E6%B3%95/" title="opencv图像算法"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-23</div><div class="title">opencv图像算法</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-01</div><div class="title">LeetCode--2023Q3</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Szh</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shen962806862"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎光临 我的快乐</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WebServer%E9%A1%B9%E7%9B%AE"><span class="toc-text">WebServer项目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86"><span class="toc-text">理论知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%96%A5%E9%94%81"><span class="toc-text">互斥锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">创建与初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E9%94%81"><span class="toc-text">上锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%94%81"><span class="toc-text">解锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%80%E6%AF%81"><span class="toc-text">销毁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#std-mutex"><span class="toc-text">std::mutex</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-text">信号量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%81%E8%A3%85"><span class="toc-text">封装</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="toc-text">条件变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0-1"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B91"><span class="toc-text">注意事项1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B92"><span class="toc-text">注意事项2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-text">生产者-消费者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98"><span class="toc-text">常见同步问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL"><span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEMySQL"><span class="toc-text">配置MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="toc-text">设置密码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E7%8E%B0"><span class="toc-text">项目实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84"><span class="toc-text">代码架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%A1%86%E6%9E%B6"><span class="toc-text">项目框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD"><span class="toc-text">实现功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8A%BF"><span class="toc-text">优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">1.线程池初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="toc-text">线程创建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E9%98%9F%E5%88%97%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">任务队列初始化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6"><span class="toc-text">2.任务调度</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%8F%96%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C"><span class="toc-text">线程取任务执行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E8%B7%9F%E8%B8%AA"><span class="toc-text">任务状态跟踪</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E7%BB%88%E6%AD%A2"><span class="toc-text">3.线程池的终止</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%BB%88%E6%AD%A2%E7%8A%B6%E6%80%81"><span class="toc-text">标记线程池终止状态</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E7%BA%BF%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%AE%8C%E6%88%90"><span class="toc-text">等待线程执行完成</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8A%A8%E6%80%81%E8%B0%83%E6%95%B4%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="toc-text">4.动态调整线程数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="toc-text">增加线程数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E7%BA%BF%E7%A8%8B%E6%95%B0-TODO"><span class="toc-text">减少线程数 TODO</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5-TODO"><span class="toc-text">5.自定义任务调度策略 TODO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E7%9B%91%E6%8E%A7%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%8A%B6%E6%80%81"><span class="toc-text">6.监控线程池状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Epoll"><span class="toc-text">Epoll</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#I-O%E5%A4%8D%E7%94%A8"><span class="toc-text">I&#x2F;O复用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#select"><span class="toc-text">select</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#poll"><span class="toc-text">poll</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ET%E5%92%8CLT"><span class="toc-text">ET和LT</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP"><span class="toc-text">HTTP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="toc-text">请求报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%8A%A5%E6%96%87"><span class="toc-text">响应报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95"><span class="toc-text">请求方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-text">状态码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-text">HTTP处理流程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%A4%84%E7%90%86"><span class="toc-text">连接处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E5%92%8C%E6%B3%A8%E5%86%8C"><span class="toc-text">登录和注册</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-text">有限状态机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Epoll-1"><span class="toc-text">Epoll</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debug"><span class="toc-text">Debug</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-1"><span class="toc-text">MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="toc-text">关于用户密码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-text">编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Emysql-h"><span class="toc-text">关于mysql.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Eg"><span class="toc-text">关于g++</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WebServer项目笔记"/></a><div class="content"><a class="title" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记">WebServer项目笔记</a><time datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode--2023Q3"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3">LeetCode--2023Q3</a><time datetime="2023-07-01T02:01:40.000Z" title="发表于 2023-07-01 10:01:40">2023-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/11.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查漏补缺CPP"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP">查漏补缺CPP</a><time datetime="2023-06-20T08:08:36.000Z" title="发表于 2023-06-20 16:08:36">2023-06-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Szh</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CPP/">CPP</a><a class="post-meta__tags" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a></div><div class="post_share"><div class="social-share" data-image="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/"><img class="next-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/7.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LeetCode--2023Q3</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/%E5%8E%9F%E7%90%86/LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98--3%E6%9C%88%E5%8F%8A%E4%BB%A5%E5%89%8D/" title="LeetCode每日一题--3月及以前"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-04</div><div class="title">LeetCode每日一题--3月及以前</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-01</div><div class="title">LeetCode--2023Q3</div></div></a></div><div><a href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q2/" title="LeetCode--2023Q2"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-01</div><div class="title">LeetCode--2023Q2</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Szh</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shen962806862"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎光临 我的快乐</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#WebServer%E9%A1%B9%E7%9B%AE"><span class="toc-text">WebServer项目</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86"><span class="toc-text">理论知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%92%E6%96%A5%E9%94%81"><span class="toc-text">互斥锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">创建与初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E9%94%81"><span class="toc-text">上锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%94%81"><span class="toc-text">解锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%80%E6%AF%81"><span class="toc-text">销毁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#std-mutex"><span class="toc-text">std::mutex</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-text">信号量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%81%E8%A3%85"><span class="toc-text">封装</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="toc-text">条件变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0-1"><span class="toc-text">函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B91"><span class="toc-text">注意事项1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B92"><span class="toc-text">注意事项2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-text">生产者-消费者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98"><span class="toc-text">常见同步问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Socket"><span class="toc-text">Socket</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#socket"><span class="toc-text">socket()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sockaddr-in"><span class="toc-text">sockaddr_in</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#setsockopt"><span class="toc-text">setsockopt()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bind"><span class="toc-text">bind()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#listen"><span class="toc-text">listen()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#accept"><span class="toc-text">accept()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#socketpair"><span class="toc-text">socketpair()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Epoll"><span class="toc-text">Epoll</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#I-O%E5%A4%8D%E7%94%A8"><span class="toc-text">I&#x2F;O复用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#select"><span class="toc-text">select</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#poll"><span class="toc-text">poll</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="toc-text">函数分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ET%E5%92%8CLT"><span class="toc-text">ET和LT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%98%BB%E5%A1%9E%E4%B8%8E%E9%9D%9E%E9%98%BB%E5%A1%9E"><span class="toc-text">阻塞与非阻塞</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E4%BF%A1%E5%8F%B7"><span class="toc-text">Linux信号</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#sigaction-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">sigaction 结构体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sigfillset"><span class="toc-text">sigfillset()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sigaction"><span class="toc-text">sigaction()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#alarm"><span class="toc-text">alarm()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIGPIPE%E4%BF%A1%E5%8F%B7"><span class="toc-text">SIGPIPE信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIGALRM%E4%BF%A1%E5%8F%B7"><span class="toc-text">SIGALRM信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIGTERM%E4%BF%A1%E5%8F%B7"><span class="toc-text">SIGTERM信号</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP"><span class="toc-text">HTTP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="toc-text">请求报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%8A%A5%E6%96%87"><span class="toc-text">响应报文</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E6%96%B9%E6%B3%95"><span class="toc-text">请求方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81"><span class="toc-text">状态码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B"><span class="toc-text">HTTP处理流程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E5%A4%84%E7%90%86"><span class="toc-text">连接处理</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL"><span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEMySQL"><span class="toc-text">配置MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="toc-text">设置密码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E7%8E%B0"><span class="toc-text">项目实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84"><span class="toc-text">代码架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%A1%86%E6%9E%B6"><span class="toc-text">项目框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD"><span class="toc-text">实现功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8A%BF"><span class="toc-text">优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">1.线程池初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="toc-text">线程创建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E9%98%9F%E5%88%97%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">任务队列初始化</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6"><span class="toc-text">2.任务调度</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E5%8F%96%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C"><span class="toc-text">线程取任务执行</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81%E8%B7%9F%E8%B8%AA"><span class="toc-text">任务状态跟踪</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E7%BB%88%E6%AD%A2"><span class="toc-text">3.线程池的终止</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%BB%88%E6%AD%A2%E7%8A%B6%E6%80%81"><span class="toc-text">标记线程池终止状态</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E7%BA%BF%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%AE%8C%E6%88%90"><span class="toc-text">等待线程执行完成</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%8A%A8%E6%80%81%E8%B0%83%E6%95%B4%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="toc-text">4.动态调整线程数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A2%9E%E5%8A%A0%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="toc-text">增加线程数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E7%BA%BF%E7%A8%8B%E6%95%B0-TODO"><span class="toc-text">减少线程数 TODO</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5-TODO"><span class="toc-text">5.自定义任务调度策略 TODO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E7%9B%91%E6%8E%A7%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%8A%B6%E6%80%81"><span class="toc-text">6.监控线程池状态</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E5%92%8C%E6%B3%A8%E5%86%8C"><span class="toc-text">登录和注册</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="toc-text">有限状态机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Epoll-1"><span class="toc-text">Epoll</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Debug"><span class="toc-text">Debug</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-1"><span class="toc-text">MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="toc-text">关于用户密码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-text">编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Emysql-h"><span class="toc-text">关于mysql.h</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Eg"><span class="toc-text">关于g++</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WebServer项目笔记"/></a><div class="content"><a class="title" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记">WebServer项目笔记</a><time datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode--2023Q3"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3">LeetCode--2023Q3</a><time datetime="2023-07-01T02:01:40.000Z" title="发表于 2023-07-01 10:01:40">2023-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查漏补缺CPP"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP">查漏补缺CPP</a><time datetime="2023-06-20T08:08:36.000Z" title="发表于 2023-06-20 16:08:36">2023-06-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Szh</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
