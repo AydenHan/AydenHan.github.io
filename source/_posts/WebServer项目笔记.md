@@ -1,7 +1,7 @@
 ---
-title: WebServer项目笔记
-date: 2023-07-11 23:04:11
-categories: 应用
+title：WebServer项目笔记
+date：2023-07-11 23:04:11
+categories：应用
 tags:
 - CPP
 - 服务器
@@ -41,14 +41,14 @@ pthread_mutex_t _mutex;
 有两种方式，第一种是调用函数。
 
 ```cpp
-pthread_mutex_init(&_mutex, NULL);	// 第二个参数为 NULL，则互斥锁的属性会设置为默认属性
+pthread_mutex_init(&_mutex，NULL);	// 第二个参数为 NULL，则互斥锁的属性会设置为默认属性
 ```
 
 第二种是使用宏定义初始化赋值，因为这个互斥锁变量本质就是个联合体。
 
 ```cpp
 # define PTHREAD_MUTEX_INITIALIZER \
-   { { 0, 0, 0, 0, 0, 0, { 0, 0 } } }	// 在 pthread.h 中，对该宏的定义
+   { { 0，0，0，0，0，0，{ 0，0 } } }	// 在 pthread.h 中，对该宏的定义
 pthread_mutex_t _mutex = PTHREAD_MUTEX_INITIALIZER;
 ```
 
@@ -78,14 +78,14 @@ if(0 != pthread_mutex_trylock(&_mutex)) {
 
 ```cpp
 struct timespec {
-    __time_t tv_sec;        /* Seconds.  */
-    long int tv_nsec;       /* Nanoseconds.  */
+    __time_t tv_sec;        /* Seconds。 */
+    long int tv_nsec;       /* Nanoseconds。 */
 };
 struct timespec abs_timeout;
 abs_timeout.tv_sec = time(NULL) + 1;
 abs_timeout.tv_nsec = 0;
 
-if(0 != pthread_mutex_timedlock(&_mutex, &abs_timeout)) {
+if(0 != pthread_mutex_timedlock(&_mutex，&abs_timeout)) {
     //The mutex could not be locked before the specified timeout expired.
 }
 ```
@@ -134,7 +134,7 @@ public:
 
 除了初始化之外，其余的函数使用基本类同上述互斥锁：
 
-**初始化**：`int sem_init (sem_t *sem, int pshared, unsigned int value)`
+**初始化**：`int sem_init (sem_t *sem，int pshared，unsigned int value)`
 
 **sem**为指向信号量结构的一个指针；**pshared**不为０时此信号量在进程间共享，否则只能为当前进程的所有线程共享；**value**给出了信号量的初始值。
 
@@ -149,7 +149,7 @@ public:
 ```cpp
 int sem_wait( sem_t *sem );
 int sem_trywait( sem_t *sem );
-int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);
+int sem_timedwait(sem_t *sem，const struct timespec *abs_timeout);
 ```
 
 以上函数**调用成功均会返回0**。
@@ -159,8 +159,8 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout);
 ```cpp
 class SemS {
 public:
-    SemS() { sem_init(&_sem, 0, 0); }
-    SemS(int val) { sem_init(&_sem, 0, val); }
+    SemS() { sem_init(&_sem，0，0); }
+    SemS(int val) { sem_init(&_sem，0，val); }
     ~SemS() { sem_destroy(&_sem); }
     bool wait() { sem_wait(&_sem) == 0; }
     bool post() { sem_post(&_sem) == 0; }
@@ -212,7 +212,7 @@ int pthread_cond_broadcast(pthread_cond_t* cond);
 ```cpp
 lock(&mutex);
 while(value<=0) 	// 需要value > 0 所以 value <= 0 就条件不满足
-    pthread_cond_wait(&cond, &mutex);
+    pthread_cond_wait(&cond，&mutex);
 unlock(&mutex);
 ```
 
@@ -320,6 +320,490 @@ unlock(&mutex);
 
 
 
+### Socket
+
+#### socket()
+
+该函数建立一个协议族为domain、协议类型为type、协议编号为protocol的套接字文件描述符。
+
+```cpp
+#include<sys/socket.h>
+int socket(int domain，int type，int protocol);
+```
+
+**domain**
+
+最常用的参数为 `AF_INET / PF_INET` 均表示**IPv4 Internet协议**。其中 AF = Address Family，PF = Protocol Family。在windows系统中两者完全一致，在Linux系统中，也基本一致（对于BSD,是**AF**,对于POSIX是**PF**）
+
+所以在实际使用时，根据命名释义，在初始化时选择 `PF_INET`，后面调用设置地址的函数时选用 `AF_INET`。
+
+**type**
+
+常用的有两种：
+
+- **SOCK_STREAM**：TCP连接，提供序列化的、可靠的、双向连接的字节流。支持带外数据传输。
+- **SOCK_DGRAM：**支持UDP连接（无连接状态的消息）
+
+**protocol**
+
+用于制定某个协议的特定类型，即type类型中的某个类型。通常某协议中只有一种特定类型，这样protocol参数仅能设置为0；但是有些协议有多种特定的类型，就需要设置这个参数来选择特定的类型。**TCP设置为0**。
+
+**返回值**
+
+成功，会返回一个标识这个套接字的文件描述符；失败的时候返回-1。 
+
+
+
+#### sockaddr_in
+
+**sockaddr**在头文件`#include <sys/socket.h>`中定义，sockaddr的缺陷是：sa_data把目标地址和端口信息混在一起了，如下：
+
+```cpp
+struct sockaddr {  
+    sa_family_t sin_family;	//地址族
+    char sa_data[14]; 		//14字节，包含套接字中的目标地址和端口信息               
+}; 
+```
+
+**sockaddr_in**在头文件`#include<netinet/in.h>或#include <arpa/inet.h>`中定义，该结构体解决了sockaddr的缺陷，把port和addr 分开储存在两个变量中，如下：
+
+![这里写图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/20161125160930613.png)
+
+`sockaddr_in` 是internet环境下套接字的地址形式。所以在网络编程中我们会对sockaddr_in结构体进行操作，使用sockaddr_in来建立所需的信息，最后使用类型转化就可以了。**sockaddr_in用于socket定义和赋值；sockaddr用于函数参数。**
+
+![这里写图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/20161124222509661.png)
+
+在给地址和端口赋值时注意要把值转为NBO（**网络字节序**），这样在发送网络数据时才能接收到正确值。
+
+```cpp
+struct sockaddr_in address;
+bzero(&address，sizeof(address));
+address.sin_family = AF_INET;
+address.sin_addr.s_addr = htonl(INADDR_ANY);
+address.sin_port = htons(port);
+```
+
+
+
+#### setsockopt()
+
+[setsockopt函数功能及参数详解](https://www.cnblogs.com/cthon/p/9270778.html)
+
+```cpp
+int reuse_addr_ctl = 1;
+setsockopt(listenfd，SOL_SOCKET，SO_REUSEADDR，&reuse_addr_ctl，sizeof(reuse_addr_ctl));
+```
+
+在本项目中，由于**大规模并发的TCP连接**，就需要控制socket的地址复用。
+
+1. **SO_REUSEADDR**允许启动一个监听服务器并捆绑其众所周知端口，即使以前建立的将此端口用做他们的本地端口的连接仍存在。这通常是重启监听服务器时出现，若不设置此选项，则bind时将出错。
+2. 允许在同一端口上启动同一服务器的多个实例，只要每个实例捆绑一个不同的本地IP地址即可。对于TCP，我们根本不可能启动捆绑相同IP地址和相同端口号的多个服务器。
+
+3. 允许单个进程捆绑同一端口到多个套接口上，只要每个捆绑指定不同的本地IP地址。一般不用于TCP服务器。
+
+4. 允许完全重复的捆绑：当一个IP地址和端口绑定到某个套接口上时，还允许此IP地址和端口捆绑到另一个套接口上。一般来说，这个特性仅在支持多播的系统上才有，而且只对UDP套接口而言（TCP不支持多播）。
+
+这个套接字选项通知内核，如果端口忙，但TCP状态位于 `TIME_WAIT` （端口释放后可能出现），可以重用端口。如果端口忙，而TCP状态位于其他状态，重用端口时依旧得到一个错误信息，指明"地址已经使用中"。
+
+**端口复用最常用的用途应该是防止服务器重启时之前绑定的端口还未释放或者程序突然退出而系统没有释放端口。这种情况下如果设定了端口复用，则新启动的服务器进程可以直接绑定端口。如果没有设定端口复用，绑定会失败。**
+
+
+
+#### bind()
+
+服务端用于把用于通信的地址和端口绑定到 socket上。
+
+`bind(listenfd，(sockaddr*)&address，sizeof(address));`
+
+
+
+#### listen()
+
+侦听功能将套接字置于**侦听传入连接**的状态。`int listen (int __fd，int __n);`
+
+第二个参数为相应socket**可以排队的最大连接个数**。(*例：有100个用户链接请求，但是系统一次只能处理20个，剩下的80个不能不理，所以系统创建队列记录这些暂时不能处理、一会儿处理的连接请求，依先后顺序处理*)
+
+socket()函数创建的socket默认是一个主动类型的，listen函数将socket变为**被动**类型的，**等待客户的连接请求**。
+
+
+
+#### accept()
+
+TCP服务器端依次调用socket()、bind()、listen()之后，就会监听指定的socket地址了。TCP客户端依次调用socket()、connect()之后向TCP服务器发送一个连接请求。TCP服务器监听到这个请求之后，就会调用accept()函数取接收请求，此时连接建立成功。之后就可以开始网络I/O操作了，即类同于普通文件的读写I/O操作。
+
+`int accept(int sockfd，struct sockaddr *addr，socklen_t *addrlen);`
+
+- 第一个参数为服务器的socket描述字；
+- 第二个参数为指向struct sockaddr *的指针，用于返回客户端的协议地址；
+- 第三个参数为客户端协议地址的长度。
+- 如果accpet成功，那么其返回值是由内核自动生成的一个全新的描述字，代表与客户的TCP连接。若出现错误，返回值小于0。
+
+一个服务器通常通常仅仅只创建一个监听socket描述字，它在该服务器的生命周期内一直存在。内核为每个由服务器进程接受的客户连接创建了一个已连接socket描述字，当服务器完成了对某个客户的服务，相应的已连接socket描述字就被关闭。
+
+
+
+#### socketpair()
+
+```cpp
+#include <sys/socket.h>
+int socketpair(int d，int type，int protocol，int sv[2])；
+```
+
+用于**创建一对无名的、相互连接的套接字**（匿名管道）。 如果函数成功，则返回0，创建好的套接字分别是sv[0]和sv[1]；否则返回-1，错误码保存于errno中。
+
+- **domain**：表示协议族，在Linux下只能为PF_LOCAL或PF_UNIX（ `#define PF_UNIX  PF_LOCAL`）（自从Linux 2.6.27后也支持SOCK_NONBLOCK和SOCK_CLOEXEC）。
+- **type**：表示协议，可以是`SOCK_STREAM`或者`SOCK_DGRAM`。SOCK_STREAM是基于TCP的，而SOCK_DGRAM是基于UDP的
+- **protocol**：表示类型，只能为0
+- **sv[2]**：套节字柄对，该两个句柄作用相同，均能进行读写双向操作
+
+**基本用法：** 
+
+1. 这对套接字可以用于**全双工通信**，每一个套接字既可以读也可以写。例如，可以往sv[0]中写，从sv[1]中读；或者从sv[1]中写，从sv[0]中读； 
+2. 如果往一个套接字(如sv[0])中写入后，再从该套接字读时会阻塞，只能在另一个套接字中(sv[1])上读成功； 
+3. 读、写操作可以位于同一个进程，也可以分别位于不同的进程，如父子进程。如果是父子进程时，一般会功能分离，一个进程用来读，一个用来写。因为文件描述副sv[0]和sv[1]是进程共享的，所以读的进程要关闭写描述符，反之，写的进程关闭读描述符。 
+
+**注意：**
+
+1. 该函数只能用于UNIX域（LINUX）下。
+2. 只能用于有亲缘关系的进程（或线程）间通信。
+3. 所创建的套节字对作用是一样的，均能够可读可写（而管道PIPE只能进行单向读或写）。
+4. 在读的时候，管道内必须有内容，否则将会阻塞；简而言之，该函数是阻塞的。
+
+
+
+### Epoll
+
+#### I/O复用
+
+**I/O是指网络中的I/O（即输入输出），多路是指多个TCP连接，复用是指一个或少量线程被重复使用。**连起来解就是，**用少量的线程来处理网络上大量的TCP连接中的I/O**。常见的I/O复用有以下三种：**select**、**poll**、**epoll**。
+
+##### select
+
+```cpp
+#include <sys/select.h>
+#include <sys/time.h>
+int select(int maxfdpl,fd_set *readset,fd_set *writeset,fd_set *exceptset,const struct timeval *timeout);
+```
+
+函数第一个参数是**被监听的描述符的最大值+1**，select底层的数据结构是位数组，因此必须知道被监听的最大描述符才可以确定描述符的范围，否则就需要将整个数组遍历一遍。
+
+函数第二、三、四个参数是被监听的事件，分别是**读、写、异常**事件。
+
+函数的最后一个参数是**监听的时间**（NULL、0、正值）
+
+**selct缺点：**
+
+1. 从函数参数列表可见，select只能监听读、写、异常这三个事件
+2. selct监听的描述符是有最大值限制的，在Linux内核中是1024
+3. select的实现是每次将待检测的描述符放在位数组中，全部传给内核进行监听，内核监听之后会返回一个就绪描述符个数，并且修改了监听的事件值，以表示该事件就绪。内核再将修改后的数组传给用户空间。用户空间只能通过遍历所有描述符来处理就绪的描述符，之后再将描述符传给内核继续监听......很明显，这样在监听的描述符少的情况下并不影响效率，但是监听的描述符数量特别大的情况下，每次又只有少数描述符上有事件就绪，大量的换入换出会使得效率十分低下。
+
+
+
+##### poll
+
+```cpp
+struct pollfd{  
+  int fd;
+  short events;
+  short revents;
+};
+int poll(struct pollfd fdarray[]，unsigned long nfds，int timeout);
+```
+
+第一个参数是个结构体数组，结构体中声明了被监听描述符和相应的事件，每个被监听的描述符对应一个结构体，数组表示可以监听多个描述符。
+
+第二个参数是被监听描述符的个数。
+
+第三个参数同select，只监听时间。
+
+**poll缺点：**
+
+**从函数参数来看，poll解决了select前两个问题，监听的描述符数量没有严格限制，监听的事件不止读、写、异常，但是第三个缺点依然存在，存在大量的换入换出。**
+
+
+
+#### 函数分析
+
+```cpp
+#include <sys/epoll.h> 
+int epoll_create(int size);
+```
+
+创建一个epoll实例。返回值为epoll实例的文件描述符，参数size标识该实例监听的最大数目。
+
+- 当创建好epoll句柄后，它就是会占用一个fd值，在linux下如果查看/proc/进程id/fd/，是能够看到这个fd的，所以在使用完epoll后，必须调用close()关闭，否则可能导致fd被耗尽。
+- size参数只是告诉内核这个 epoll对象会处理的事件大致数目，而不是能够处理的事件的最大个数。在 Linux最新的一些内核版本的实现中，这个 size参数没有任何意义。
+
+内核事件表：包括文件描述符的分配、文件实体的分配等。文件描述符中有一个域很重要：**private_data域**，这是epoll的核心，其中有**内核时间表**、**就绪描述符队列**等信息。
+
+![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-bbe1af804032b9910917f046f2e1106b_720w.webp)
+
+```cpp
+int epoll_ctl(int epfd，int op，int fd，struct epoll_event *event);
+```
+
+- epfd：为`epoll_create`创建的句柄
+- op：即操作，包含以下三个宏——
+  1. **EPOLL_CTL_ADD** (注册新的fd到epfd)
+  2. **EPOLL_CTL_MOD** (修改已经注册的fd的监听事件)
+  3. **EPOLL_CTL_DEL** (从epfd删除一个fd)
+
+- fd：需要监听的fd
+
+- event：内核需要监听什么类型的事件，结构体如下——
+
+```cpp
+typedef union epoll_data {
+    void *ptr;
+    int fd;
+    __uint32_t u32;
+    __uint64_t u64;
+} epoll_data_t;
+struct epoll_event {
+    uint32_t events;		/* Epoll events */
+    epoll_data_t data;		/* User data variable */
+} __EPOLL_PACKED;
+```
+
+**events**描述事件类型，其中epoll事件类型主要有以下几种：
+
+- EPOLLIN：表示对应的文件描述符**可以读**（包括对端SOCKET正常关闭）
+- EPOLLOUT：表示对应的文件描述符**可以写**
+- EPOLLPRI：表示对应的文件描述符有**紧急的数据可读**
+- EPOLLERR：表示对应的文件描述符**发生错误**
+- EPOLLHUP：表示对应的文件描述符**被挂断**；
+- EPOLLET：将EPOLL设为**边缘触发(Edge Triggered)模式**，这是相对于**水平触发**(Level Triggered)而言的
+- EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket的话，需要再次把这个socket加入到EPOLL队列里
+- EPOLLRDHUP：表示读关闭，对端关闭，不是所有的内核版本都支持；
+- ······
+
+该函数主要是对内核事件表的操作，涉及插入（添加监听描述符）、删除（删除被监听的描述符）、修改（修改被监听的描述符）。主要有以下步骤：
+
+1. 遍历内核事件表，看该描述符是否在内核事件表中。
+2. 判断所要做的操作：插入、删除或是修改
+3. 根据操作做相应处理
+
+![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-e5d595e4f6c400f5e69f5679ebd453c0_720w.webp)
+
+```cpp
+int epoll_wait(int epfd，struct epoll_event *events，int maxevents，int timeout);
+```
+
+- **events**：分配好内存的 epoll_event结构体数组，epoll将会把发生的事件复制到 events数组中（events不可以是空指针，内核只负责把数据复制到这个 events数组中，不会去帮助我们在用户态中分配内存。内核这种做法效率很高）。
+- **maxevents**：本次可返回的最大事件数目，通常 maxevents参数与预分配的events数组的大小是相等的。
+- **timeout**：超时时间；为0，则表示 epoll_wait在 rdllist链表中为空，立刻返回，不会等待。为-1，则表示一直在等待，直至有事件发生。
+- **return**：成功返回有多少文件描述符就绪，时间到时返回0，出错返回-1；
+
+
+
+内核事件表的底层数据结构是红黑树，就绪描述符的底层数据结构是链表。
+
+epoll_wait的功能就是不断查看就绪队列中有没有描述符，如果没有就一直检查、直到超时。如果有就绪描述符，就将就绪描述符通知给用户。
+
+
+
+#### ET和LT
+
+**ET**模式是高效模式，就绪描述符只通知用户一次，如果用户没做处理内核将不再进行通知；
+
+**LT**模式比较稳定，如果用户没有处理就绪的描述符，内核会不断通知。
+
+当为ET模式时，上边我们提到就绪描述符是用链表组织的，因此只需将**就绪部分断链发给用户**，而在LT模式下，用户没有处理就绪描述符时，内核会再次**将未处理的就绪描述符加入到就绪队列中重复提醒用户**空间。
+
+由于内核对用户态的不信任,内核态和用户态的传输数据总是拷贝的。
+
+区别在于：
+
+当一个新的事件到来时，ET模式下当然可以从 epoll_wait调用中获取到这个事件，可是如果这次没有把这个事件对应的套接字缓冲区处理完，在这个套接字没有新的事件再次到来时，在 ET模式下是无法再次从 epoll_wait调用中获取这个事件的；而 LT模式则相反，只要一个事件对应的套接字缓冲区还有数据，就总能从 epoll_wait中获取这个事件。因此，在 LT模式下开发基于 epoll的应用要简单一些，不太容易出错，而在 ET模式下事件发生时，如果没有彻底地将缓冲区数据处理完，则会导致缓冲区中的用户请求得不到响应。默认情况下，Nginx是通过 ET模式使用 epoll的。
+
+
+
+#### 阻塞与非阻塞
+
+```cpp
+#include <fcntl.h>
+int fcntl(int fd，int cmd，long arg);
+```
+
+`fcntl()`针对文件描述符提供控制。参数fd是被参数cmd操作的描述符。
+
+-  **F_SETFL** 设置arg标志参数，可选的几个标志是：O_APPEND、O_NONBLOCK、O_SYNC、O_ASYNC。
+- **F_GETFL**  取得fd的文件状态标志,同上述(arg被忽略)   
+
+**cmd常用例：**用命令`F_GETFL`和`F_SETFL`设置文件标志，比如阻塞与非阻塞。
+
+```cpp
+flags = fcntl(fd，F_GETFL);
+flags |= O_NONBLOCK;
+fcntl(fd，F_SETFL，flags);
+```
+
+
+
+### Linux信号
+
+信号就是由用户、系统或进程发送给**目标进程**的信息，以通知目标进程中某个状态的改变或是异常。
+
+#### sigaction 结构体
+
+```cpp
+struct sigaction {
+    void     (*sa_handler)(int);
+    void     (*sa_sigaction)(int，siginfo_t *，void *);
+    sigset_t   sa_mask;
+    int        sa_flags;
+    void     (*sa_restorer)(void);
+};
+```
+
+**1.sa_handler：指定信号关联函数**
+
+输入为一个函数指针（函数名），即用户指定的信号处理函数。除此之外，还可以赋值为常数`SIG_IGN`表示**忽略信号**，赋值为常数`SIG_DFL`表示**执行系统默认动作**(采用缺省的处理方式)。
+
+`typedef void (*__sighandler_t) (int);`
+
+赋值为一个函数指针表示用自定义函数捕捉信号，或者说向内核注册了一个信号处理函数，该函数返回值为void，带一个int参数，通过参数可以得知当前信号的编号，这样就可以用同一个函数处理多种信号。
+
+**2.sa_sigaction指定信号关联函数**
+
+由`_sa_sigaction`是指定的信号处理函数带有三个参数，是为**实时信号**而设的（当然同样支持非实时信号），它指定一个3参数信号处理函数。第一个参数为信号值，第二个参数是指向siginfo_t结构的指针，结构中包含信号携带的数据值，第三个参数没有使用（posix没有规范使用该参数的标准）。
+
+**sa_handler**主要用于不可靠信号（实时信号当然也可以，只是不能带信息），**sa_sigaction**用于实时信号可以带信息(siginfo_t)，两者不能同时出现（如果设置了`SA_SIGINFO`标志位，则会使用`sa_sigaction`处理函数，否则使用`sa_handler`处理函数。）。
+
+**3.sa_mask存放需要手动屏蔽的信号**
+
+指定在信号处理程序执行过程中，哪些信号应当**被阻塞**。缺省情况下当前信号本身被阻塞，防止信号的嵌套发送，除非指定`SA_NODEFER`或者`SA_NOMASK`标志位，处理程序执行完后，被阻塞的信号开始执行。
+
+**4.sa_flags指定一组修改信号行为的标志**
+
+**5.sa_restorer**：已过时，POSIX不支持它，不应再被使用。
+
+
+
+#### sigfillset()
+
+`int sigfillset (sigset_t *set);`
+
+初始化一个满的信号集，集合当中有所有的信号，所有的信号都被添加到这个集合中了。用于初始化上述结构体中的 `sa_mask`。
+
+
+
+#### sigaction()
+
+**检查或修改指定信号的设置(或同时执行)**
+
+`int sigaction(int signum,const struct sigaction *act,const struct sigaction *old);`
+
+- **signum：**为信号的值，可以为除`sigkill`及`sigstop`外的任何一 个特定有效的信号（为这两个信号定义自己的处理函数，将导致信号安装错误）
+- **act：**要设置的对信号的新处理方式(传入)
+- **oldact：**原来对信号的处理方式(传出)
+- 如果act指针非空，则要改变指定信号的处理方式，如果oldact指针非空 则系统将此前指定信号的处理方式引入 oldact。
+- 返回值:函数成功返回0，失败返回-1。
+
+
+
+#### alarm()
+
+`unsigned int alarm(unsigned int seconds);`
+
+设置定时器(闹钟)。在指定seconds后，内核会给当前进程发送**SIGALRM**信号。进程收到该信号，默认动作终止。每个进程都有且只有唯一的一个定时器。
+
+返回0或剩余的秒数，无失败。
+
+取消定时器`alarm(0)`，返回旧闹钟余下秒数。
+
+alarm使用的是自然定时法，与进程状态无关，就绪、运行、挂起(阻塞、暂停)、终止、僵尸…无论进程处于何种状态，alarm都计时。
+
+
+
+#### SIGPIPE信号
+
+当服务器close一个连接时，若client端接着发数据，根据TCP协议的规定，会收到一个RST响应，client再往这个服务器发送数据时，系统会发出一个SIGPIPE信号给进程，告诉进程这个连接已经断开了，不要再写了。
+
+ 对一个对端已经关闭的socket调用两次write，第二次将会生成**SIGPIPE**信号，该信号的**缺省处理方法为结束进程**。为了避免进程退出，需要重载这个信号的处理方法。
+
+结合TCP的"四次握手"关闭：TCP是全双工的信道，可以看作两条单工信道，TCP连接两端的两个端点各负责一条。当对端调用close时，虽然本意是关闭整个两条信道，但本端只是收到FIN包。按照TCP协议的语义，表示对端只是关闭了其所负责的那一条单工信道，仍然可以继续接收数据。也就是说，因为TCP协议的限制，一个端点无法获知对端的socket是调用了close还是shutdown。
+
+因此第一次对其调用write方法时，如果发送缓冲没问题，会返回正确写入(发送)。但发送的报文会导致对端发送RST报文，因为对端的socket已经调用了close，完全关闭，既不发送，也不接收数据。所以，第二次调用write方法(假设在收到RST之后)，会生成**SIGPIPE**信号，导致进程退出。
+
+为了避免进程退出，可以捕获**SIGPIPE**信号，或者忽略它，给它设置**SIG_IGN**信号处理函数。这样，第二次调用write方法时，会返回-1，同时errno置为**SIGPIPE**。程序便能知道对端已经关闭。
+
+
+
+#### SIGALRM信号
+
+在进行阻塞式系统调用时，为避免进程陷入无限期的等待，可以为这些阻塞式系统调用设置定时器。Linux提供了上述的`alarm`系统调用和**SIGALRM**信号实现这个功能。
+
+如果客户端长时间没有与服务器进行交互，需要服务器在一定时间之后主动关闭socket连接。在这种场景下，就可以在服务器收到客户端的socket的连接时，设置一个定时信号，然后在定时信号到来时，关闭掉socket连接。
+
+
+
+#### SIGTERM信号
+
+SIGINT、SIGKILL、SIGTERM，三者都是结束/终止进程运行，但略微有区别。
+
+**SIGINT**
+
+- 产生方式：键盘Ctrl+C
+- 产生结果：只对当前前台进程，和他的所在的进程组的每个进程都发送`SIGINT`信号，之后这些进程会执行信号处理程序再终止。
+
+**SIGKILL**
+
+- 产生方式：和任何控制字符无关,用`kill`函数发送。
+- 本质：相当于`shell> kill -9 pid`。
+- 产生结果：当前进程收到该信号（该信号无法被捕获），也就是说进程无法执行信号处理程序，会直接发送默认行为——直接退出。这也是为何`kill -9 pid`一定能杀死程序的原因。故这也造成了进程被结束前无法清理或者关闭已分配的资源，这样是不好的。
+
+**SIGTERM**
+
+- 产生方式：和任何控制字符无关，用`kill`函数发送。
+- 本质：相当于`shell> kill`不加-9时 pid。
+- 产生结果：当前进程会收到信号，而其子进程不会收到。如果当前进程被kill(即收到SIGTERM)，则其子进程的父进程将为init，即pid为1的进程。
+- 与SIGKILL的不同：SIGTERM**可以被阻塞、忽略、捕获**，即可以进行信号处理程序，那么这样就可以让进程很好的终止，允许清理和关闭文件。
+
+
+
+
+
+### HTTP
+
+#### 请求报文
+
+![在这里插入图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16.png)
+
+#### 响应报文
+
+![在这里插入图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909889143773.png)
+
+#### 请求方法
+
+![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/73b3056eeb3fe6bc8cbbb54ec1fcf0a7.jpeg)
+
+#### 状态码
+
+![在这里插入图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909895342368.png)
+
+#### HTTP处理流程
+
+HTTP的处理流程分为以下三个步骤：
+
+- **连接处理：**浏览器端发出http连接请求，主线程创建http对象接收请求并将所有数据读入对应buffer，将该对象插入任务队列，等待工作线程从任务队列中取出一个任务进行处理。
+- **处理报文请求**：工作线程取出任务后，调用进程处理函数，通过主、从状态机对请求报文进行解析。
+- **返回响应报文：**解析完之后，生成响应报文，返回给浏览器端。
+
+##### 连接处理
+
+在连接阶段，最重要的是**tcp连接过程和读取http的请求报文**。
+
+
+
+服务器是如何实现读取http的报文的呢？首先，服务器需要对每一个**已建立连接http建立一个http的类对象**
+
+
+
+
+
+
+
 ## MySQL
 
 
@@ -347,17 +831,17 @@ sudo systemctl status mysql
 
 ```shell
 ● mysql.service - MySQL Community Server
-     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
-     Active: active (running) since Tue 2023-07-11 06:28:50 PDT; 3min 22s ago
-   Main PID: 4805 (mysqld)
-     Status: "Server is operational"
-      Tasks: 37 (limit: 6984)
-     Memory: 364.6M
-     CGroup: /system.slice/mysql.service
+     Loaded：loaded (/lib/systemd/system/mysql.service; enabled; vendor preset：enabled)
+     Active：active (running) since Tue 2023-07-11 06:28:50 PDT; 3min 22s ago
+   Main PID：4805 (mysqld)
+     Status："Server is operational"
+      Tasks：37 (limit：6984)
+     Memory：364.6M
+     CGroup：/system.slice/mysql.service
              └─4805 /usr/sbin/mysqld
 
-Jul 11 06:28:49 ubuntu systemd[1]: Starting MySQL Community Server...
-Jul 11 06:28:50 ubuntu systemd[1]: Started MySQL Community Server.
+Jul 11 06:28:49 ubuntu systemd[1]：Starting MySQL Community Server...
+Jul 11 06:28:50 ubuntu systemd[1]：Started MySQL Community Server.
 ```
 
 
@@ -471,8 +955,8 @@ sudo /etc/init.d/mysql restart
 循环调用 `pthread_create` 和 `pthread_detach` 库函数，创建线程。
 
 ```cpp
-int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
-           		   		void *(*start_routine) (void *), void *arg);
+int pthread_create(pthread_t *thread，const pthread_attr_t *attr,
+           		   		void *(*start_routine) (void *)，void *arg);
 ```
 
 - **thread**：传递存储线程（pthread_t变量）的地址
@@ -596,7 +1080,7 @@ bool ThreadPool<T>::append_thread(int new_num) {
     if(!_dynamic_ctl)   return false;
     _threads.resize(_thread_num + new_num);
     for(int i = 0; i < new_num; ++i) {
-        if(pthread_create(&_threads[_thread_num + i], NULL, transfer, (void*)this)) {
+        if(pthread_create(&_threads[_thread_num + i]，NULL，transfer，(void*)this)) {
             return false;
         }
         if(pthread_detach(_threads[_thread_num + i])) {
@@ -638,173 +1122,11 @@ double get_run_time() const {
 
 
 
-### Epoll
+### 定时器
 
-#### I/O复用
+如果一个客户端与服务器长时间连接，并且不进行数据的交互，这个连接就没有存在的意义还占据了服务器的资源。在这种情况下，服务器就需要一种手段检测无意义的连接，并对这些连接进行处理。除了处理非活跃的连接之外，服务器还有一些定时事件，比如关闭文件描述符等。为实现这些功能，服务器就需要为各事件分配一个定时器。
 
-**I/O是指网络中的I/O（即输入输出），多路是指多个TCP连接，复用是指一个或少量线程被重复使用。**连起来解就是，**用少量的线程来处理网络上大量的TCP连接中的I/O**。常见的I/O复用有以下三种：**select**、**poll**、**epoll**。
-
-##### select
-
-```cpp
-#include <sys/select.h>
-#include <sys/time.h>
-int select(int maxfdpl,fd_set *readset,fd_set *writeset,fd_set *exceptset,const struct timeval *timeout);
-```
-
-函数第一个参数是**被监听的描述符的最大值+1**，select底层的数据结构是位数组，因此必须知道被监听的最大描述符才可以确定描述符的范围，否则就需要将整个数组遍历一遍。
-
-函数第二、三、四个参数是被监听的事件，分别是**读、写、异常**事件。
-
-函数的最后一个参数是**监听的时间**（NULL、0、正值）
-
-**selct缺点：**
-
-1. 从函数参数列表可见，select只能监听读、写、异常这三个事件
-2. selct监听的描述符是有最大值限制的，在Linux内核中是1024
-3. select的实现是每次将待检测的描述符放在位数组中，全部传给内核进行监听，内核监听之后会返回一个就绪描述符个数，并且修改了监听的事件值，以表示该事件就绪。内核再将修改后的数组传给用户空间。用户空间只能通过遍历所有描述符来处理就绪的描述符，之后再将描述符传给内核继续监听......很明显，这样在监听的描述符少的情况下并不影响效率，但是监听的描述符数量特别大的情况下，每次又只有少数描述符上有事件就绪，大量的换入换出会使得效率十分低下。
-
-
-
-##### poll
-
-```cpp
-struct pollfd{  
-  int fd;
-  short events;
-  short revents;
-};
-int poll(struct pollfd fdarray[], unsigned long nfds, int timeout);
-```
-
-第一个参数是个结构体数组，结构体中声明了被监听描述符和相应的事件，每个被监听的描述符对应一个结构体，数组表示可以监听多个描述符。
-
-第二个参数是被监听描述符的个数。
-
-第三个参数同select，只监听时间。
-
-**poll缺点：**
-
-**从函数参数来看，poll解决了select前两个问题，监听的描述符数量没有严格限制，监听的事件不止读、写、异常，但是第三个缺点依然存在，存在大量的换入换出。**
-
-
-
-#### 函数分析
-
-```cpp
-#include <sys/epoll.h> 
-int epoll_create(int size);
-```
-
-创建一个内核事件表，实际上就是创建文件，这其中包括文件描述符的分配、文件实体的分配等。文件描述符中有一个域很重要：**private_data域**，这是epoll的核心，其中有**内核时间表**、**就绪描述符队列**等信息。
-
-![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-bbe1af804032b9910917f046f2e1106b_720w.webp)
-
-```cpp
-int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
-```
-
-- epfd：为`epoll_create`创建的句柄
-- op：即操作，包含以下三个宏——
-  1. **EPOLL_CTL_ADD** (注册新的fd到epfd)
-  2. **EPOLL_CTL_MOD** (修改已经注册的fd的监听事件)
-  3. **EPOLL_CTL_DEL** (从epfd删除一个fd)
-
-- event：内核需要监听的事件，结构体如下——
-
-```cpp
-struct epoll_event {
-  uint32_t events;		/* Epoll events */
-  epoll_data_t data;	/* User data variable */
-} __EPOLL_PACKED;
-```
-
-**events**描述事件类型，其中epoll事件类型主要有以下几种：
-
-- EPOLLIN：表示对应的文件描述符**可以读**（包括对端SOCKET正常关闭）
-- EPOLLOUT：表示对应的文件描述符**可以写**
-- EPOLLPRI：表示对应的文件描述符有**紧急的数据可读**
-- EPOLLERR：表示对应的文件描述符**发生错误**
-- EPOLLHUP：表示对应的文件描述符**被挂断**；
-- EPOLLET：将EPOLL设为**边缘触发(Edge Triggered)模式**，这是相对于**水平触发**(Level Triggered)而言的
-- EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket的话，需要再次把这个socket加入到EPOLL队列里
-- EPOLLRDHUP：表示读关闭，对端关闭，不是所有的内核版本都支持；
-- ······
-
-
-
-该函数主要是对内核事件表的操作，涉及插入（添加监听描述符）、删除（删除被监听的描述符）、修改（修改被监听的描述符）。主要有以下步骤：
-
-1. 遍历内核事件表，看该描述符是否在内核事件表中。
-2. 判断所要做的操作：插入、删除或是修改
-3. 根据操作做相应处理
-
-![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/v2-e5d595e4f6c400f5e69f5679ebd453c0_720w.webp)
-
-```cpp
-int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
-```
-
-- events：用来存储从内核得到的事件集合
-- maxevents：告之内核这个events有多大，不能大于epoll_create()时的size；
-- timeout：超时时间；
-- return：成功返回有多少文件描述符就绪，时间到时返回0，出错返回-1；、
-
-
-
-内核事件表的底层数据结构是红黑树，就绪描述符的底层数据结构是链表。
-
-epoll_wait的功能就是不断查看就绪队列中有没有描述符，如果没有就一直检查、直到超时。如果有就绪描述符，就将就绪描述符通知给用户。
-
-
-
-#### ET和LT
-
-**ET**模式是高效模式，就绪描述符只通知用户一次，如果用户没做处理内核将不再进行通知；
-
-**LT**模式比较稳定，如果用户没有处理就绪的描述符，内核会不断通知。
-
-当为ET模式时，上边我们提到就绪描述符是用链表组织的，因此只需将**就绪部分断链发给用户**，而在LT模式下，用户没有处理就绪描述符时，内核会再次**将未处理的就绪描述符加入到就绪队列中重复提醒用户**空间。
-
-由于内核对用户态的不信任,内核态和用户态的传输数据总是拷贝的。
-
-
-
-### HTTP
-
-#### 请求报文
-
-![在这里插入图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16.png)
-
-#### 响应报文
-
-![在这里插入图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909889143773.png)
-
-#### 请求方法
-
-![img](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/73b3056eeb3fe6bc8cbbb54ec1fcf0a7.jpeg)
-
-#### 状态码
-
-![在这里插入图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909895342368.png)
-
-#### HTTP处理流程
-
-HTTP的处理流程分为以下三个步骤：
-
-- **连接处理：**浏览器端发出http连接请求，主线程创建http对象接收请求并将所有数据读入对应buffer，将该对象插入任务队列，等待工作线程从任务队列中取出一个任务进行处理。
-- **处理报文请求**：工作线程取出任务后，调用进程处理函数，通过主、从状态机对请求报文进行解析。
-- **返回响应报文：**解析完之后，生成响应报文，返回给浏览器端。
-
-##### 连接处理
-
-在连接阶段，最重要的是**tcp连接过程和读取http的请求报文**。
-
-
-
-服务器是如何实现读取http的报文的呢？首先，服务器需要对每一个**已建立连接http建立一个http的类对象**
-
-
+该项目使用SIGALRM信号来实现定时器，首先每一个定时事件都处于一个升序链表上，**通过alarm()函数周期性触发SIGALRM信号**，而后信号回调函数利用管道通知主循环，主循环接收到信号之后对升序链表上的定时器进行处理：若一定时间内无数据交换则关闭连接。
 
 
 
@@ -867,7 +1189,7 @@ FLUSH PRIVILEGES;
 
 **问题2：**修改密码时报错
 
-`ERROR 1819 (HY000): Your password does not satisfy the current policy requirements`
+`ERROR 1819 (HY000)：Your password does not satisfy the current policy requirements`
 
 **原因：**由于默认安装了validate_password插件，密码不符合**当前策略要求**
 
@@ -915,7 +1237,7 @@ set global validate_password.length=1;	# 最低好像是4，不能
 
 #### 关于mysql.h
 
-**问题：**`fatal error: mysql/mysql.h: No such file or directory`
+**问题：**`fatal error：mysql/mysql.h：No such file or directory`
 
 **原因：**没有安装 **mysql**的**相关链接库**
 
@@ -925,7 +1247,7 @@ set global validate_password.length=1;	# 最低好像是4，不能
 
 #### 关于g++
 
-**问题：**`make: g++: Command not found`
+**问题：**`make：g++：Command not found`
 
 **原因：**没有安装 **g++** 编译器
 

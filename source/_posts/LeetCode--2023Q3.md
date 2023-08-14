@@ -4495,3 +4495,129 @@ public:
 };
 ```
 
+
+
+## 2023.8.12
+
+### 美团笔.5
+
+**题干**
+
+小美拿到了一棵树，每个节点有一个权值，初始每个节点都白色。小美有若干次操作，每次操作可以选择两个相邻的节点，如果它们都是白色且权值的乘积是完全平方数，小美就可以把这两个节点同时染红。小美想知道，自己最多可以染红多少个节点？
+
+***输入描述***
+
+第一行输入一个正整数n，代表节点的数量。
+
+第二行输入n个正整数ai，代表每个节点的权值。
+
+接下来的n一1行，每行输入两个正整数u、v，代表节点u和节点v有一条边连接。
+
+1 ≤ n ≤ 10^5
+
+1 ≤ ai ≤ 10^9
+
+1 ≤ u，v ≤ n
+
+***输出描述***
+
+输出一个整数，表示最多可以染红的节点数量。
+
+**示例**
+
+*输入*：
+
+```
+3
+3 3 12
+1 2
+2 3
+```
+
+*输出*：2
+
+**解法**
+
+基本思路：**无向图、DFS**
+
+相比于LC，笔试题还需要额外处理输入数据，也就是需要你考虑存储的数据结构。
+
+本题写的是树，但在存储时其实可以按照无向图来理解，那么可以用二维数组存储每个节点的连通信息（包括父节点也存下来了）。用一维数组存储权值。
+
+按照题意要染红尽可能多的节点，那么从叶节点向上染我认为是最佳策略，因此选择dfs后序的顺序，从叶节点向上递归。返回值设为以该节点为根的子树的最大染红节点数量。
+
+***Code***
+
+```cpp
+int main() {
+    int n;  // 节点的数量
+    cin >> n;
+    
+    vector<vector<int> > tree(n+1);     // 邻接表表示无向图
+    vector<int> weights(n+1);           // 节点的权值
+    vector<bool> iswhite(n+1, true);    // 标记节点颜色
+
+    for(int i = 1; i <= n; ++i)
+        cin >> weights[i];
+    for(int i = 1; i < n; ++i) {
+        int u, v;
+        cin >> u >> v;
+        tree[u].push_back(v);
+        tree[v].push_back(u);
+    }
+
+    auto isSqr = [](int n) -> bool {
+        int res = sqrt(n);
+        return res * res == n;
+    };
+    
+    function<int(int, int)> dfs = [&](int node, int parent)-> int {
+        int redNodes = 0;
+        for(int child : tree[node]) 
+            if(child != parent)
+                redNodes += dfs(child, node);
+
+        if (parent > 0 && iswhite[parent] && iswhite[node] && isSqr(weights[node] * weights[parent])) {
+            redNodes += 2;
+            iswhite[node] = false;
+            iswhite[parent] = false;
+        }
+        return redNodes;
+    };
+    cout << dfs(1,0) << endl;
+    return 0;
+}
+```
+
+
+
+
+
+## 2023.8.13
+
+### 88.合并两个有序数组
+
+**解法**
+
+基本思路：**双指针**
+
+因为是要存在nums1里，从前往后不好操作，但后面都是0，可以考虑从大到小填入nums1后面。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+        int ptr = m + n - 1;
+        --m;--n;
+        while(n >= 0) {
+            if(m >= 0 && nums1[m] > nums2[n]) 
+                swap(nums1[ptr--], nums1[m--]);
+            else
+                nums1[ptr--] = nums2[n--];
+        }
+    }
+};
+```
+
