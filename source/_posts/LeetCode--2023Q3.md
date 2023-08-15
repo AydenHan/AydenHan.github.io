@@ -4621,3 +4621,49 @@ public:
 };
 ```
 
+
+
+## 2023.8.15
+
+### 833.字符串中的查找与替换
+
+**解法**
+
+基本思路：**哈希？模拟**
+
+这题排序的话要三个数组一起排，python好写，CPP不太行。
+
+边判断边修改会导致字符串长度变化从而使得下标失效，每次都需要重新计算。省力的方法就是先遍历找到需要修改的部分的下标和对应的操作下标保存下来，然后再遍历修改。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    string findReplaceString(string s, vector<int>& indices, vector<string>& sources, vector<string>& targets) {
+        vector<int> keys(s.size(), -1);
+        for(int i = 0; i < indices.size(); ++i) {
+            int idx = indices[i];
+            bool isDif = false;
+            for(char c : sources[i]) {
+                if(c != s[idx++]) {
+                    isDif = true;
+                    break;
+                }
+            }
+            if(isDif)   continue;
+            keys[indices[i]] = i;
+        }
+        string res = "";
+        for(int i = 0; i < s.size();) {
+            if(keys[i] != -1) {
+                res += targets[keys[i]];
+                i += sources[keys[i]].size();
+            }
+            else    res += s[i++];
+        }
+        return res;
+    }
+};
+```
+
