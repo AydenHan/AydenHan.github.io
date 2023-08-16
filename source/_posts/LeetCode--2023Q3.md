@@ -4667,3 +4667,33 @@ public:
 };
 ```
 
+
+
+## 2023.8.16
+
+### 2682.找出转圈游戏输家
+
+**解法**
+
+基本思路：**哈希**
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> circularGameLosers(int n, int k) {
+        vector<bool> hash(n, false);
+        int idx = 0, time = 1;
+        while(!hash[idx]) {  
+            hash[idx] = true;
+            idx = (idx + k * time) % n;
+            ++time;
+        }
+        vector<int> res;
+        for(int i = 0; i < n; ++i)  if(!hash[i])    res.emplace_back(i+1);
+        return res;
+    }
+};
+```
+
