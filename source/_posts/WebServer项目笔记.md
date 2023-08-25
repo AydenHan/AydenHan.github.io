@@ -850,6 +850,51 @@ MYSQL* mysql_real_connect(MYSQL *mysql, const char *host, const char *user, cons
 
 
 
+#### mysql_query()
+
+执行query语句，查询数据库表中的内容。
+
+`int mysql_query(MYSQL *mysql, const char *query);`
+
+正常情况下，字符串必须包含1条SQL语句，而且不应为语句添加终结分号（‘;’）或“\g”。
+
+如果允许多语句执行，字符串可包含多条由分号隔开的语句。（“多查询执行的C API处理”）
+
+不能用于包含二进制数据的查询。
+
+
+
+#### mysql_store_result()
+
+将 mysql_query 查询的全部结果读取到客户端，`分配1个MYSQL_RES结构`，并将结果置于该结构中。
+
+`MYSQL_RES *mysql_store_result(MYSQL *mysql);`
+
+使用说明：
+
+- 对于成功检索了数据的每个查询（SELECT、SHOW、DESCRIBE、EXPLAIN、CHECK TABLE等），必须调用mysql_store_result() 或 mysql_use_result() 。
+- 如果希望了解查询是否应返回结果集，可使用 **mysql_field_count**() 进行检查。
+- 如果查询未返回结果集，将返回*Null指针*（例如，如果查询是INSERT语句）。
+- 如果读取结果集失败，会返回*Null指针*。通过检查 **mysql_error**() 是否返回非空字符串，**mysql_errno**() 是否返回非0值，或 **mysql_field_count**() 是否返回0，可以检查是否出现了错误。
+- 如果未返回行，将返回*空的结果集*。（空结果集设置不同于作为返回值的空指针）。
+- 一旦获得了*不是Null指针的结果*，可调用 **mysql_num_rows**() 来获取结果集中的行数。
+- 可以调用 **mysql_fetch_row**() 来获取结果集中的行，或调用 **mysql_row_seek**() 和**mysql_row_tell**() 来获取或设置结果集中的当前行位置。
+- 一旦完成了对结果集的操作，必须调用 **mysql_free_result**()。
+
+
+
+#### mysql_fetch_row()
+
+从结果集中获取下一行，若没有下一行，返回空指针。
+
+```cpp
+typedef char** MYSQL_ROW;
+MYSQL_ROW mysql_fetch_row(MYSQL_RES* result);
+```
+
+- 行内值的数目由mysql_num_fields(result)给出。如果行中保存了调用mysql_fetch_row()返回的值，将按照row[0]到row[mysql_num_fields(result)-1]，访问这些值的指针。
+- 可以通过调用mysql_fetch_lengths()来获得行中字段值的长度。对于空字段以及包含NULL的字段，长度为0。通过检查字段值的指针，能够区分它们。如果指针为NULL，字段为NULL，否则字段为空。
+
 
 
 ### HTTP
@@ -870,23 +915,11 @@ MYSQL* mysql_real_connect(MYSQL *mysql, const char *host, const char *user, cons
 
 ![在这里插入图片描述](WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAMl9QUQ==,size_20,color_FFFFFF,t_70,g_se,x_16-16909895342368.png)
 
-#### HTTP处理流程
-
-HTTP的处理流程分为以下三个步骤：
-
-- **连接处理：**浏览器端发出http连接请求，主线程创建http对象接收请求并将所有数据读入对应buffer，将该对象插入任务队列，等待工作线程从任务队列中取出一个任务进行处理。
-- **处理报文请求**：工作线程取出任务后，调用进程处理函数，通过主、从状态机对请求报文进行解析。
-- **返回响应报文：**解析完之后，生成响应报文，返回给浏览器端。
-
-##### 连接处理
-
-在连接阶段，最重要的是**tcp连接过程和读取http的请求报文**。
 
 
+### Reactor模式
 
-服务器是如何实现读取http的报文的呢？首先，服务器需要对每一个**已建立连接http建立一个http的类对象**
-
-
+详情参考 [Proactor模式&Reactor模式详解 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/622210396)
 
 
 
@@ -1223,9 +1256,80 @@ double get_run_time() const {
 
 这样不同的数据库访问请求就可以共享这些连接，通过重复使用这些已经建立的数据库连接，可以解决频繁建立连接的缺点，从而提高了系统的性能。**数据库连接池跟线程池的思想基本是一致的**。
 
+#### 单例模式
 
+因为池子只需要一个，所以采用**单例模式**。
+
+单例模式属于创建型模式，它提供了一种创建对象的最佳方式。这种模式涉及到一个单一的类，该类负责创建自己的唯一的对象。该对象外界可以获取到，但是不能创建和拷贝。
+
+通俗的讲：单例模式就是说每一个类只有单一的一个对象，并且这个对象由**该对象自己创建**。如果让外部调用构造函数或者拷贝构造函数等，很难保证外部只创建了一个实例对象。
+
+**单例模式的最佳方式：**
+
+C++11规定了local static在多线程条件下的初始化行为，要求编译器保证了内部静态变量的线程安全性。在C++11标准下，《Effective C++》提出了一种更优雅的单例模式实现，使用函数内的 **local static 对象**。这样，只有当第一次访问`getInstance()`方法时才创建实例。。C++0x之后该实现是线程安全的，C++0x之前仍需加锁。
+
+```cpp
+class Singleton {
+private:
+	Singleton() { };
+	~Singleton() { };
+public:
+	static Singleton& getInstance() {
+		static Singleton instance;
+		return instance;
+	}
+};
+```
 
 在该项目中不仅实现了数据库连接池，还将数据库连接的获取与释放通过RAII机制封装，避免手动释放。
+
+
+
+### HTTP处理流程
+
+HTTP的处理流程分为以下三个步骤：
+
+1. **连接处理：**浏览器端发出http连接请求，主线程创建http对象接收请求并将所有数据读入对应buffer，将该对象插入任务队列，等待工作线程从任务队列中取出一个任务进行处理。
+2. **解析请求报文：**工作线程取出任务后，调用进程处理函数，通过主、从状态机对请求报文进行解析。
+3. **生成响应报文：**解析完之后，明确用户想要进行的操作（跳转到对应的界面、添加用户名、验证用户等等）并将相应的数据写入响应报文。
+4. **返回响应报文给客户端：**将响应报文发回给客户端。
+
+#### Reactor模式-TODO
+
+本项目采用 **多 Reactor 多线程**的方案。[Proactor模式&Reactor模式详解 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/622210396)
+
+![img](WebServer项目笔记/v2-4855471687db6a2bd80f1cbd7186414a_720w.webp)
+
+#### 1.连接处理
+
+- 主线程是**基于事件驱动的loop**，通过 epoll 监控连接建立、断开和读取、发送事件。
+- 主线程阻塞于`epoll_wait`，当有事件发生后，分为以下几种状态：
+  1. 接受到**连接建立**事件，主线程通过 `accept` 获取连接，并将该TCP连接加入内核事件表，初始化该连接的http类对象，设置该连接的定时器并加入定时器管理链表中；
+  2. 接受到**连接断开**事件，主线程通过定时器回调函数关闭该连接，并从内核事件表中删除。
+  3. 接收到**读取、发送**事件，将该连接的http类对象加入线程池的任务队列中，等待空闲线程处理。
+
+*多 Reactor 多线程*的方案虽然看起来复杂的，但实现时比*单 Reactor 多线程*的方案要简单的多，原因如下：
+
+- 主线程和子线程分工明确，主线程只负责接收新连接，子线程负责完成后续的业务处理。
+- 主线程和子线程的交互很简单，主线程只需要把新连接传给子线程，子线程无须返回数据，直接就可以在子线程将处理结果发送给客户端。
+
+
+
+#### 2.解析报文请求
+
+[最新版Web服务器项目详解 - 05 http连接处理（中） (qq.com)](https://mp.weixin.qq.com/s?__biz=MzAxNzU2MzcwMw==&mid=2649274278&idx=7&sn=d1ab62872c3ddac765d2d80bbebfb0dd&chksm=83ffbefeb48837e808caad089f23c340e1348efb94bef88be355f4d9aedb0f9784e1f9e072b1&cur_album_id=1339230165934882817&scene=189#wechat_redirect)
+
+
+
+#### 3.生成响应报文
+
+[最新版Web服务器项目详解 - 06 http连接处理（下） (qq.com)](https://mp.weixin.qq.com/s?__biz=MzAxNzU2MzcwMw==&mid=2649274278&idx=8&sn=a6b011ad877d865608dcec7130df0c2f&chksm=83ffbefeb48837e838ec4e001e5ad05dd1930d821ad4114c10d4b59bfabb166bc25b0db1f71b&cur_album_id=1339230165934882817&scene=189#wechat_redirect)
+
+
+
+#### 4.返回响应报文
+
+[最新版Web服务器项目详解 - 06 http连接处理（下） (qq.com)](https://mp.weixin.qq.com/s?__biz=MzAxNzU2MzcwMw==&mid=2649274278&idx=8&sn=a6b011ad877d865608dcec7130df0c2f&chksm=83ffbefeb48837e838ec4e001e5ad05dd1930d821ad4114c10d4b59bfabb166bc25b0db1f71b&cur_album_id=1339230165934882817&scene=189#wechat_redirect)
 
 
 

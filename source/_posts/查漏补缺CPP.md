@@ -460,7 +460,7 @@ struct __hashtable_node {
 
 
 
-# C++编程习惯
+# C++
 
 ## 提高速度
 
@@ -516,3 +516,6 @@ ifstream file2 = "filename";//error:copy constructor is private
 
 
 
+## 类
+
+1. 成员变量初始化的顺序为：先进行声明时初始化，然后进行初始化列表初始化，最后进行构造函数初始化。（另外初始化列表中初始化的顺序是和变量声明的顺序一样，而与列表中的顺序无关）

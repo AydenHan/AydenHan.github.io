@@ -4697,3 +4697,151 @@ public:
 };
 ```
 
+
+
+## 2023.8.18
+
+### 1388.3n块披萨
+
+**解法**
+
+基本思路：**贪心**
+
+最容易想到的贪心策略就是每次自己取最大的，但会存在问题。如示例2，[8,9,8,6,1,1]，第一次取9，第二次就只能取6，实际是不如取两次8的。这种情况主要体现在两侧的值和中间接近并且加起来的期望会更高。
+
+首先确定一个前提，只要自己取的位置两两不相邻就肯定可以全部取到。那么继续上面的推理，选最优是 8 + 8，贪最大是 9 + 6，如何判断哪个更大？**两边值的和 - 中间值**。8 + 8 - 9 = 7 > 6。因此选两边而不是中间和剩下的最大值。因为求的是最大和，那么8+8本质和9+7是一样的。由此可以继续贪心策略：每次依旧取最大的，并且删除三个，但是添加一个差值进入中间值所在位置，这样第二次取最大时，有三种情况：
+
+1. 最大是加入的差值，说明第一次是两边更优。因为加入差值时保留了相对位置，所以第二次删除时，差值相邻的两个元素是第一次中的两边各自相邻的元素。
+2. 最大是差值边上的元素，此时差值会被删除。那么加入元素的影响就被消除了，累加和依旧是两次的最大值。
+3. 最大不是以上两种情况，此时选择暂时和这一部分选中间还是两边无关，等到遍历到某一次最大值属于前两种情况时，再去处理这次的选择。
+
+由于每次遍历都加入元素，最后会多出来一部分元素，不需要管。只要取完指定次数的最大值就可以了。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int maxSizeSlices(vector<int>& slices) {
+        int res = 0;
+        int n = slices.size() / 3;
+        for(int i = 0; i < n; ++i) {
+            int maxPos = max_element(slices.begin(), slices.end()) - slices.begin();
+            int l = (maxPos + slices.size() - 1) % slices.size();
+            int r = (maxPos + slices.size() + 1) % slices.size();
+            res += slices[maxPos];
+            slices[maxPos] = slices[l] + slices[r] - slices[maxPos];
+            if(r < l)   swap(l, r);
+            slices.erase(slices.begin() + r);
+            slices.erase(slices.begin() + l);
+        }
+        return res;
+    }
+};
+```
+
+
+
+## 2023.8.21
+
+### 2337.移动片段得到字符串
+
+**解法**
+
+基本思路：**双指针**
+
+L只能左移，R只能右移，同时字符之间无法跨越。那也就是说只需要比较两个字符串之间的相对位置即可。
+
+使用两个数组，存储下两个字符串中的字符位置。之后遍历，针对上述三点进行判断：1.如果两个字符串的字符**数量不一致**或**顺序不一致**，直接false。2.如果start中的 L 在target相同顺序 L 的**左侧**，同样直接false，因为L无法右移。3.同理start中的 R 在target相同顺序 R 的**右侧**，同样直接false。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool canChange(string start, string target) {
+        vector<int> schar, tchar;
+        for(int i = 0; i < start.size(); ++i) {
+            if(start[i] != '_') schar.emplace_back(i);
+            if(target[i] != '_') tchar.emplace_back(i);
+        }
+        if(schar.size() != tchar.size())    return false;
+        for(int i = 0; i < schar.size(); ++i) {
+            if(start[schar[i]] != target[tchar[i]])	return false;
+            if(start[schar[i]] == 'L' && schar[i] < tchar[i])	return false;
+            if(start[schar[i]] == 'R' && schar[i] > tchar[i])	return false;
+        }
+        return true;
+    }
+};
+```
+
+
+
+## 2023.8.22
+
+### 849.到最近的人的最大距离
+
+**解法**
+
+基本思路：**数组**
+
+就是对题意的转化。离最近的人的最大距离，分两种情况：
+
+1. 如果是在两个人之间的，那么只能是**已就坐的人中距离最大的两个人的中间位置**（即最大值除以2）
+2. 如果最左/右边人的左/右边还有空位，那么还可能是**最边的人到两端的距离中的更大值**
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int maxDistToClosest(vector<int>& seats) {
+        int l = -1, mid = 0, r = -1;
+        for(int i = 0; i < seats.size(); ++i) {
+            if(seats[i]) {
+                if(l >= 0)  mid = max(mid, i - r);
+                else        l = i;
+                r = i;
+            }
+        }
+        r = seats.size() - r - 1;
+        return max({l, r, mid / 2});
+    }
+};
+```
+
+
+
+## 2023.8.25
+
+### 1448.统计二叉树中好节点的数目
+
+**解法**
+
+基本思路：**DFS**
+
+因为判断条件为父节点和当前节点的值大小，因此用前序遍历。**维护该条路径上的最大值**即可。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int goodNodes(TreeNode* root) {
+        int res = 0;
+        function<void(TreeNode*, int)> dfs = [&](TreeNode* cur, int preVal) {
+            if(!cur)    return;
+            if(cur->val >= preVal) {
+                ++res;
+                preVal = cur->val;
+            }  
+            dfs(cur->left, preVal);
+            dfs(cur->right, preVal);
+        };
+        dfs(root, INT_MIN);
+        return res;
+    }
+};
+```
+
