@@ -4845,3 +4845,137 @@ public:
 };
 ```
 
+
+
+## 2023.8.26
+
+### 228.汇总区间
+
+**解法**
+
+基本思路：**双指针**
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        vector<string> res;
+        for(int i = 0, j = 0; j < nums.size(); ++j) {
+            if(j == nums.size()-1 || nums[j+1] != nums[j]+1) {
+                string str = to_string(nums[i]);
+                if(i != j)  str += ("->" + to_string(nums[j]));
+                res.emplace_back(str);
+                i = j + 1;
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 美团笔3.汇总区间 - AC
+
+**题干**
+
+<img src="LeetCode--2023Q3/image-20230826131710684.png" alt="image-20230826131710684"  />
+
+![image-20230826131741197](LeetCode--2023Q3/image-20230826131741197.png)
+
+**解法**
+
+基本思路：**排序**
+
+虽然题目中说只能移动a数组，但实则在算法中可以随便移（因为只要a、b每个元素都匹配上了符合要求就必然是true，之后把b数组移回原样就相当于没移）。
+
+之后要考虑的就是对于每个a的元素，看能不能在b中找到对应元素使得 **1 - a[i] ≤ b[i] ≤ m- a[i]** 。这里用的二分查找（ `upper_bound`和 `lower_bound`函数，要求数组是已排序的）。
+
+***Code***
+
+```cpp
+int main() {
+    int q, n, m;
+    cin >> q;
+    while(q--) {
+        cin >> n >> m;
+        vector<int> a(n), b(n);
+        for(int i = 0; i < n; ++i)
+            cin >> a[i];
+        for(int i = 0; i < n; ++i)
+            cin >> b[i];
+        sort(a.begin(), a.end());
+        sort(b.begin(), b.end());
+
+        bool possible = true;
+        for (int i = 0; i < n; ++i) {
+            int target = m - a[i];
+            auto iter = upper_bound(b.begin(), b.end()-i, target);
+            auto iterMin = lower_bound(b.begin(), b.end()-i, 1 - a[i]);
+            if (iter != b.end()-i || iterMin == b.end()-i) {
+                possible = false;
+                break;
+            }
+        }
+        cout << (possible ? "Yes" : "No") << endl;
+    }
+}
+```
+
+
+
+## 2023.8.30
+
+### 1654.到家的最少跳跃次数
+
+**解法**
+
+基本思路：**BFS**
+
+本题计算步数，且每一步有多种选择，因此可以考虑BFS来解，本质其实是枚举。
+
+用队列存储下一步的所有选项，直至走到x。1.因为不能连续后跳，以及为了标记，队列中应存储两个数据：**下一步的位置和到达下一步的方向**（0为后退1为前进）。2.对于BFS来说，走过的路径需要标记，否则会陷入死循环，用**bool二维数组标记**。3.排除forbidden数组中的位置，需要转化为**哈希集合**进行查找。4.范围问题；需要设置前进和后退的极限位置，否则同样会陷入死循环。后退题中给出是0，前进的最大值为6000，证明如下：
+
+题中已给出 *f* , *a* , *b* , *x* ≤ 2000，如果 a ≥ b，当到达大于 x+b 的位置时，最多只能后跳一次，无法到达 x。此后最 保守的跳法也是前跳一次，后跳一次，无法更加接近 x。此时的**最大值是 x+b**。
+
+如果 a < b，最大值为 **max⁡(f+a+b,x)**
+
+![image-20230830103700794](LeetCode--2023Q3/image-20230830103700794.png)
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int minimumJumps(vector<int>& forbidden, int a, int b, int x) {
+        unordered_set<int> hash(forbidden.begin(), forbidden.end());
+        using pii = pair<int, int>;
+        queue<pii> q;
+        q.push({0, -1});
+        bool mark[6000][2] = {false};
+        int res = 0;
+        while(!q.empty()) {
+            int n = q.size();
+            for(int i = 0; i < n; ++i) {
+                if(q.front().first == x)    return res;
+                int frt = q.front().first + a;
+                int bck = q.front().first - b;
+                if(frt < 6000 && !mark[frt][1] && !hash.count(frt)) {
+                    q.push({frt, 1});
+                    mark[frt][1] = true;
+                }
+                if(bck >= 0 && !mark[bck][0] && q.front().second && !hash.count(bck)) {
+                    q.push({bck, 0});
+                    mark[bck][0] = true;
+                }
+                q.pop();
+            }
+            ++res;
+        }
+        return -1;
+    }
+};
+```
+
