@@ -4979,3 +4979,103 @@ public:
 };
 ```
 
+
+
+# 打卡9月LeetCode
+
+## 2023.9.2
+
+### 2511.最多可以摧毁的敌人城堡数目
+
+**解法**
+
+基本思路：**双指针**
+
+不需要先找到1，再找-1，只需要找到距离最远的一对即可（**和为0**）。
+
+因此先找到第一个非0值，作为慢指针，记录下标和值，快指针向右遍历找到可以和慢指针组成一对的位置，更新最大杀敌数（**距离 - 1**）。由于每次只会从一个1到遇到的第一个 -1，因此只要快指针为非0值，都需要更新慢指针的下标和值（因为找的是一对，不是单纯的1找-1）。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int captureForts(vector<int>& forts) {
+        int i = 0, j;
+        int res = 0, headi = -1, headv;
+        for(; i < forts.size(); ++i) {
+            if(forts[i]) {
+                headi = i;
+                headv = forts[i];
+                break;
+            }
+        }
+        if(headi < 0)   return 0;
+        for(j = headi + 1; j < forts.size(); ++j) {
+            if(!forts[j])   continue;
+            if(forts[j] + headv == 0)	res = max(res, j - headi - 1);
+            headi = j;
+            headv = forts[j];
+        }
+        return res;
+    }
+};
+```
+
+
+
+### 小米.笔1 - AC
+
+同**LeetCode.1665 hard**
+
+**题干**
+
+![image-20230902173601528](LeetCode--2023Q3/image-20230902173601528.png)
+
+![image-20230902173615202](LeetCode--2023Q3/image-20230902173615202.png)
+
+**解法**
+
+基本思路：**排序**
+
+先处理输入，将数据存入`vector<pair<int, int>>`。之后按照差值从大到小的顺序排列（因为需要让最低要求电量满足尽可能多的任务）。
+
+设置当前剩余电量`batt`和最低电量`res`，之后遍历数组，将当前剩余电量减去当前任务要耗费的电量。在**减去之前**如果`batt`比任务要求的最低电量小，就需要把差值补上，即 增加`batt`和`res`，使之符合当前任务的要求。
+
+遍历结束后的值就是答案，注意有最大值4800，超过要输出-1。
+
+***Code***
+
+```cpp
+int main() {
+    string input;
+    getline(cin, input);
+    istringstream iss(input);
+
+    vector<pair<int, int>> taskList;
+    string task;
+    while (getline(iss, task, ',')) {
+        int cost, req;
+        sscanf(task.c_str(), "%d:%d", &cost, &req);
+        taskList.push_back({cost, req});
+    }
+    sort(taskList.begin(), taskList.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
+        return (a.first - a.second) < (b.first - b.second);
+    });
+
+    int batt = taskList[0].first;
+    int res = batt;
+    for (const pair<int, int>& item : taskList) {
+        if (batt < item.second) {
+            int diff = item.second - batt;
+            batt += diff;
+            res += diff;
+        }
+        batt -= item.first;
+    }
+    cout << (res > 4800 ? -1 : res) << endl;
+
+    return 0;
+}
+```
+
