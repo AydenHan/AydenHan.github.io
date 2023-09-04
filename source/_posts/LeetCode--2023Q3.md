@@ -5079,3 +5079,93 @@ int main() {
 }
 ```
 
+
+
+## 2023.9.3
+
+### 1921.消灭怪物的最大数量
+
+**解法**
+
+基本思路：**贪心**
+
+先计算每个怪物到达城市前允许的开炮数量，并排序。
+
+贪心策略就是**尽可能先消灭最靠近城市的**（允许的开炮数量最少的）。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int eliminateMaximum(vector<int>& dist, vector<int>& speed) {
+        for(int i = 0; i < speed.size(); ++i)
+            dist[i] = ceil(static_cast<float>(dist[i]) / speed[i]);
+        sort(dist.begin(), dist.end());
+        int cnt = 0;
+        for(int n : dist) {
+            if(cnt < n) ++cnt;
+            else break;
+        }
+        return cnt;
+    }
+};
+```
+
+
+
+## 2023.9.4
+
+### 449.序列化和反序列化二叉搜索树
+
+**解法**
+
+基本思路：**BST、前序**
+
+序列化就是简单的前序存储。
+
+反序列化：
+
+普通二叉树可以通过层序将每个节点的情况都记录在队列中，包括所有空节点，以此保证空间结构。
+
+BST由于有序的特性，可以通过对值的范围判断来确定空间结构。因此采用前序存储后，取头节点即为原本的根节点，反序列化时同样按照先序的顺序，先构造当前节点，之后递归左右子节点。通过传入父节点限制的左右边界，来判断该节点属于哪个子节点。
+
+***Code***
+
+```cpp
+class Codec {
+public:
+    string serialize(TreeNode* root) {
+        if(!root)   return "";
+        string res = "";
+        function<void(TreeNode*)> dfs = [&](TreeNode* root) {
+            if(!root)   return;
+            res += to_string(root->val) + " ";
+            dfs(root->left);
+            dfs(root->right);
+        };
+        dfs(root);
+        res.pop_back();
+        return res;
+    }
+    TreeNode* deserialize(string data) {
+        if(data.empty())    return NULL;
+        vector<int> nums;
+        stringstream ss(data);
+        string tmp;
+        while(getline(ss, tmp, ' '))    nums.emplace_back(stoi(tmp));
+        int idx = 0;
+        function<TreeNode*(int, int)> dfs = [&](int l, int r) -> TreeNode* {
+            if(idx == nums.size() || nums[idx] < l || nums[idx] > r)
+                return NULL;
+            int x = nums[idx++];
+            TreeNode* root = new TreeNode(x);
+            root->left = dfs(l, x);
+            root->right = dfs(x, r);
+            return root;
+        };
+        return dfs(INT_MIN, INT_MAX);
+    }
+};
+```
+
