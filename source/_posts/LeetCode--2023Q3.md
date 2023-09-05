@@ -5169,3 +5169,36 @@ public:
 };
 ```
 
+
+
+## 2023.9.5
+
+### 2605.从两个数字数组里生成最小数字
+
+**解法**
+
+基本思路：**位运算、哈希**
+
+因为数据量较小，可以用位运算实现哈希表，以节省空间。之后枚举1-9，优先取相同的，没有相同的则记录两个最小值，最后输出组合数更小的那个。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int minNumber(vector<int>& nums1, vector<int>& nums2) {
+        unsigned short hash1 = 0, hash2 = 0;
+        for(int n : nums1)   hash1 |= 1 << n;
+        for(int n : nums2)   hash2 |= 1 << n;
+        unsigned short same = hash1 & hash2;
+        int a = 0, b = 0;
+        for(int i = 1; i < 10; ++i) {
+            if((same >> i) & 1) return i;
+            if(!a && ((hash1 >> i) & 1))    a = i;
+            if(!b && ((hash2 >> i) & 1))    b = i;
+        }
+        return min(a*10+b, b*10+a);
+    }
+};
+```
+
