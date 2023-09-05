@@ -5,15 +5,15 @@
 <meta property="og:site_name" content="小涵的米奇妙妙屋">
 <meta property="og:description" content="仿照U-COS II写的一个抢占式实时操作系统——Easy OS。目前只实现了任务的简单调度，功能比较单一，后续会不断完善更新。 底层架构STM32硬件支持Cortex-M3内核提供了以下异常：  编号大于15的均属于外部中断。 异常是可以打断正常执行流的事件，这是实现实时操作系统的关键，本文中将会使用——PendSV可悬起异常和SysTick滴答定时器。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg">
+<meta property="og:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg">
 <meta property="article:published_time" content="2022-04-08T05:41:30.000Z">
-<meta property="article:modified_time" content="2023-09-03T06:21:34.397Z">
+<meta property="article:modified_time" content="2023-09-05T16:28:55.112Z">
 <meta property="article:author" content="Szh">
 <meta property="article:tag" content="电子">
 <meta property="article:tag" content="嵌入式">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg"><link rel="shortcut icon" href="/img/Sign.ico"><link rel="canonical" href="https://www.hanhan0223.cn/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+<meta name="twitter:image" content="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg"><link rel="shortcut icon" href="/img/Sign.ico"><link rel="canonical" href="https://www.hanhan0223.cn/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
   hm.src = "https://hm.baidu.com/hm.js?a8ed5b37dd0aaae924c52eb382109c5d";
@@ -62,7 +62,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2023-09-03 14:21:34'
+  postUpdate: '2023-09-06 00:28:55'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -151,7 +151,7 @@
       }
     }
     detectApple()
-    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小涵的米奇妙妙屋</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于STM32F103的实时操作系统</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-08T05:41:30.000Z" title="发表于 2022-04-08 13:41:30">2022-04-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-03T06:21:34.397Z" title="更新于 2023-09-03 14:21:34">2023-09-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8E%9F%E7%90%86/">原理</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">7.5k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于STM32F103的实时操作系统"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>仿照<strong>U-COS II</strong>写的一个抢占式实时操作系统——<a target="_blank" rel="noopener" href="https://github.com/shen962806862/EasyOS">Easy OS</a>。目前只实现了任务的简单调度，功能比较单一，后续会不断完善更新。</p>
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小涵的米奇妙妙屋</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 脚本</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/scripts/genshin/"><i class="fa-fw fas fa-gamepad"></i><span> 我焯!原!</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于STM32F103的实时操作系统</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-04-08T05:41:30.000Z" title="发表于 2022-04-08 13:41:30">2022-04-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-05T16:28:55.112Z" title="更新于 2023-09-06 00:28:55">2023-09-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8E%9F%E7%90%86/">原理</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">8k</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于STM32F103的实时操作系统"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>仿照<strong>U-COS II</strong>写的一个抢占式实时操作系统——<a target="_blank" rel="noopener" href="https://github.com/shen962806862/EasyOS">Easy OS</a>。目前只实现了任务的简单调度，功能比较单一，后续会不断完善更新。</p>
 <h1 id="底层架构"><a href="#底层架构" class="headerlink" title="底层架构"></a>底层架构</h1><h2 id="STM32硬件支持"><a href="#STM32硬件支持" class="headerlink" title="STM32硬件支持"></a>STM32硬件支持</h2><p>Cortex-M3内核提供了以下异常：</p>
 <p><img src="/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/5629cbeecb7eb91876bda5289eedf86b1fa27fbd.png@942w_677h_progressive.webp" alt="img"></p>
 <p>编号大于15的均属于外部中断。</p>
@@ -313,22 +313,27 @@ CPU_SR_Restore			    	;开中断（退出临界区）
 #define  EXIT_CRITICAL()   &#123;  CPU_SR_Restore(CPU_SR); &#125;</code></pre>
 
 <p>注意，ARM架构中汇编函数的返回值默认为存储在R0中；同理，汇编函数的前四个输入参数一般为R0-R3。</p>
+<p>再注意，由于这种写法问题，两者必须<strong>成对出现</strong>，不能在<code>EXIT_CRITICAL()</code>前再调用<code>ENTER_CRITICAL()</code>，会导致<strong>中断永远关闭</strong>。</p>
 <h3 id="初始化的汇编函数"><a href="#初始化的汇编函数" class="headerlink" title="初始化的汇编函数"></a>初始化的汇编函数</h3><pre class="language-assembly" data-language="assembly"><code class="language-assembly">NVIC_INT_CTRL    EQU            0xE000ED04    ; 中断控制寄存器的地址
 NVIC_PENDSVSET   EQU            0x10000000    ; 触发软中断，通过给NVIC_INT_CTRL第28bit写1
 NVIC_SYSPRI14    EQU            0xE000ED22    ; 系统优先级寄存器(14)  对应 PendSV
-NVIC_PENDSV_PRI  EQU            0xFF          ; PendSV 中断优先级为最低(0xFF)
+NVIC_PENDSV_PRI  EQU            0xFFFF0000    ; PendSV 中断优先级为最低(0xFF)
 
 CPU_Start
     CPSID    I          
     
-    LDR     R0, &#x3D;NVIC_SYSPRI14       ; 初始化PendSV，并设置中断优先级为255，最低     
-    LDR     R1, &#x3D;NVIC_PENDSV_PRI          
-    STRB    R1, [R0]                      
+    LDR     R4, &#x3D;NVIC_SYSPRI14      ; 初始化PendSV，并设置中断优先级为255，最低     
+    LDR     R5, &#x3D;NVIC_PENDSV_PRI          
+    STRB    R5, [R4]                      
     
-    LDR 	R4,  &#x3D;0x0                ; 初始化PSP为0   
+    MOV 	R4, #0                	; 初始化PSP为0   
     MSR    	PSP, R4                           
     
-    LDR    	R4, &#x3D;NVIC_INT_CTRL       ; 先触发一次PendSV异常
+	LDR     R4, &#x3D;SCHEDULE         	; SCHEDULE &#x3D; TRUE
+	MOV 	R5, #1
+	STRB    R5, [R4]
+	
+    LDR    	R4, &#x3D;NVIC_INT_CTRL      ; 先触发一次PendSV异常
     LDR    	R5, &#x3D;NVIC_PENDSVSET       
     STR    	R5, [R4]                   
 
@@ -451,23 +456,22 @@ void delay_ms(u16 ms, u8 tim_used)
 <p>注意这里需要软件清0，因此在结束循环后将该位复位。</p>
 <h4 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h4><p>在RTOS中的不同任务，使用的是相同的定时器资源，因此调用延时函数时应注意<strong>同时进行的任务中不能使用相同的tim定时器</strong>。否则在出现任务切换时会修改同一tim寄存器的值，导致时序混乱。</p>
 <h2 id="USART"><a href="#USART" class="headerlink" title="USART"></a>USART</h2><h3 id="初始化-1"><a href="#初始化-1" class="headerlink" title="初始化"></a>初始化</h3><pre class="language-c" data-language="c"><code class="language-c">void uart_init(u32 bound) &#123;
-	MY_NVIC_Init(3,3,USART1_IRQn,2);
+	float uart_div; 
+	u16 div_m, div_f; 
 	RCC-&gt;APB2ENR |&#x3D; 1 &lt;&lt; 2;  	
-	RCC-&gt;APB2ENR |&#x3D; 1 &lt;&lt; 14;  
+	RCC-&gt;APB2ENR |&#x3D; 1 &lt;&lt; 14; 
 	RCC-&gt;APB2RSTR |&#x3D; 1 &lt;&lt; 14;   
 	RCC-&gt;APB2RSTR &amp;&#x3D; ~(1 &lt;&lt; 14);
 	GPIOA-&gt;CRH &amp;&#x3D; 0xFFFFF00F;
 	GPIOA-&gt;CRH |&#x3D; 0x000008B0;
-    GPIOA-&gt;ODR |&#x3D; 1 &lt;&lt; 10;
-	float uart_div; 
-	uart_div &#x3D; (float)SystemCoreClock &#x2F; (bound * 16);
-	u16 div_m &#x3D; (u16)uart_div;
-	u16 div_f &#x3D; (uart_div - div_m) * 16 + 0.5f; 
+    uart_div &#x3D; (float)SystemCoreClock &#x2F; (bound * 16);
+	div_m &#x3D; uart_div;
+	div_f &#x3D; (uart_div - div_m) * 16 + 0.5f;
  	USART1-&gt;BRR &#x3D; div_m &lt;&lt; 4 | div_f;
-	USART1-&gt;CR1 |&#x3D; 0x202C;  	
+	USART1-&gt;CR1 |&#x3D; 0x202C;  
+	NVIC_SetPriority(USART1_IRQn, 0x08);
+	NVIC-&gt;ISER[USART1_IRQn &#x2F; 32] |&#x3D; (1 &lt;&lt; USART1_IRQn % 32);	
 &#125;</code></pre>
-
-
 
 <h4 id="使能"><a href="#使能" class="headerlink" title="使能"></a>使能</h4><p>串口作为 STM32 的一个外设，其时钟由外设时钟使能寄存器控制，usart1是在APB2ENR寄存器的<strong>第14位</strong>，其余都在 APB1ENR 寄存器。同时usart1默认是复用GPIOA的9、10端口，因此还需要使能<strong>第2位</strong>。</p>
 <p><img src="/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/image-20230902151209683.png" alt="image-20230902151209683"></p>
@@ -485,7 +489,13 @@ void delay_ms(u16 ms, u8 tim_used)
 <p>第10位，校验位不使能。</p>
 <p><img src="/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/image-20230902184043904.png" alt="image-20230902184043904"></p>
 <p>最后即 <code>0x202C</code>。</p>
-<h4 id="中断优先级"><a href="#中断优先级" class="headerlink" title="中断优先级"></a>中断优先级</h4><p>既然开启了中断使能，就需要设置中断的优先级。</p>
+<h4 id="中断"><a href="#中断" class="headerlink" title="中断"></a>中断</h4><p>既然用到了中断，就需要设置中断的优先级并<font color="red"><strong>使能</strong></font>（很关键，中断不使能就用不了，调了好久的bug才发现）。</p>
+<p>NVIC 是嵌套向量中断控制器，控制着整个STM32芯片中断相关的功能。其中最常用的三个寄存器：</p>
+<ul>
+<li>NVIC-&gt;ISER，用于使能中断</li>
+<li>NVIC-&gt;ICER，用于清除中断使能</li>
+<li>NVIC-&gt;IP，用于设置中断优先级</li>
+</ul>
 <h3 id="数据帧"><a href="#数据帧" class="headerlink" title="数据帧"></a>数据帧</h3><p><img src="/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/6407a634a44f42f4b58704b25c40866f.png" alt="在这里插入图片描述"></p>
 <h4 id="标准"><a href="#标准" class="headerlink" title="标准"></a>标准</h4><p><img src="/%E5%8E%9F%E7%90%86/%E5%9F%BA%E4%BA%8ESTM32F103%E7%9A%84%E5%AE%9E%E6%97%B6%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzU0NzQ3Njg2,size_4,color_FFFFFF,t_70#pic_center.png" alt="在这里插入图片描述"></p>
 <p>在上面的通讯方式中，两个通讯设备的DB9 接口（常说的<strong>COM口</strong>）之间通过串口信号线建立起连接，串口信号线中使用RS-232 标准传输数据信号。由于 RS-232 电平标准的信号不能直接被控制器直接识别，所以这些信号会经过一个电平转换芯片转换成控制器能识别的TTL 标准的电平信号，才能实现通讯。</p>
@@ -513,7 +523,7 @@ void delay_ms(u16 ms, u8 tim_used)
 </thead>
 <tbody><tr>
 <td align="center">当协议第一帧为 <code>0xFE</code> 时，数据接收状态置1，允许接收数据。<br>数据接收完毕后，由软件清0。</td>
-<td align="center">00：接收指令01：接收数据长度<br>10：接收数据11：数据溢出</td>
+<td align="center">00：接收指令01：接收数据长度<br>10：接收数据11：TODO</td>
 <td align="center">协议第二帧固定为自定义指令编号，用于调用API。编号范围 [1, 31]，<code>0x00</code>默认为不使用指令。</td>
 <td align="center">存储协议第三帧，表示接下来还需要传输的数据字节数（最大256）</td>
 </tr>
@@ -522,49 +532,79 @@ void delay_ms(u16 ms, u8 tim_used)
 <h4 id="指令信号"><a href="#指令信号" class="headerlink" title="指令信号"></a>指令信号</h4><p>第二帧固定为指令编号，范围 [0x01, 0x1F]。<code>0x00</code> 默认为不使用指令，忽略该帧。结束该帧时将状态位置01，表示等待接收数据长度帧。</p>
 <h4 id="数据长度信号"><a href="#数据长度信号" class="headerlink" title="数据长度信号"></a>数据长度信号</h4><p>第三帧固定为数据长度，表明接下来要传输的数据字节数。结束该帧时将状态位置10，表示开始接收数据帧。</p>
 <p>若剩余接收字节数大于缓冲区（最大256）剩余空间，将第13位置1。当不再大于时，置0。用于在缓冲区满或数据接收完成时判断是否存在溢出丢失现象。</p>
-<h4 id="接收实现"><a href="#接收实现" class="headerlink" title="接收实现"></a>接收实现</h4><pre class="language-c" data-language="c"><code class="language-c">#define PARITY_STAT(RXx)	(RXx &amp; 0x8000) &#x3D;&#x3D; 0
-#define ORDER_STAT(RXx)		(RXx &amp; 0x6000) &#x3D;&#x3D; 0
-#define LEN_STAT(RXx)		(RXx &amp; 0x6000) &#x3D;&#x3D; 0x4000
-#define DATA_STAT(RXx)		(RXx &amp; 0x6000) &#x3D;&#x3D; 0x5000
-#define END_STAT(RXx)		(RXx &amp; 0x00FF) &#x3D;&#x3D; 0
+<h4 id="接收实现"><a href="#接收实现" class="headerlink" title="接收实现"></a>接收实现</h4><pre class="language-c" data-language="c"><code class="language-c">extern u8 usart_rx_end;
+#define UR_PARITY(RXx)		(RXx &amp; 0x8000) &#x3D;&#x3D; 0
+#define UR_STAT(RXx)		RXx &amp; 0x6000
+#define UR_END(RXx)			(RXx &amp; 0x00FF) &#x3D;&#x3D; 0
+#define UR_END_SET(x)		usart_rx_end |&#x3D; 1 &lt;&lt; (x-1)
+#define UR_END_RESET(x)		usart_rx_end &amp;&#x3D; ~(1 &lt;&lt; (x-1))
+void RX_Protocol(void) &#123;
+	u8 res;
+	res &#x3D; USART1-&gt;DR;
+	if(UR_PARITY(usart1_rx)) &#123;
+		if(res &#x3D;&#x3D; 0xFE)	
+			usart1_rx |&#x3D; 1 &lt;&lt; 15;
+	&#125;	
+	else &#123;
+		switch(UR_STAT(usart1_rx)) &#123;
+			case 0: &#123;
+				usart1_rx |&#x3D; 1 &lt;&lt; 13;
+				if(res) &#123;
+					&#x2F;&#x2F; TODO: order case
+				&#125;
+				break;
+			&#125;
+			case 0x2000: &#123;
+				usart1_rx |&#x3D; res;
+				usart1_rx ^&#x3D; (1 &lt;&lt; 13 | 1 &lt;&lt; 14);
+				if(UR_END(usart1_rx)) &#123;
+					usart1_rx &#x3D; 0;
+					UR_END_RESET(1);
+				&#125;
+				break;
+			&#125;
+			case 0x4000: &#123;
+				lwrb_write(&amp;fifo_buff, &amp;res, 1);
+				usart1_rx--;
+				if(UR_END(usart1_rx)) &#123;
+					usart1_rx &#x3D; 0;
+					UR_END_SET(1);
+				&#125;
+				break;
+			&#125;
+			case 0x6000: &#123;
+				&#x2F;&#x2F; TODO: overflow?
+			&#125;
+		&#125; 		
+	&#125;	
+&#125;
 void USART1_IRQHandler(void) &#123;
-	u8 res;	
-	if(USART1-&gt;SR &amp; (1 &lt;&lt; 5)) &#123;	 
-		res &#x3D; USART1-&gt;DR; 
-		if(PARITY_STAT(usart1_rx)) &#123;
-			if(res &#x3D;&#x3D; 0xFE)	&#123;
-				usart1_rx |&#x3D; 1 &lt;&lt; 15;
-				return;
-			&#125;
-		&#125;
-		if(ORDER_STAT(usart1_rx)) &#123;
-			usart1_rx |&#x3D; 1 &lt;&lt; 13;
-			if(res) &#123;
-				&#x2F;&#x2F; order case
-			&#125;
-			return;
-		&#125;
-		if(LEN_STAT(usart1_rx)) &#123;
-			usart1_rx |&#x3D; res;
-			usart1_rx ^&#x3D; (1 &lt;&lt; 13 | 1 &lt;&lt; 14);
-			return;
-		&#125;
-		if(DATA_STAT(usart1_rx)) &#123;
-			lwrb_write(&amp;fifo_buff, &amp;res, 1);
-			usart1_rx--;
-			if(END_STAT(usart1_rx)) &#123;
-				usart1_rx &#x3D; 0;
-			&#125;
-		&#125;		 									     
-	&#125;
+#if SYSTEM_SUPPORT_OS 		
+	OSIrqEnter();    
+#endif
+	if(USART1-&gt;SR &amp; (1 &lt;&lt; 5))
+		RX_Protocol();
+	
+#if SYSTEM_SUPPORT_OS 	
+	OSIrqExit();  											 
+#endif
 &#125; </code></pre>
 
+<h4 id="发送实现"><a href="#发送实现" class="headerlink" title="发送实现"></a>发送实现</h4><p>发送的实现只完成了基础的字节发送和字符串发送，因为要根据另一端的接收协议来决定发送顺序，因此只实现了基础功能。</p>
+<pre class="language-c" data-language="c"><code class="language-c">void send(u8* str) &#123;
+	while(*str !&#x3D; &#39;\0&#39;)
+		send_byte(*str++);
+&#125;
+void send_byte(u8 c) &#123;
+	USART1-&gt;DR &#x3D; c;
+	while(!(USART1-&gt;SR &amp; 0x40));
+&#125;</code></pre>
 
 
 
-
-
-
+<h3 id="接收缓冲区"><a href="#接收缓冲区" class="headerlink" title="接收缓冲区"></a>接收缓冲区</h3><p>用了一个轻量级的C99开源库：<a target="_blank" rel="noopener" href="https://github.com/MaJerle/lwrb/tree/v2.0.0">MaJerle/lwrb at v2.0.0 (github.com)</a></p>
+<p><strong>Lightweight ring buffer manager</strong>，提供了一个通用FIFO环形缓冲区的C99实现（v3.0支持C11）。</p>
+<p>根据协议设定，每次在将所有数据读入环形缓冲区后，将标志位<code>usart_rx_end</code>置位。task在检测到该标志位置位后即表明有数据可读。</p>
 <h1 id="系统结构"><a href="#系统结构" class="headerlink" title="系统结构"></a>系统结构</h1><h2 id="任务控制块TCB"><a href="#任务控制块TCB" class="headerlink" title="任务控制块TCB"></a>任务控制块TCB</h2><p>包含三个部分，任务栈顶指针、延时时长以及任务状态</p>
 <pre class="language-c" data-language="c"><code class="language-c">typedef unsigned int  STACK_TypeDef;
 typedef unsigned int  PRIO_TypeDef;
@@ -606,8 +646,11 @@ extern  TCB_Ptr       TCB_NextP;            &#x2F;&#x2F; 下一个运行任务�
 #define DelTaskReady(Prio)	(	TaskReadyTable &amp;&#x3D; ~(0x01&lt;&lt;Prio)	)</code></pre>
 
 <p>通过一个简单的for循环获取当前最高优先级的任务（实际就是获取优先级数）</p>
-<pre class="language-c" data-language="c"><code class="language-c">u32 i;
-for(i &#x3D; 0; (i &lt; TASKS_NUM) &amp;&amp; (!(TaskReadyTable &amp; (0x01&lt;&lt;i))); i++);</code></pre>
+<pre class="language-c" data-language="c"><code class="language-c">u32 SysGetHighestReady(void) &#123;
+	u32 i &#x3D; 0;
+	for(i &#x3D; 0; (i &lt; TASKS_NUM) &amp;&amp; (!(TaskReadyTable &amp; (1&lt;&lt;i))); i++);
+	return i;
+&#125;</code></pre>
 
 <p>相应优先级的任务，存于 <strong>TCB[i]</strong> 中。</p>
 <h2 id="任务的创建"><a href="#任务的创建" class="headerlink" title="任务的创建"></a>任务的创建</h2><pre class="language-c" data-language="c"><code class="language-c">&#x2F;*
@@ -620,7 +663,6 @@ void STM32_TaskCreate(TASK_TypeDef task, STACK_TypeDef *stack, PRIO_TypeDef prio
 &#123;
     STACK_TypeDef  *p_stk;
     p_stk      &#x3D; stack;                           &#x2F;&#x2F;加载栈顶指针
-    p_stk      &#x3D; (STACK_TypeDef *)((STACK_TypeDef)(p_stk) &amp; 0xFFFFFFF8u);
     
     *(--p_stk) &#x3D; (STACK_TypeDef)0x01000000uL;     &#x2F;&#x2F; xPSR的T位置1，设置为Thumb模式？TODO
     *(--p_stk) &#x3D; (STACK_TypeDef)task;             &#x2F;&#x2F; PC指针
@@ -665,160 +707,174 @@ void STM32_TaskCreate(TASK_TypeDef task, STACK_TypeDef *stack, PRIO_TypeDef prio
 <li>ARM 模式：在 ARM 模式下，通常可以更快速地响应中断，因为每条指令执行的操作较多。</li>
 <li>Thumb 模式：Thumb 模式下，由于指令较短，中断处理可能需要更多的指令来完成，因此响应中断的速度可能较慢。</li>
 </ul>
-<h2 id="部分函数接口"><a href="#部分函数接口" class="headerlink" title="部分函数接口"></a>部分函数接口</h2><h3 id="任务的调度"><a href="#任务的调度" class="headerlink" title="任务的调度"></a>任务的调度</h3><pre class="language-c" data-language="c"><code class="language-c">&#x2F;*
- --- 任务调度          
-*&#x2F;
-void SysTaskSchedule(void)
-&#123;
-	u32 i;
+<h2 id="部分函数接口"><a href="#部分函数接口" class="headerlink" title="部分函数接口"></a>部分函数接口</h2><h3 id="任务的调度"><a href="#任务的调度" class="headerlink" title="任务的调度"></a>任务的调度</h3><h4 id="调度函数"><a href="#调度函数" class="headerlink" title="调度函数"></a>调度函数</h4><p>包含用户级的调度 <code>SysCtxSw()</code> 和内核级的调度 <code>OsCtxSw()</code>。</p>
+<pre class="language-c" data-language="c"><code class="language-c">void SysCtxSw(void) &#123;
+	u32 prio;
+	ENTER_CRITICAL();
+	prio &#x3D; SysGetHighestReady();
+	PrioNext &#x3D; PrioCur &#x3D; prio;
+	TCB_NextP &#x3D; &amp;TCB[prio];
+	EXIT_CRITICAL();
+&#125;
+#define OsCtxSw	CPU_TASK_SCHEDULE		&#x2F;&#x2F; 即为上文中汇编代码函数</code></pre>
 
-	if(SCHEDULE &#x3D;&#x3D; 1)
-	&#123;
-		for(i &#x3D; 0; i &lt; TASKS_NUM; i++)					&#x2F;&#x2F; 刷新各任务剩余延时时间 
-		&#123;
-			if(TCB[i].State &#x3D;&#x3D; TASK_DELAY )
-			&#123;
-				TCB[i].Delay--;
-				if(TCB[i].Delay &#x3D;&#x3D; 0)					&#x2F;&#x2F; 必须是由定时器减时的才行
-				&#123;
-					TCB[PrioCur].State &#x3D; TASK_READY;	
-					SetTaskReady(i);		    		&#x2F;&#x2F;修改任务就绪表 使任务可以重新运行	
-				&#125;
+<p>任务的调度只应该出现在两种情况：</p>
+<ol>
+<li>任务等待资源就绪（挂起、恢复）或自我延时；</li>
+<li>退出中断；</li>
+</ol>
+<p>情况 1 可以理解为<strong>任务主动放弃 cpu 的使用权</strong>。</p>
+<p>情况 2 可以理解为<strong>中断后，某种资源可能就绪了，需要任务切换</strong>。</p>
+<h4 id="systick-1"><a href="#systick-1" class="headerlink" title="systick"></a>systick</h4><p>需要注意的是 SysTick 中断，这个中断是 os 的“心跳”，必须得有。在该中断中必须做的工作仅有 os 的时间管理 <code>SysStatUpdate()</code>（即<strong>计时、任务延时时间的减少</strong>等）。</p>
+<pre class="language-c" data-language="c"><code class="language-c">void SysStatUpdate(void) &#123;
+	u32 i;
+	ENTER_CRITICAL();
+	OSTick++;
+	for(i &#x3D; 0; i &lt; TASKS_NUM; i++) &#123;				
+		if(TCB[i].State &#x3D;&#x3D; TASK_DELAY ) &#123;
+			TCB[i].Delay--;
+			if(TCB[i].Delay &#x3D;&#x3D; 0) &#123;					
+				TCB[PrioCur].State &#x3D; TASK_READY;	
+				SetTaskReady(i);
 			&#125;
 		&#125;
+	&#125;
+	EXIT_CRITICAL();
+&#125;</code></pre>
 
-		for(i &#x3D; 0; (i &lt; TASKS_NUM) &amp;&amp; (!(TaskReadyTable &amp; (0x01&lt;&lt;i))); i++);
-		
-		PrioNext &#x3D; i;	
-		PrioCur  &#x3D; i;
-		TCB_NextP &#x3D; &amp;TCB[i];
-		CPU_TASK_SCHEDULE();
+<p>将任务切换放置在退出最后一层中断时（当只有systick中断发生时，退出心跳中断就切换）。</p>
+<p>如果每次退出systick时都<strong>直接</strong>进行任务切换，会过于频繁，若是最高优先级任务仍为当前运行任务，就白白耗费资源了。因此在切换前需要判断最高优先级任务是否为当前任务，若不是则切换。</p>
+<h4 id="中断嵌套处理"><a href="#中断嵌套处理" class="headerlink" title="中断嵌套处理"></a>中断嵌套处理</h4><p>同进出临界区，也必须成对出现。任务的切换发生在<strong>最后一个中断结束时，且最高优先级任务并非当前运行任务</strong>。</p>
+<p>每一个使用到的中断（除了PendSV），都需要在进入和退出时加上这一对函数。</p>
+<pre class="language-c" data-language="c"><code class="language-c">void OSIrqEnter(void) &#123;
+    if (SCHEDULE)
+        if (OSIrqNest &lt; 255u) 
+            OSIrqNest++;        
+&#125;
+void OSIrqExit(void) &#123;
+	if(SCHEDULE) &#123;
+		if(OSIrqNest &gt; 0u) &#123;
+			ENTER_CRITICAL();
+			OSIrqNest--;
+			EXIT_CRITICAL();
+		&#125;
+		if(OSIrqNest &#x3D;&#x3D; 0u) &#123;
+			u32 prio &#x3D; SysGetHighestReady();
+			if(PrioCur !&#x3D; prio) &#123;		
+				SysCtxSw();
+				OsCtxSw();
+			&#125;
+		&#125;
 	&#125;
 &#125;</code></pre>
 
 
 
-<h3 id="任务的创建-1"><a href="#任务的创建-1" class="headerlink" title="任务的创建"></a>任务的创建</h3><pre class="language-c" data-language="c"><code class="language-c">&#x2F;*
- --- 创建任务                                                                    
- - *p_Task:  任务函数地址
- - *p_Stack：任务栈顶指针
- - prio:     任务优先级
-*&#x2F;
-void TaskCreate(void (*p_Task)(void), STACK_TypeDef *p_Stack, PRIO_TypeDef prio)
-&#123;
-    if(prio &lt;&#x3D; TASKS_NUM)
-    &#123;
+<h3 id="任务的创建-1"><a href="#任务的创建-1" class="headerlink" title="任务的创建"></a>任务的创建</h3><pre class="language-c" data-language="c"><code class="language-c">void TaskCreate(void (*p_Task)(void), STACK_TypeDef *p_Stack, PRIO_TypeDef prio) &#123; 
+	ENTER_CRITICAL();
+    if(prio &lt;&#x3D; TASKS_NUM) &#123;
 		STM32_TaskCreate(p_Task, p_Stack, prio);  	
 		SetTaskReady(prio);      			 
     &#125;
+	EXIT_CRITICAL();
 &#125;</code></pre>
 
 
 
-<h3 id="任务的挂起"><a href="#任务的挂起" class="headerlink" title="任务的挂起"></a>任务的挂起</h3><pre class="language-c" data-language="c"><code class="language-c">void TaskSuspend(PRIO_TypeDef prio)
-&#123;
-	u32 i;
-	
+<h3 id="任务的挂起"><a href="#任务的挂起" class="headerlink" title="任务的挂起"></a>任务的挂起</h3><pre class="language-c" data-language="c"><code class="language-c">void TaskSuspend(PRIO_TypeDef prio) &#123;
 	ENTER_CRITICAL();
 	TCB[prio].Delay &#x3D; 0;
 	TCB[prio].State &#x3D; TASK_SUSPEND;
-	DelTaskReady(prio);				&#x2F;&#x2F; 从任务就绪表上去除标志位
-	EXIT_CRITICAL();
-		
-	if(PrioCur &#x3D;&#x3D; prio)				&#x2F;&#x2F; 当要挂起的任务为当前任务	重新调度		
-	&#123;
-		for(i &#x3D; 0; (i &lt; TASKS_NUM) &amp;&amp; (!(TaskReadyTable &amp; (0x01&lt;&lt;i))); i++);
-		
-		PrioNext &#x3D; i;	
-		PrioCur  &#x3D; i;
-		TCB_NextP &#x3D; &amp;TCB[i];
-		CPU_TASK_SCHEDULE();
-	&#125;	
-&#125;</code></pre>
-
-
-
-<h3 id="任务的恢复"><a href="#任务的恢复" class="headerlink" title="任务的恢复"></a>任务的恢复</h3><pre class="language-c" data-language="c"><code class="language-c">void TaskResume(PRIO_TypeDef prio)
-&#123;
-	u32 i;
-
-	ENTER_CRITICAL();
-	SetTaskReady(prio);				&#x2F;&#x2F; 从任务就绪表上重置标志位	
-    TCB[prio].Delay &#x3D; 0;			&#x2F;&#x2F; 将时间计时设为0,延时到	
-    TCB[prio].State &#x3D; TASK_READY;	&#x2F;&#x2F; s	
+	DelTaskReady(prio);				
 	EXIT_CRITICAL();
 	
-	if(PrioCur &#x3D;&#x3D; prio)				&#x2F;&#x2F; 不执行？	
-	&#123;
-		for(i &#x3D; 0; (i &lt; TASKS_NUM) &amp;&amp; (!(TaskReadyTable &amp; (0x01&lt;&lt;i))); i++);
-		
-		PrioNext &#x3D; i;	
-		PrioCur  &#x3D; i;
-		TCB_NextP &#x3D; &amp;TCB[i];
-		CPU_TASK_SCHEDULE();
+	if(PrioCur &#x3D;&#x3D; prio) &#123;		
+		SysCtxSw();
+		OsCtxSw();
 	&#125;	
 &#125;</code></pre>
 
 
 
-<h3 id="任务的延时"><a href="#任务的延时" class="headerlink" title="任务的延时"></a>任务的延时</h3><pre class="language-c" data-language="c"><code class="language-c">&#x2F;*
- --- 任务延时
- - ticks: 延时的节拍数
-*&#x2F;
-void SysTimeDelay(TICKS_TypeDef ticks)
-&#123;
-	u32 i &#x3D; 0;
-	if (ticks)								        
-	&#123;
+<h3 id="任务的恢复"><a href="#任务的恢复" class="headerlink" title="任务的恢复"></a>任务的恢复</h3><pre class="language-c" data-language="c"><code class="language-c">void TaskResume(PRIO_TypeDef prio) &#123;
+	ENTER_CRITICAL();
+	SetTaskReady(prio);				
+    TCB[prio].Delay &#x3D; 0;			
+    TCB[prio].State &#x3D; TASK_READY;	
+	EXIT_CRITICAL();
+	
+	if(PrioCur !&#x3D; prio)	&#123;
+		SysCtxSw();
+		OsCtxSw();
+	&#125;	
+&#125;</code></pre>
+
+
+
+<h3 id="任务的延时"><a href="#任务的延时" class="headerlink" title="任务的延时"></a>任务的延时</h3><pre class="language-c" data-language="c"><code class="language-c">void SysTimeDelay(TICKS_TypeDef ticks) &#123;
+	if (ticks) &#123;
 		ENTER_CRITICAL();
 		DelTaskReady(PrioCur);				 
-		TCB[PrioCur].Delay &#x3D; ticks;			&#x2F;&#x2F; 设置任务延时节拍数   
+		TCB[PrioCur].Delay &#x3D; ticks;			
 		TCB[PrioCur].State &#x3D; TASK_DELAY;	
 		EXIT_CRITICAL();
-
-		for(i &#x3D; 0; (i &lt; TASKS_NUM) &amp;&amp; (!(TaskReadyTable &amp; (0x01&lt;&lt;i))); i++);
 		
-		PrioNext &#x3D; i;	
-		PrioCur  &#x3D; i;
-		TCB_NextP &#x3D; &amp;TCB[i];
-		CPU_TASK_SCHEDULE();
+		SysCtxSw();
+		OsCtxSw();
 	&#125;
 &#125;</code></pre>
 
 
 
-<h1 id="实例应用"><a href="#实例应用" class="headerlink" title="实例应用"></a>实例应用</h1><h2 id="测试例程"><a href="#测试例程" class="headerlink" title="测试例程"></a>测试例程</h2><h3 id="单任务计数"><a href="#单任务计数" class="headerlink" title="单任务计数"></a>单任务计数</h3><pre class="language-c" data-language="c"><code class="language-c">#define TASK_2_STK_SIZE 128
+<h1 id="实例应用"><a href="#实例应用" class="headerlink" title="实例应用"></a>实例应用</h1><h2 id="测试例程"><a href="#测试例程" class="headerlink" title="测试例程"></a>测试例程</h2><h3 id="led闪烁-usart通信"><a href="#led闪烁-usart通信" class="headerlink" title="led闪烁 + usart通信"></a>led闪烁 + usart通信</h3><pre class="language-c" data-language="c"><code class="language-c">static STACK_TypeDef	IdleStack[64];
+
+#define TASK_1_STK_SIZE 128
+#define TASK_2_STK_SIZE 128
+
+static STACK_TypeDef TASK_1_STK[TASK_1_STK_SIZE];
 static STACK_TypeDef TASK_2_STK[TASK_2_STK_SIZE];
 
-u32 task2count &#x3D; 0;
-void task_2()
-&#123;
-  	while(1)
-	&#123;
-		task2count++;
-		display(task2count);	&#x2F;&#x2F; 数码管显示函数
-		if (task2count &gt;&#x3D; 9999) &#123;
-			task2count &#x3D; 0;
-		&#125;
-		SysTimeDelay(1);
+void task_1() &#123;
+	while(1) &#123;
+		LED1 &#x3D; 0;
+		SysTimeDelay(1000);
+		LED1 &#x3D; 1;
+		SysTimeDelay(1000);
 	&#125;
+&#125;
+
+void task_2() &#123;
+	while(1) &#123;
+		if(usart_rx_end) &#123;
+			u8 text[256];
+			recv(text, recv_max_len());
+			send(text);
+		&#125;
+	&#125;
+&#125;
+
+void IdleTask(void) &#123;	
+	TaskCreate(task_1, &amp;TASK_1_STK[TASK_1_STK_SIZE-1], 0);
+	TaskCreate(task_2, &amp;TASK_2_STK[TASK_2_STK_SIZE-1], 1);
+	TaskSuspend(TASKS_NUM);
+	&#x2F;&#x2F;while(1);
 &#125;
 
 int main()
 &#123;
-	delay_init(72);
-	LED_Configuration();
-	DigitalTube_Configuration();
-	LCD_Configuration();
+	&#x2F;&#x2F; device init
+	delay_init(7200, 3);
+	led_init();
+	uart_init(115200);
 
+	&#x2F;&#x2F; OS init
 	Sys_Init();
-	&#x2F;&#x2F;TaskCreate(task_1, &amp;TASK_1_STK[TASK_1_STK_SIZE-1], TASK1_PRIO);
-	TaskCreate(task_2, &amp;TASK_2_STK[TASK_2_STK_SIZE-1], TASK2_PRIO);
-  	Sys_Start();
-  
+	TaskCreate(IdleTask, &amp;IdleStack[63], TASKS_NUM);
+	Sys_Start();
+
  	return 0;
 &#125;</code></pre>
 
 
 
-</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%94%B5%E5%AD%90/">电子</a><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><a class="post-meta__tags" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></div><div class="post_share"><div class="social-share" data-image="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8Ejs%E8%B7%A8%E6%BA%90%E8%AF%B7%E6%B1%82%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/"><img class="prev-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">关于js跨源请求的解决方案</div></div></a></div><div class="next-post pull-right"><a href="/%E5%8E%9F%E7%90%86/opencv%E5%9B%BE%E5%83%8F%E7%AE%97%E6%B3%95/"><img class="next-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">opencv图像算法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/%E5%8E%9F%E7%90%86/ID%E5%8D%A1%E4%B8%8EIC%E5%8D%A1%E5%8E%9F%E7%90%86/" title="ID卡与IC卡原理"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-14</div><div class="title">ID卡与IC卡原理</div></div></a></div><div><a href="/%E6%9D%82%E8%AE%B0/%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%AC%94%E8%AE%B0%E6%9C%AC%E6%8B%86%E6%9C%BA%E4%BD%93%E9%AA%8C/" title="第一次笔记本拆机体验"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-13</div><div class="title">第一次笔记本拆机体验</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Szh</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shen962806862"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎光临 我的快乐</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="toc-text">底层架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#STM32%E7%A1%AC%E4%BB%B6%E6%94%AF%E6%8C%81"><span class="toc-text">STM32硬件支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SysTick%E7%B3%BB%E7%BB%9F%E6%BB%B4%E7%AD%94%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">SysTick系统滴答定时器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PendSV%E5%8F%AF%E6%82%AC%E8%B5%B7%E5%BC%82%E5%B8%B8"><span class="toc-text">PendSV可悬起异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E5%AE%9E%E7%8E%B0"><span class="toc-text">汇编实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SysTick%E4%B8%AD%E6%96%AD%E8%B0%83%E7%94%A8"><span class="toc-text">SysTick中断调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PendSV%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0"><span class="toc-text">PendSV汇编函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4"><span class="toc-text">汇编指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LR%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">LR寄存器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="toc-text">上下文切换</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E6%8E%A7%E5%88%B6%E7%9A%84%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0"><span class="toc-text">中断控制的汇编函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0"><span class="toc-text">初始化的汇编函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#STM32F103"><span class="toc-text">STM32F103</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC%E6%8C%87%E4%BB%A4"><span class="toc-text">跳转指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SystemInit"><span class="toc-text">SystemInit</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#systick"><span class="toc-text">systick</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">相关寄存器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">定时器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#systick%E5%86%85%E6%A0%B8%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">systick内核定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tim%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">tim定时器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">寄存器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Note"><span class="toc-text">Note</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#USART"><span class="toc-text">USART</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96-1"><span class="toc-text">初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E8%83%BD"><span class="toc-text">使能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E4%BD%8D%E6%B8%850"><span class="toc-text">复位清0</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IO%E6%A8%A1%E5%BC%8F"><span class="toc-text">IO模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A2%E7%89%B9%E7%8E%87"><span class="toc-text">波特率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E8%83%BD-1"><span class="toc-text">使能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-text">中断优先级</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B8%A7"><span class="toc-text">数据帧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E5%87%86"><span class="toc-text">标准</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A2%E7%89%B9%E7%8E%87-1"><span class="toc-text">波特率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B5%B7%E5%A7%8B%E5%92%8C%E5%81%9C%E6%AD%A2%E4%BF%A1%E5%8F%B7"><span class="toc-text">起始和停止信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%95%88%E6%95%B0%E6%8D%AE"><span class="toc-text">有效数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C"><span class="toc-text">数据校验</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%B8%A7"><span class="toc-text">协议帧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B5%B7%E5%A7%8B%E6%A0%A1%E9%AA%8C%E4%BF%A1%E5%8F%B7"><span class="toc-text">起始校验信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E4%BF%A1%E5%8F%B7"><span class="toc-text">指令信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%95%BF%E5%BA%A6%E4%BF%A1%E5%8F%B7"><span class="toc-text">数据长度信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E5%AE%9E%E7%8E%B0"><span class="toc-text">接收实现</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84"><span class="toc-text">系统结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E6%8E%A7%E5%88%B6%E5%9D%97TCB"><span class="toc-text">任务控制块TCB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%B1%E7%BB%AA%E4%BB%BB%E5%8A%A1%E5%88%97%E8%A1%A8"><span class="toc-text">就绪任务列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-text">任务的创建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ARM-or-Thumb"><span class="toc-text">ARM or Thumb</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86"><span class="toc-text">指令集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E5%AE%BD%E5%BA%A6"><span class="toc-text">指令宽度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AF%86%E5%BA%A6"><span class="toc-text">代码密度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD"><span class="toc-text">性能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text">中断处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3"><span class="toc-text">部分函数接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E8%B0%83%E5%BA%A6"><span class="toc-text">任务的调度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%88%9B%E5%BB%BA-1"><span class="toc-text">任务的创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E6%8C%82%E8%B5%B7"><span class="toc-text">任务的挂起</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E6%81%A2%E5%A4%8D"><span class="toc-text">任务的恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%BB%B6%E6%97%B6"><span class="toc-text">任务的延时</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%BA%94%E7%94%A8"><span class="toc-text">实例应用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E4%BE%8B%E7%A8%8B"><span class="toc-text">测试例程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E4%BB%BB%E5%8A%A1%E8%AE%A1%E6%95%B0"><span class="toc-text">单任务计数</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WebServer项目笔记"/></a><div class="content"><a class="title" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记">WebServer项目笔记</a><time datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode--2023Q3"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3">LeetCode--2023Q3</a><time datetime="2023-07-01T02:01:40.000Z" title="发表于 2023-07-01 10:01:40">2023-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查漏补缺CPP"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP">查漏补缺CPP</a><time datetime="2023-06-20T08:08:36.000Z" title="发表于 2023-06-20 16:08:36">2023-06-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Szh</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%94%B5%E5%AD%90/">电子</a><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><a class="post-meta__tags" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></div><div class="post_share"><div class="social-share" data-image="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/%E5%8E%9F%E7%90%86/%E5%85%B3%E4%BA%8Ejs%E8%B7%A8%E6%BA%90%E8%AF%B7%E6%B1%82%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/"><img class="prev-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">关于js跨源请求的解决方案</div></div></a></div><div class="next-post pull-right"><a href="/%E5%8E%9F%E7%90%86/opencv%E5%9B%BE%E5%83%8F%E7%AE%97%E6%B3%95/"><img class="next-cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">opencv图像算法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/%E5%8E%9F%E7%90%86/ID%E5%8D%A1%E4%B8%8EIC%E5%8D%A1%E5%8E%9F%E7%90%86/" title="ID卡与IC卡原理"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-14</div><div class="title">ID卡与IC卡原理</div></div></a></div><div><a href="/%E6%9D%82%E8%AE%B0/%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%AC%94%E8%AE%B0%E6%9C%AC%E6%8B%86%E6%9C%BA%E4%BD%93%E9%AA%8C/" title="第一次笔记本拆机体验"><img class="cover" src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-13</div><div class="title">第一次笔记本拆机体验</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Szh</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shen962806862"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎光临 我的快乐</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="toc-text">底层架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#STM32%E7%A1%AC%E4%BB%B6%E6%94%AF%E6%8C%81"><span class="toc-text">STM32硬件支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SysTick%E7%B3%BB%E7%BB%9F%E6%BB%B4%E7%AD%94%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">SysTick系统滴答定时器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PendSV%E5%8F%AF%E6%82%AC%E8%B5%B7%E5%BC%82%E5%B8%B8"><span class="toc-text">PendSV可悬起异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E5%AE%9E%E7%8E%B0"><span class="toc-text">汇编实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SysTick%E4%B8%AD%E6%96%AD%E8%B0%83%E7%94%A8"><span class="toc-text">SysTick中断调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PendSV%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0"><span class="toc-text">PendSV汇编函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4"><span class="toc-text">汇编指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LR%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">LR寄存器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="toc-text">上下文切换</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E6%8E%A7%E5%88%B6%E7%9A%84%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0"><span class="toc-text">中断控制的汇编函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0"><span class="toc-text">初始化的汇编函数</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#STM32F103"><span class="toc-text">STM32F103</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC%E6%8C%87%E4%BB%A4"><span class="toc-text">跳转指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SystemInit"><span class="toc-text">SystemInit</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#systick"><span class="toc-text">systick</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">相关寄存器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">定时器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#systick%E5%86%85%E6%A0%B8%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">systick内核定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tim%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">tim定时器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">寄存器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Note"><span class="toc-text">Note</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#USART"><span class="toc-text">USART</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96-1"><span class="toc-text">初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E8%83%BD"><span class="toc-text">使能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E4%BD%8D%E6%B8%850"><span class="toc-text">复位清0</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IO%E6%A8%A1%E5%BC%8F"><span class="toc-text">IO模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A2%E7%89%B9%E7%8E%87"><span class="toc-text">波特率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E8%83%BD-1"><span class="toc-text">使能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD"><span class="toc-text">中断</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B8%A7"><span class="toc-text">数据帧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E5%87%86"><span class="toc-text">标准</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A2%E7%89%B9%E7%8E%87-1"><span class="toc-text">波特率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B5%B7%E5%A7%8B%E5%92%8C%E5%81%9C%E6%AD%A2%E4%BF%A1%E5%8F%B7"><span class="toc-text">起始和停止信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%95%88%E6%95%B0%E6%8D%AE"><span class="toc-text">有效数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C"><span class="toc-text">数据校验</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E8%AE%AE%E5%B8%A7"><span class="toc-text">协议帧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B5%B7%E5%A7%8B%E6%A0%A1%E9%AA%8C%E4%BF%A1%E5%8F%B7"><span class="toc-text">起始校验信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E4%BF%A1%E5%8F%B7"><span class="toc-text">指令信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%95%BF%E5%BA%A6%E4%BF%A1%E5%8F%B7"><span class="toc-text">数据长度信号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E5%AE%9E%E7%8E%B0"><span class="toc-text">接收实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%91%E9%80%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">发送实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-text">接收缓冲区</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84"><span class="toc-text">系统结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E6%8E%A7%E5%88%B6%E5%9D%97TCB"><span class="toc-text">任务控制块TCB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%B1%E7%BB%AA%E4%BB%BB%E5%8A%A1%E5%88%97%E8%A1%A8"><span class="toc-text">就绪任务列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-text">任务的创建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ARM-or-Thumb"><span class="toc-text">ARM or Thumb</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86"><span class="toc-text">指令集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E5%AE%BD%E5%BA%A6"><span class="toc-text">指令宽度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AF%86%E5%BA%A6"><span class="toc-text">代码密度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD"><span class="toc-text">性能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86"><span class="toc-text">中断处理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E5%88%86%E5%87%BD%E6%95%B0%E6%8E%A5%E5%8F%A3"><span class="toc-text">部分函数接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E8%B0%83%E5%BA%A6"><span class="toc-text">任务的调度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E5%87%BD%E6%95%B0"><span class="toc-text">调度函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#systick-1"><span class="toc-text">systick</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%AD%E6%96%AD%E5%B5%8C%E5%A5%97%E5%A4%84%E7%90%86"><span class="toc-text">中断嵌套处理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%88%9B%E5%BB%BA-1"><span class="toc-text">任务的创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E6%8C%82%E8%B5%B7"><span class="toc-text">任务的挂起</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E6%81%A2%E5%A4%8D"><span class="toc-text">任务的恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%BB%B6%E6%97%B6"><span class="toc-text">任务的延时</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B%E5%BA%94%E7%94%A8"><span class="toc-text">实例应用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E4%BE%8B%E7%A8%8B"><span class="toc-text">测试例程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#led%E9%97%AA%E7%83%81-usart%E9%80%9A%E4%BF%A1"><span class="toc-text">led闪烁 + usart通信</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WebServer项目笔记"/></a><div class="content"><a class="title" href="/%E5%BA%94%E7%94%A8/WebServer%E9%A1%B9%E7%9B%AE%E7%AC%94%E8%AE%B0/" title="WebServer项目笔记">WebServer项目笔记</a><time datetime="2023-07-11T15:04:11.000Z" title="发表于 2023-07-11 23:04:11">2023-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode--2023Q3"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/LeetCode--2023Q3/" title="LeetCode--2023Q3">LeetCode--2023Q3</a><time datetime="2023-07-01T02:01:40.000Z" title="发表于 2023-07-01 10:01:40">2023-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP"><img src="https://myweb-1259751480.cos.ap-shanghai.myqcloud.com/images/cover/12.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="查漏补缺CPP"/></a><div class="content"><a class="title" href="/%E5%8E%9F%E7%90%86/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BACPP/" title="查漏补缺CPP">查漏补缺CPP</a><time datetime="2023-06-20T08:08:36.000Z" title="发表于 2023-06-20 16:08:36">2023-06-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Szh</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
