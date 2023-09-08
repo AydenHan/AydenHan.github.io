@@ -5202,3 +5202,40 @@ public:
 };
 ```
 
+
+
+## 2023.9.5
+
+### 1123.最深叶节点的最近公共祖先
+
+**解法**
+
+基本思路：**DFS**
+
+因为要取最大深度，因此递归时需要往下传当前节点的深度，以维护**全局的叶节点的最大深度**。往上传当前子树最深叶节点的深度。当以两个**子节点为根的子树最大深度**与当前**已获取的叶节点的最大深度**均相同时，更新节点。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    TreeNode *lcaDeepestLeaves(TreeNode *root) {
+        TreeNode *ans = nullptr;
+        int max_depth = -1; 
+        function<int(TreeNode*, int)> dfs = [&](TreeNode *node, int depth) {
+            if (node == nullptr) {
+                max_depth = max(max_depth, depth); 
+                return depth;
+            }
+            int left_max_depth = dfs(node->left, depth + 1); 
+            int right_max_depth = dfs(node->right, depth + 1); 
+            if (left_max_depth == right_max_depth && left_max_depth == max_depth)
+                ans = node;
+            return max(left_max_depth, right_max_depth); 
+        };
+        dfs(root, 0);
+        return ans;
+    }
+};
+```
+
