@@ -1221,7 +1221,72 @@ vector<int> dailyTemperatures(vector<int>& vec) {
 
 ![image.png](%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95%E7%9A%84CPP%E5%AE%9E%E7%8E%B0/1617425519-BCKwIu-image.png)
 
-### 堆排序 - O(n*log(n))
+下图好像有点问题。
+
+![img](常用数据结构和算法的CPP实现/0B319B38-B70E-4118-B897-74EFA7E368F9.png)
+
+### 冒泡排序 - n^2
+
+```cpp
+void bubbleSort(vector<int>& arr) {
+    bool order = true;
+    for(int i = 0; i < arr.size()-1 && order; ++i) {
+        order = false;
+        for(int j = 0; j < arr.size()-i-1; ++j) {
+			if(arr[j] > arr[j+1]) {
+                order = true;
+				swap(arr[j], arr[j+1]);
+            }
+        }
+    }
+}
+```
+
+
+
+### 选择排序 - n^2
+
+选择排序通过遍历查找出最小元素位置，并进行排序。首先在未排序序列中找到最小元素，将其和序列中的第一个元素交换；然后，再从剩余未排序元素中继续寻找最小元素并进行排序。以此类推，直到所有元素均排序完毕。
+
+```cpp
+void selectSort(vector<int>& arr) {
+    for(int i = 0; i < arr.size()-1; ++i) {
+        int minVal = arr[i];
+        for(int j = i+1; j < arr.size(); ++j) {
+			if(arr[j] < minVal) {
+                minVal = arr[j];
+                swap(arr[i], arr[j]);
+            }
+        }
+    }
+}
+```
+
+
+
+### 插入排序 - n^2
+
+1. 首先对前两个元素进行比较并排序
+2. 将第三个元素放入到前两个有序数组的合适位置，完成后，前三个元素为有序数组
+3. 再对下一个元素重复1、2步骤，直至所有元素排序完成
+
+***在快速排序中，为减少递归的深度，可以采用插入排序做优化。***
+
+```cpp
+void insertSort(vector<int>& arr) {
+    for(int i = 1; i < arr.size(); ++i) {
+        int cur = arr[i];
+        int pre = i - 1;
+        for(; pre >= 0 && cur < arr[pre]; --pre)
+			arr[pre+1] = arr[pre];
+        arr[pre+1] = cur;
+    }
+}
+```
+
+
+
+### 堆排序 - nlogn
 
 #### 1.函数调用
 
@@ -1275,7 +1340,7 @@ void heapSort(vector<int>& arr){
 
 
 
-### 归并排序 - O(n*log(n))
+### 归并排序 - nlogn
 
 ```cpp
 void merge(vector<int>& arr, int l, int mid, int r) {
@@ -1296,6 +1361,139 @@ void mergeSort(vector<int>& arr, int l, int r) {
     }
 }
 ```
+
+
+
+### 快速排序 - nlogn
+
+```cpp
+void quickSort(vector<int>& arr, int l, int r) {
+    if(l < r) {
+        int i = l, j = r, pivot = arr[l];
+        while(i < j) {
+            while(i < j && arr[j] >= pivot) --j;
+            arr[i] = arr[j];
+            while(i < j && arr[i] <= pivot) ++i;
+            arr[j] = arr[i];
+        }
+        arr[i] = pivot;
+        quickSort(arr, l, i-1);
+        quickSort(arr, i+1, r);
+    }
+}
+```
+
+
+
+### 希尔排序 - n(logn)^2
+
+其实是插排的一种优化方案。
+
+简单插入排序很循规蹈矩，不管数组分布是怎么样的，依然一步一步的对元素进行比较，移动，插入，比如[5,4,3,2,1,0]这种倒序序列，数组末端的0要回到首位置很是费劲，比较和移动元素均需n-1次。
+
+希尔排序在数组中采用**跳跃式分组**的策略，通过某个**增量**将数组元素划分为若干组，然后**分组进行插入排序**。随后逐步缩小增量，继续按组进行插入排序操作，**直至增量为1**。希尔排序通过这种策略使得整个数组在初始阶段达到从**宏观上基本有序**，小的基本在前，大的基本在后。然后缩小增量，到增量为1时，其实多数情况下只需微调即可，不会涉及过多的数据移动。
+
+![img](常用数据结构和算法的CPP实现/v2-772665fb7ea1f6354fa6dd083c9f79f8_720w.webp)
+
+```cpp
+void shellSort(vector<int>& arr) {
+    int gap = arr.size() / 2;
+    while(gap > 0) {
+        for(int i = gap; i < arr.size(); ++i) {
+            int pre = i - gap;
+            int cur = arr[i];
+            for(; pre >= 0 && cur < arr[pre]; pre -= gap)
+                arr[pre + gap] = arr[pre];
+            arr[pre + gap] = cur;
+        }
+        gap /= 2;
+    }
+}
+```
+
+
+
+### 计数排序 - n+k
+
+计数排序的本质就是**哈希**。统计每个元素出现的数量，以元素值为下标存储，利用数组下标的有序性完成排序。之后按序放回原数组即可。
+
+很容易看出来，当 **n >> k** 时，该算法较为有利，即**待排序数组的范围尽可能小并且重复值较多**时，使用该排序。
+
+```cpp
+void countSort(vector<int>& arr, int min, int max) {
+    if(arr.empty() || min > max)    
+        return;
+    vector<int> cnt(max - min + 1, 0);
+    for(int n : arr)
+        cnt[n - min]++;
+    int idx = 0;
+    for(int i = 0; i < cnt.size(); ++i)
+        while(cnt[i]--)
+            arr[idx++] = i + min;
+}
+```
+
+
+
+### 桶排序 - n+k
+
+桶排序属于升级版的技术排序。他不再是每个元素都映射一个位置，而是一组范围内的元素映射至一个数组中（称之为桶），此时桶之间的排序是完成了的。之后对桶内元素使用其他排序方式（也可以继续桶排序）完成排序，最后填充回原数组。
+
+![动图](常用数据结构和算法的CPP实现/v2-55bdaa0253026d20564c7da9f8c3dcff_b.gif)
+
+```cpp
+void bucketSort(vector<int>& arr, int min, int max, int bucket_size) {
+    if(arr.empty() || min > max || bucket_size <= 0)
+        return;
+    vector<vector<int> > buck((max - min + 1) / bucket_size + 1);
+    for(int n : arr)
+        buck[(n - min) / bucket_size].push_back(n);
+    int idx = 0;
+    for(vector<int>& item : buck) {
+        insertSort(item);
+        for(int n : item)
+            arr[idx++] = n;
+    }
+}
+```
+
+
+
+### 基数排序 - nk
+
+基数排序是按照低位先排序，然后收集；再按照高位排序，然后再收集；依次类推，直到最高位。有时候有些属性是有优先级顺序的，**先按低优先级排序，再按高优先级排序**。最后的次序就是高优先级高的在前，高优先级相同的低优先级高的在前。
+
+排序的功能由**数组下标的有序性**实现。每次实现一位的排序，直至最高位排序完成。
+
+![动图](常用数据结构和算法的CPP实现/v2-3a6f1e5059386523ed941f0d6c3a136e_b.gif)
+
+```cpp
+void radixSort(vector<int>& arr) {
+    if(arr.empty()) return;
+    vector<vector<int> > buck;
+    bool next = true;
+    for(int bit = 1, cnt = 0; next; bit *= 10) {
+        buck.clear();
+        buck.resize(10);
+        next = false;
+        cnt = 0;
+        for(int n : arr) {
+            int p = (n % (bit * 10)) / bit;
+            buck[p].push_back(n);
+            if(p)   cnt++;
+        }
+        if(cnt) {
+            next = true;
+            int idx = 0;
+            for(vector<int>& item : buck)
+                for(int n : item)
+                    arr[idx++] = n;
+        }
+    }
+}
+```
+
+
 
 
 
