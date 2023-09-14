@@ -5239,3 +5239,90 @@ public:
 };
 ```
 
+
+
+## 2023.9.13
+
+### 2596.检查骑士巡视方案
+
+**解法**
+
+基本思路：**DFS、回溯**
+
+很明显的深搜模拟。
+
+终止条件就是走完所有格子，那就需要维护一个步数变量`cnt`。
+
+每个格子恰好访问一次，因此需要维护一个标记是否访问过的数组`visited`。
+
+深搜的条件改变就在于是否访问过以及步数，步数可以作为递归参数传入，每层+1传入即可，标记访问节点置于for循环遍历外侧即可，回溯实现就完成了。
+
+能向八个方向移动，那么可以继续**递归的条件**就是：移动后的坐标**不越界**且**未访问**过且**值恰好为已走的步数**。
+
+函数返回值设为`bool`作为状态反馈，一旦访问到最后一步是true了，一路回溯都返回true；但凡中间有一个false，该层就需要换路径尝试向下递归。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    bool checkValidGrid(vector<vector<int>>& grid) {
+        int n = grid.size();
+        vector<pair<int, int> > move = {{-1, 2}, {-2, 1}, {1, 2}, {2, 1}, 
+                                        {2, -1}, {1, -2}, {-1, -2}, {-2, -1}};
+        vector<vector<bool> > visited(n, vector<bool>(n, false));
+        function<bool(int, int, int)> dfs = [&](int x, int y, int cnt) -> bool {
+            if(n * n == cnt)    return true;
+            visited[x][y] = true;
+            for(auto& pii : move) {
+                int nx = x + pii.first, ny = y + pii.second;
+                if(nx < 0 || nx >= n || ny < 0 || ny >= n || visited[nx][ny] || grid[nx][ny] != cnt)
+                    continue;
+                if(dfs(nx, ny, cnt+1)) return true;
+            }
+            visited[x][y] = false;
+            return false;
+        };
+        return dfs(0, 0, 1);
+    }
+};
+```
+
+
+
+## 2023.9.14
+
+### 1222.可以攻击国王的皇后
+
+**解法**
+
+基本思路：**模拟**
+
+从king往八个方向遍历，找到在范围内的第一个queen就加入结果集。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> queensAttacktheKing(vector<vector<int>>& queens, vector<int>& king) {
+        vector<vector<int> > res;
+        vector<vector<bool> > pos(8, vector<bool>(8, false));
+        for(auto& vec : queens) pos[vec[0]][vec[1]] = true;
+        for(int x = -1; x < 2; ++x) {
+            for(int y = -1; y < 2; ++y) {
+                if(!x && !y)    continue;
+                int nx = king[0] + x, ny = king[1] + y;
+                while(nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                    if(pos[nx][ny]) {
+                        res.push_back({nx, ny});break;
+                    }
+                    nx += x;ny += y;
+                }
+            }
+        }
+        return res;
+    }
+};
+```
+
