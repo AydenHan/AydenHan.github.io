@@ -5326,3 +5326,112 @@ public:
 };
 ```
 
+
+
+## 2023.9.23
+
+### 1993.树上的操作
+
+**解法**
+
+基本思路：**DFS**
+
+输入是每个节点的父节点信息，因此还需记录子节点的信息（二维数组）。另外维护一个数组存储解锁状态。
+
+重点在于更新操作，需要向上遍历所有父节点和向下遍历所有子节点。父节点只有一个可以直接循环解决，子节点有多个分支因此需要dfs。
+
+***Code***
+
+```cpp
+class LockingTree {
+public:
+    LockingTree(vector<int>& parent) {
+        int n = parent.size();
+        locked.resize(n, -1);
+        children.resize(n);
+        this->parent = parent;
+        for(int i = 1; i < n; ++i)
+            children[parent[i]].push_back(i);
+    }
+    
+    bool lock(int num, int user) {
+        if(locked[num] == -1) {
+            locked[num] = user;
+            return true;
+        }
+        return false;
+    }
+    
+    bool unlock(int num, int user) {
+        if(locked[num] == user) {
+            locked[num] = -1;
+            return true;
+        }
+        return false;
+    }
+    
+    bool upgrade(int num, int user) {
+        if(locked[num] != -1) return false;
+        int x = parent[num];
+        while(x != -1) {
+            if(locked[x] != -1) return false;
+            x = parent[x];
+        }
+        int cnt = 0;
+        dfs(num, cnt);
+        if(!cnt)    return false;
+        locked[num] = user;
+        return true;
+    }
+private:
+    void dfs(int id, int& cnt) {
+        for(int n : children[id]) {
+            if(locked[n] != -1) {
+                ++cnt;
+                locked[n] = -1;
+            }
+            dfs(n, cnt);
+        }
+    }
+private:
+    vector<int> locked;
+    vector<int> parent;
+    vector<vector<int> > children;
+};
+```
+
+
+
+## 2023.9.28
+
+### 2251.花期内花的数目
+
+**解法**
+
+基本思路：**排序、二分查找**
+
+因为要兼顾大于等于start和小于等于end，在一个二维数组中不好比较，因此可以拆分成两个一维数组分别排序，之后只需要找到小于等于看花时间的start数目，再减去小于看花时间的end数目，就是当时开花的数目了。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    vector<int> fullBloomFlowers(vector<vector<int>>& flowers, vector<int>& people) {
+        vector<int> start, end, res;
+        for(auto& vec : flowers) {
+            start.push_back(vec[0]);
+            end.push_back(vec[1]);
+        }
+        sort(start.begin(), start.end());
+        sort(end.begin(), end.end());
+        for(int n : people) {
+            int have = upper_bound(start.begin(), start.end(), n) - start.begin();
+            int no = lower_bound(end.begin(), end.end(), n) - end.begin();
+            res.push_back(have - no);
+        }
+        return res;
+    }
+};
+```
+
