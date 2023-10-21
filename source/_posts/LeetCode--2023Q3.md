@@ -5435,3 +5435,38 @@ public:
 };
 ```
 
+
+
+## 2023.9.30
+
+### 2136.全部开花的最早一天
+
+**解法**
+
+基本思路：**排序、贪心**
+
+贪心很好理解，你会发现无论怎么选，每颗种子的播种时间都是必须走过的，而对于生长时间（是并行的）就可以尽可能将短的最后播种，这样相对时间最短。
+
+我的第一反应是累加播种时间，然后再加个最短的生长时间就行，也确实通过了大部分用例。但是还有细节要注意，如果有比最短的生长时间要长很多的种子的话，那么可能出现最短的最后开花时，之前的还没开花，因此不能直接求和。
+
+因此需要根据生长时间将**种子序号**从大到小排序。之后计算每轮种子开花的最大时间，取最大值即可。这里为什么是取最大值而不是最早一天的最小值？因为**按照生长时间从大到小进行播种**这一步就已经决定了最终的结果是最小的了，取最大值是为了得出正确的结果（全部都开花，所以是最大值）。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int earliestFullBloom(vector<int> &plantTime, vector<int> &growTime) {
+        vector<int> id(plantTime.size());
+        iota(id.begin(), id.end(), 0); 
+        sort(id.begin(), id.end(), [&](int i, int j) { return growTime[i] > growTime[j]; });
+        int res = 0, days = 0;
+        for (int i : id) {
+            days += plantTime[i];
+            res = max(res, days + growTime[i]);
+        }
+        return res;
+    }
+};
+```
+
