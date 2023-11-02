@@ -114,7 +114,7 @@ public:
 
 
 
-## 2023.10.121
+## 2023.10.21
 
 ### 2316.统计无向图中无法到达点对数
 
@@ -155,6 +155,100 @@ public:
         for(int i = 0; i < n; ++i)
             res += n - sz[find(i)];
         return res / 2;
+    }
+};
+```
+
+
+
+## 2023.10.22
+
+### 1402.做菜顺序
+
+**解法**
+
+基本思路：**贪心、前缀和**
+
+由示例可知，要想得到最大值，满意度最高的菜就要最后求和，因此可以先对数组进行降序排序。
+
+假设排序后数组前三个值为a、b、c，则如果只取第一个，结果为a，取前两个，结果为 2a + b = a + (a+b)，取前三，结果a + (a+b) + (a+b+c)。。。由此可知，**每多取一个就是加上当前的前缀和，并且只要前缀和大于0，就可以一直往后取**（贪心）。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int maxSatisfaction(vector<int>& satisfaction) {
+        sort(satisfaction.rbegin(), satisfaction.rend());
+        int pre = 0, sum = 0;
+        for(int n : satisfaction) {
+            pre += n;
+            if(pre <= 0)    break;
+            sum += pre;
+        }
+        return sum;
+    }
+};
+```
+
+
+
+## 2023.10.23
+
+### 2678.老人的数目
+
+**解法**
+
+基本思路：**字符串、数组**
+
+简单题。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int countSeniors(vector<string>& details) {
+        int res = 0;
+        for(const string& str : details)
+            if(str[11] > '6' || (str[11] == '6' && str[12] > '0') )
+                ++res;
+        return res;
+    }
+};
+```
+
+
+
+## 2023.11.2
+
+### 2103.环和杆
+
+**解法**
+
+基本思路：**哈希表、位运算**
+
+简单题。一眼哈希，但哈希的value要存RGB三种，可以用位数组存储。
+
+***Code***
+
+```cpp
+class Solution {
+public:
+    int countPoints(string rings) {
+        unsigned char hash[10] = {0};
+        for(int i = 0; i < rings.size(); i += 2) {
+            unsigned char mask;
+            if(rings[i] == 'R') mask = 1;
+            else if(rings[i] == 'G') mask = 2;
+            else    mask = 4;
+            hash[rings[i+1] - '0'] |= mask;
+        }
+        int res = 0;
+        for(int i = 0; i < 10; ++i)
+            if(hash[i] == 7)
+                ++res;
+        return res;
     }
 };
 ```
